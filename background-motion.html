@@ -20,6 +20,8 @@
         <script src="../jspsych-6.0.5/plugins/jspsych-survey-text.js"></script>
         <script src="../jspsych-6.0.5/plugins/jspsych-instructions.js"></script>
          <script src="jspsych-virtual-chinrest.js"></script>
+         <script src="jspsych-rdk_2.js"></script>
+         <script src="jspsych-ydk.js"></script>
 
     </head>
     <body>
@@ -214,10 +216,25 @@
           }
         };
 
+
+        var test_block = {
+          type: "rdk_2", 
+          aperture_type: 4,
+          number_of_apertures: 2, //This needs to be set if more than one aperture
+          trial_duration: 10000,
+          RDK_type: 3, //Applied to all apertures if only one value
+          aperture_width: 200, //Applied to all apertures if only one value
+          number_of_dots: [200, 100], //Different parameter for each aperture. Array length must equal number_of_apertures
+          aperture_center_x: [(window.innerWidth/2)-300,(window.innerWidth/2)+300] //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+      };
+
+
+
+
         /*set up experiment structure*/
         var timeline = [];
-  		timeline.push(virtual_chinrest_trial)
         timeline.push(instructions);
+        timeline.push(test_block);
         timeline.push(lastOne);
         timeline.push(survey_trial);
         timeline.push(test);
