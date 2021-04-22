@@ -1,251 +1,83 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Flanker Task</title>
+<head>
+    <title>Background Motion Task</title>
 
-                <!-- jQuery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-        <!-- css -->
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
-        <!-- SVG.js -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.3/svg.min.js"></script>
+            <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <!-- css -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
+    <!-- SVG.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.3/svg.min.js"></script>
 
-        <script src="../jspsych-6.0.5/jspsych.js"></script>
-        <script src="../jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
-        <script src=../jspsych-6.0.5/plugins/jspsych-image-keyboard-response.js"></script>
-        <link href="../jspsych-6.0.5/css/jspsych.css" rel="stylesheet" type="text/css"></link>
-        <script src="../jspsych-6.0.5/plugins/jspsych-fullscreen.js"></script>
-        <script src="../jspsych-6.0.5/plugins/jspsych-survey-text.js"></script>
-        <script src="../jspsych-6.0.5/plugins/jspsych-instructions.js"></script>
-         <script src="jspsych-virtual-chinrest.js"></script>
-         <script src="jspsych-rdk_2.js"></script>
-         <script src="jspsych-ydk.js"></script>
+    <script src="../jspsych-6.0.5/jspsych.js"></script>
+    <script src="../jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src=../jspsych-6.0.5/plugins/jspsych-image-keyboard-response.js"></script>
+    <link href="../jspsych-6.0.5/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    <script src="../jspsych-6.0.5/plugins/jspsych-fullscreen.js"></script>
+    <script src="../jspsych-6.0.5/plugins/jspsych-survey-text.js"></script>
+    <script src="../jspsych-6.0.5/plugins/jspsych-instructions.js"></script>
+      <script src="jspsych-virtual-chinrest.js"></script>
+      <script src="jspsych-rdk_2.js"></script>
+      <script src="jspsych-ydk.js"></script>
 
-    </head>
-    <body>
-    </body>
-    <script>
+</head>
+<body>
+</body>
+<script>
 
-      function saveData() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'write_data.php'); // change 'write_data.php' to point to php script.
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function() {
-          if(xhr.status == 200){
-            var response = JSON.parse(xhr.responseText);
-            console.log(response.success);
-          }
-        };
-        xhr.send(jsPsych.data.get().json());
-      }
+function saveData() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'write_data.php'); // change 'write_data.php' to point to php script.
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
+    if(xhr.status == 200){
+      var response = JSON.parse(xhr.responseText);
+      console.log(response.success);
+    }
+  };
+  xhr.send(jsPsych.data.get().json());
+}
 
+var virtual_chinrest_trial = {
+type: 'virtual-chinrest',
+resize_units: "deg",
+blindspot_reps: 1,
+pixels_per_unit: 190,
+};
 
-
-
-
-        /* experiment parameters */
-      var reps_per_trial_type = 1;
-
-
-
-
-      var survey_trial = {
-        type: 'survey-text',
-        questions: [{prompt: "Your Name"}],
-        on_finish: function(data){
-        var responses = JSON.parse(data.responses);
-        var code = responses.Q0;
-        jsPsych.data.addProperties({participantCode: code}) // update the global variable
-        console.log('The trial just finished loading.', code);
-        },
-        // data: {written: randomGroup}
-      }
+/*set up instructions block*/
+var instructions = {
+  type: "instructions",
+  pages: [ "<p>This is backgroung motion experiment, like the examples below.</p>"
+    ],
+    show_clickable_nav:true
+};
 
 
-      // jsPsych.data.addProperties({
-      // subject: randomGroup,
-      // });
+var test_block = {
+  type: "rdk_2", 
+  aperture_type: 2,
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  trial_duration: 100000,
+  RDK_type: 3, //Applied to all apertures if only one value
+  aperture_width: 500, //Applied to all apertures if only one value
+  number_of_dots: 500, //Different parameter for each aperture. Array length must equal number_of_apertures
+  aperture_center_x: [(window.innerWidth/2)] //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+};
 
-		var virtual_chinrest_trial = {
-		  type: 'virtual-chinrest',
-		  resize_units: "deg",
-		  blindspot_reps: 1,
-		  pixels_per_unit: 190,
-		};
+  /*set up experiment structure*/
+  var timeline = [];
+  timeline.push(instructions);
+  timeline.push(test_block);
 
-        /*set up instructions block*/
-        var instructions = {
-          type: "instructions",
-          pages: [ "<p>In this task, you will see five arrows on the screen, like the examples below.</p>"+
-            "<img src='img/black.png'></img>",
-            "<p>Press the left arrow key  on the keyboard if the middle arrow is pointing left (<). </p>"+
-            "<p>Press the right arrow key if the middle arrow is pointing right (>). <br></p>",
-            "<p><br>When arrows are in <b><font color='blue'>blue</font></b> color,</p>"+
-            "<img src='img/blue.png'></img>"+
-            "<p>Press the left arrow key if the arrows on each <u> side </u> of the center are pointing left. (<)</p>"+
-            "<p>Press the right arrow key if the arrows on each <u> side </u> of the center are pointing right. (>)</p>"
-            ],
-            show_clickable_nav:true
-        };
-
-        /*set up welcome block*/
-        var lastOne = {
-          type: "html-keyboard-response",
-          stimulus: "<p>Summary: if arrows are in <b><font color='blue'>blue</font></b>, respond the direction of the <u>peripheral</u> arrows; <br>if <b><font color='black'>black</font></b>, respond the direction of the <u>center</u> arrow, using the arrows on the keyboard </p>"+
-            "<img src='img/buttonImages.png'></img>"+
-            "<p>It will take around 2 minutes.<p>"+
-            "<p><br>Press any key to begin.</p>"
-        };
-
-
-
-        //defining stimuli
-        var test_stimuli = [
-           {
-             stimulus: '<div style="font-size:75px"> <<<<< </div>',
-             data: { stim_type: 'congruent', direction: 'left', attend: 'center'}
-           },
-           {
-             stimulus: '<div style="font-size:75px"> >>>>> </div>',
-             data: { stim_type: 'congruent', direction: 'right', attend: 'center'}
-           },
-           {
-             stimulus: '<div style="font-size:75px"> <<><< </div>',
-             data: { stim_type: 'incongruent', direction: 'right', attend: 'center'}
-           },
-           {
-             stimulus: '<div style="font-size:75px"> >><>> </div>',
-             data: { stim_type: 'incongruent', direction: 'left', attend: 'center'}
-           },
-           {
-             stimulus: '<div style="color:blue; font-size:75px"> <<<<< </div>',
-             data: { stim_type: 'congruent', direction: 'left', attend: 'surround'}
-           },
-           {
-             stimulus: '<div style="color:blue; font-size:75px"> >>>>> </div>',
-             data: { stim_type: 'congruent', direction: 'right', attend: 'surround'}
-           },
-           {
-             stimulus: '<div style="color:blue; font-size:75px"> <<><< </div>',
-             data: { stim_type: 'incongruent', direction: 'left', attend: 'surround'}
-           },
-           {
-             stimulus: '<div style="color:blue; font-size:75px"> >><>> </div>',
-             data: { stim_type: 'incongruent', direction: 'right', attend: 'surround'}
-           }
-         ];
-
-/*        var test_stimuli = [
-          {
-            stimulus: "img/center_cong_left.png",
-            data: { stim_type: 'congruent', direction: 'left', attend: 'center'}
-          },
-          {
-            stimulus: "img/center_cong_right.png",
-            data: { stim_type: 'congruent', direction: 'right', attend: 'center'}
-          },
-          {
-            stimulus: "img/center_incong_right.png",
-            data: { stim_type: 'incongruent', direction: 'right', attend: 'center'}
-          },
-          {
-            stimulus: "img/center_incong_left.png",
-            data: { stim_type: 'incongruent', direction: 'left', attend: 'center'}
-          },
-          {
-            stimulus: "img/surround_cong_left.png",
-            data: { stim_type: 'congruent', direction: 'left', attend: 'surround'}
-          },
-          {
-            stimulus: "img/surround_cong_right.png",
-            data: { stim_type: 'congruent', direction: 'right', attend: 'surround'}
-          },
-          {
-            stimulus: "img/surround_incong_left.png",
-            data: { stim_type: 'incongruent', direction: 'left', attend: 'surround'}
-          },
-          {
-            stimulus: "img/surround_incong_right.png",
-            data: { stim_type: 'incongruent', direction: 'right', attend: 'surround'}
-          }
-        ];*/
-
-
-
-        /* defining test timeline */
-        var test = {
-          timeline: [{
-            type: 'html-keyboard-response',
-            choices: [37, 39],
-            trial_duration: 1500,
-            stimulus: jsPsych.timelineVariable('stimulus'),
-            data: jsPsych.timelineVariable('data'),
-            on_finish: function(data){
-              var correct = false;
-              if(data.direction == 'left' &&  data.key_press == 37 && data.rt > -1){
-                correct = true;
-              } else if(data.direction == 'right' && data.key_press == 39 && data.rt > -1){
-                correct = true;
-              }
-              data.correct = correct;
-            },
-            post_trial_gap: function() {
-                return Math.floor(Math.random() * 1500) + 500;
-            }
-          }],
-          timeline_variables: test_stimuli,
-          sample: {type: 'fixed-repetitions', size: reps_per_trial_type}
-        };
-
-        /*defining debriefing block*/
-        var debrief = {
-          type: "html-keyboard-response",
-          stimulus: function() {
-            var total_trials = Math.round(jsPsych.data.get().filter({trial_type: 'html-keyboard-response'}).count() -2);
-            //var total_trials = jsPsych.data.get().filter({trial_type: 'image-keyboard-response'}).count();
-            var accuracy = Math.round(jsPsych.data.get().filter({correct: true}).count() / total_trials * 100);
-            var congruent_rt = Math.round(jsPsych.data.get().filter({correct: true, stim_type: 'congruent'}).select('rt').mean());
-            var incongruent_rt = Math.round(jsPsych.data.get().filter({correct: true, stim_type: 'incongruent'}).select('rt').mean());
-            var subjID = jsPsych.data.get().last(1).values()[0]['participantCode']
-            return subjID + "," + "<p>You responded correctly on <strong>"+accuracy+"%</strong> of the trials.</p> " + 
-            "<p>Your average response time for congruent trials was <strong>" + congruent_rt + "ms</strong>.</p>"+
-            "<p>Your average response time for incongruent trials was <strong>" + incongruent_rt + "ms</strong>.</p>"+
-            "<p><br>Press any key to complete the experiment. Thank you!</p>";
-          }
-        };
-
-
-        var test_block = {
-          type: "rdk_2", 
-          aperture_type: 4,
-          number_of_apertures: 2, //This needs to be set if more than one aperture
-          trial_duration: 10000,
-          RDK_type: 3, //Applied to all apertures if only one value
-          aperture_width: 200, //Applied to all apertures if only one value
-          number_of_dots: [200, 100], //Different parameter for each aperture. Array length must equal number_of_apertures
-          aperture_center_x: [(window.innerWidth/2)-300,(window.innerWidth/2)+300] //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
-      };
-
-
-
-
-        /*set up experiment structure*/
-        var timeline = [];
-        timeline.push(instructions);
-        timeline.push(test_block);
-        timeline.push(lastOne);
-        timeline.push(survey_trial);
-        timeline.push(test);
-        timeline.push(debrief);
-
-
-        /*start experiment*/
-        jsPsych.init({
-            timeline: timeline,
-            // show_progress_bar: true,
-            on_finish: saveData
-        });
-    </script>
+  /*start experiment*/
+  jsPsych.init({
+      timeline: timeline,
+      // show_progress_bar: true,
+      on_finish: saveData
+  });
+</script>
 </html>
