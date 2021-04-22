@@ -333,8 +333,8 @@ jsPsych.plugins["rdk_2"] = (function() {
 			apertureConfiguration = 1
 		}
 
-		var apertureWidth_center = 200; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
-		var apertureHeight_center = 400; 
+		var apertureWidth_center = 100; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
+		var apertureHeight_center = 100; 
 
 		/* RDK type parameter
 		** See Fig. 1 in Scase, Braddick, and Raymond (1996) for a visual depiction of these different signal selection rules and noise types
@@ -477,11 +477,11 @@ jsPsych.plugins["rdk_2"] = (function() {
 		var apertureHeightArray_center;
 
 		// Draw the ellipse
-		ctx.fillStyle = 'blue';
-		ctx.beginPath();
-		ctx.ellipse(canvasWidth/2-100, canvasHeight/2, 50, 75, Math.PI / 4, 0, 2 * Math.PI);
-		//ctx.stroke();
-		ctx.fill();
+		// ctx.fillStyle = 'blue';
+		// ctx.beginPath();
+		// ctx.ellipse(canvasWidth/2-100, canvasHeight/2, 50, 75, Math.PI / 4, 0, 2 * Math.PI);
+		// //ctx.stroke();
+		// ctx.fill();
 					
 		// Set up multiple apertures
 		setUpMultipleApertures();
@@ -1167,6 +1167,14 @@ jsPsych.plugins["rdk_2"] = (function() {
 		    //if(fixationCross === true){
 			if(fixationCross === true){
 				
+
+
+				// Draw the ellipse
+				ctx.fillStyle = 'gray';
+				ctx.beginPath();
+				ctx.ellipse(canvasWidth/2, canvasHeight/2, 50, 50, Math.PI / 4, 0, 2 * Math.PI);
+				//ctx.stroke();
+				ctx.fill();
 				for (var i = 0; i < nDots; i++) {
 					dot = dotArray_center[i];
 					ctx.beginPath();
@@ -1787,11 +1795,11 @@ jsPsych.plugins["rdk_2"] = (function() {
 		//----RDK Functions End----
 		
 		// Draw the ellipse
-		ctx.fillStyle = 'green';
-		ctx.beginPath();
-		ctx.ellipse(canvasWidth/2+10, canvasHeight/2, 50, 75, Math.PI / 4, 0, 2 * Math.PI);
-		//ctx.stroke();
-		ctx.fill();
+		// ctx.fillStyle = 'green';
+		// ctx.beginPath();
+		// ctx.ellipse(canvasWidth/2+10, canvasHeight/2, 50, 75, Math.PI / 4, 0, 2 * Math.PI);
+		// //ctx.stroke();
+		// ctx.fill();
 
 		//----General Functions Begin//----
 		
