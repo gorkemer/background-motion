@@ -61,13 +61,20 @@ var test_block = {
   type: "rdk_2", 
   aperture_type: 2,
   number_of_apertures: 1, //This needs to be set if more than one aperture
-  trial_duration: 100000,
+  trial_duration: 1000,
   RDK_type: 3, //Applied to all apertures if only one value
-  aperture_width: 500, //Applied to all apertures if only one value
-  number_of_dots: 500, //Different parameter for each aperture. Array length must equal number_of_apertures
-  aperture_center_x: [(window.innerWidth/2)], //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
+  aperture_width: 100, //Applied to all apertures if only one value
+  number_of_dots: 100, //Different parameter for each aperture. Array length must equal number_of_apertures
+  aperture_center_x: [window.innerWidth/2], //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
   coherence: 0.3,
-  move_distance: 1
+  move_distance: 1,
+  number_of_dots: 100,
+  foreground_aperture_width: 500,
+  foreground_aperture_height: 500,
+  foreground_number_of_dots: 200,
+  foreground_move_distance: 0.6, //Different parameter for each aperture. Array length must equal number_of_apertures
+  foreground_aperture_center_x: [(window.innerWidth/2)-200,(window.innerWidth/2)+200],
+  foreground_number_of_apertures: 1
 };
 
   /*set up experiment structure*/

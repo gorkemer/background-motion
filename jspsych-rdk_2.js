@@ -246,7 +246,97 @@ jsPsych.plugins["rdk_2"] = (function() {
 		      	pretty_name: "fixation_type_horizontal",
 		      	default: -1,
 		      	description: "horizontal or vertical line for the fixation cross"
-			}
+			}, ////////////// BELOW FOREGROUND PARAMETERS ///////////////////////////////
+			foreground_aperture_center_x: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Foreground Aperture center X",
+				default: undefined,
+				description: "The x-coordinate of the center of the aperture"
+			},
+			foreground_aperture_center_y: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Foreground Aperture center Y",
+				default: undefined,
+				description: "The y-coordinate of the center of the aperture"
+			},
+			foreground_aperture_width: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Foreground Aperture width",
+				default: 600,
+				description: "The width of the aperture in pixels"
+			},
+			foreground_aperture_height: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Foreground Aperture height",
+				default: 400,
+				description: "The height of the aperture in pixels"
+			},
+			foreground_dot_color: {
+				type: jsPsych.plugins.parameterType.STRING,
+				pretty_name: "Foreground Dot color",
+				default: "white",
+				description: "The color of the dots"
+			},
+			foreground_number_of_apertures: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Number of apertures",
+				default: 1,
+				description: "The number of RDK apertures (If more than one, make sure to separate them by setting aperture_center_x and aperture_center_y for each RDK)"
+			},
+			foreground_number_of_dots: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Number of dots",
+				default: 300,
+				description: "The number of dots per set in the stimulus"
+			},
+			foreground_number_of_sets: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Number of sets",
+				default: 1,
+				description: "The number of sets of dots to cycle through"
+			},
+			foreground_coherent_direction: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Coherent direction",
+				default: 0,
+				description: "The direction of coherent motion in degrees"
+			},
+			foreground_coherence: {
+				type: jsPsych.plugins.parameterType.FLOAT,
+				pretty_name: "Coherence",
+				default: 0.5,
+				description: "The percentage of dots moving in the coherent direction"
+			},
+			foreground_opposite_coherence: {
+				type: jsPsych.plugins.parameterType.FLOAT,
+				pretty_name: "Opposite coherence",
+				default: 0,
+				description: "The percentage of dots moving in the direction opposite of the coherent direction"
+			},
+			foreground_dot_radius: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Dot radius",
+				default: 2,
+				description: "The radius of the dots in pixels"
+			},
+			foreground_dot_life: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Dot life",
+				default: -1,
+				description: "The number of frames that pass before each dot disappears and reappears somewhere else"
+			},
+			foreground_RDK_type: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "RDK type",
+				default: 3,
+				description: "The Type of RDK (refer to documentation for details)"
+			},
+			foreground_aperture_type: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Aperture Type",
+				default: 2,
+				description: "The shape of the aperture"
+			},
 			
 	    }
 	 }
@@ -297,7 +387,24 @@ jsPsych.plugins["rdk_2"] = (function() {
 		trial.canvas_height = assignParameterValue(trial.canvas_height, 500);
 		trial.fixation_type_horizontal = assignParameterValue(trial.fixation_type_horizontal, -1);
 		
-
+		//foreground dots
+/* 		trial.foreground_number_of_apertures = assignParameterValue(trial.foreground_number_of_apertures, 1);
+		trial.foreground_number_of_dots = assignParameterValue(trial.foreground_number_of_dots, 300);
+		trial.foreground_number_of_sets = assignParameterValue(trial.foreground_number_of_sets, 1);
+		trial.foreground_coherent_direction = assignParameterValue(trial.foreground_coherent_direction, 0);
+		trial.foreground_coherence = assignParameterValue(trial.foreground_coherence, 0.5);
+		trial.foreground_opposite_coherence = assignParameterValue(trial.foreground_opposite_coherence, 0);
+		trial.foreground_dot_radius = assignParameterValue(trial.foreground_dot_radius, 2);
+		trial.foreground_dot_life = assignParameterValue(trial.foreground_dot_life, -1);
+		trial.foreground_move_distance = assignParameterValue(trial.foreground_move_distance, 1);
+		trial.foreground_aperture_width = assignParameterValue(trial.foreground_aperture_width, 600);
+		trial.foreground_aperture_height = assignParameterValue(trial.foreground_aperture_height, 400);
+		trial.foreground_dot_color = assignParameterValue(trial.foreground_dot_color, "white");
+		trial.foreground_aperture_center_x = assignParameterValue(trial.foreground_aperture_center_x, window.innerWidth/2);
+		trial.foreground_aperture_center_y = assignParameterValue(trial.foreground_aperture_center_y, window.innerHeight/2);
+		trial.foreground_RDK_type = assignParameterValue(trial.foreground_RDK_type, 3);
+		trial.foreground_aperture_type = assignParameterValue(trial.foreground_aperture_type, 2);
+ */
 
 		//For square and circle, set the aperture height == aperture width
 		if (apertureType == 1 || apertureType == 3) {
@@ -333,8 +440,24 @@ jsPsych.plugins["rdk_2"] = (function() {
 			apertureConfiguration = 1
 		}
 
-		var apertureWidth_center = 150; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
-		var apertureHeight_center = 75; 
+		//// foreground parameter variables
+		//var nApertures_foreground = trial.foreground_number_of_apertures; //The number of apertures
+		//var nDots_foreground = trial.foreground_number_of_dots; //Number of dots per set (equivalent to number of dots per frame)
+		//var nSets_foreground = trial.foreground_number_of_sets; //Number of sets to cycle through per frame
+		//var coherentDirection_foreground = trial.foreground_coherent_direction; //The direction of the coherentDots in degrees. Starts at 3 o'clock and goes counterclockwise (0 == rightwards, 90 == upwards, 180 == leftwards, 270 == downwards), range 0 - 360
+		//var coherence_foreground = trial.foreground_coherence; //Proportion of dots to move together, range from 0 to 1
+		//var oppositeCoherence_foreground = trial.foreground_opposite_coherence; // The coherence for the dots going the opposite direction as the coherent dots
+		//var dotRadius_foreground = trial.foreground_dot_radius; //Radius of each dot in pixels
+		//var dotLife_foreground = trial.foreground_dot_life; //How many frames a dot will keep following its trajectory before it is redrawn at a random location. -1 denotes infinite life (the dot will only be redrawn if it reaches the end of the aperture).
+		//var moveDistance_foreground = trial.foreground_move_distance; //How many pixels the dots move per frame
+		//var apertureWidth_foreground = trial.foreground_aperture_width; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
+		//var apertureHeight_foreground = trial.foreground_aperture_height; //How many pixels high the aperture is. Only relevant for ellipse and rectangle apertures. For circle and square, this is ignored.
+		//var dotColor_foreground = trial.foreground_dot_color; //Color of the dots
+		//var apertureCenterX_foreground = trial.foreground_aperture_center_x; // The x-coordinate of center of the aperture on the screen, in pixels
+		//var apertureCenterY_foreground = trial.foreground_aperture_center_y; // The y-coordinate of center of the aperture on the screen, in pixels
+
+		var apertureWidth_foreground = 150; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
+		var apertureHeight_foreground = 75; 
 		var nDots_foreground = 50;
 		var moveDistance_foreground = 0.3;
 
@@ -358,6 +481,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		 6 - different && random direction         */
 
 		var RDK = trial.RDK_type;
+		var RDK_foreground = trial.foreground_RDK_type;
 
 
 		/* 
@@ -368,6 +492,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		 4 - Rectangle
 		*/
 		var apertureType = trial.aperture_type;
+		var apertureType_foreground = trial.foreground_aperture_type;
 
 		/*
 		Out of Bounds Decision
@@ -453,10 +578,11 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//Global variable for the current aperture number
 		var currentApertureNumber;
+		var currentApertureNumber_foreground;
 
 		//3D Array to hold the dots (1st D is Apertures, 2nd D is Sets, 3rd D is Dots)
 		var dotArray3d = [];
-		var dotArray3d_center = []
+		var dotArray3d_foreground = []
 
 		//Variables for different apertures (initialized in setUpMultipleApertures function below)
 		var nDotsArray;
@@ -475,8 +601,21 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		var boxTypeArray;
 		var boxSizesArray;
-		var apertureWidthArray_center;
-		var apertureHeightArray_center;
+
+		//foreground
+		var nDotsArray_foreground;
+		var nSetsArray_foreground;
+		var coherentDirectionArray_foreground;
+		var coherenceArray_foreground;
+		var oppositeCoherenceArray_foreground;
+		var dotRadiusArray_foreground;
+		var dotLifeArray_foreground;
+		var moveDistanceArray_foreground;
+		var apertureWidthArray_foreground;
+		var apertureHeightArray_foreground;
+		var dotColorArray_foreground;
+		var apertureCenterXArray_foreground;
+		var apertureCenterYArray_foreground;
 
 		// Draw the ellipse
 		// ctx.fillStyle = 'blue';
@@ -491,22 +630,33 @@ jsPsych.plugins["rdk_2"] = (function() {
 		//Declare aperture parameters for initialization based on shape (used in initializeApertureDimensions function below)
 		var horizontalAxis;
 		var verticalAxis;
+		var horizontalAxis_foreground;
+		var verticalAxis_foreground;
 
 		//Calculate the x and y jump sizes for coherent dots
 		var coherentJumpSizeX;
 		var coherentJumpSizeY;
+		var coherentJumpSizeX_foreground;
+		var coherentJumpSizeY_foreground;
 
 		//Calculate the number of coherent, opposite coherent, and incoherent dots
 		var nCoherentDots;
 		var nOppositeCoherentDots;
 		var nIncoherentDots;
 
+		var nCoherentDots_foreground;
+		var nOppositeCoherentDots_foreground;
+		var nIncoherentDots_foreground;
+
 		//Make the array of arrays containing dot objects
 		var dotArray2d;
-		var dotArray2d_center;
+		var dotArray2d_foreground;
 
 		var dotArray; //Declare a global variable to hold the current array
 		var currentSetArray; //Declare and initialize a global variable to cycle through the dot arrays
+
+		var dotArray_foreground; //Declare a global variable to hold the current array
+		var currentSetArray_foreground; //Declare and initialize a global variable to cycle through the dot arrays
 
 		
 		//Initialize stopping condition for animateDotMotion function that runs in a loop
@@ -731,8 +881,24 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 			boxTypeArray = setParameter(boxType);
 			boxSizesArray = setParameter(boxSizes);
-			apertureWidthArray_center = setParameter(apertureWidth_center); 
-			apertureHeightArray_center = setParameter(apertureHeight_center); 
+
+			//foreground parameters
+			//nDotsArray_foreground = setParameter(nDots_foreground);
+			//nSetsArray_foreground = setParameter(nSets_foreground); 
+			//coherentDirectionArray_foreground = setParameter(coherentDirection_foreground); 
+			//coherenceArray_foreground = setParameter(coherence_foreground); 
+			//oppositeCoherenceArray_foreground = setParameter(oppositeCoherence_foreground); 
+			//dotRadiusArray_foreground = setParameter(dotRadius_foreground); 
+			//dotLifeArray_foreground = setParameter(dotLife_foreground); 
+			//moveDistanceArray_foreground = setParameter(moveDistance_foreground); 
+			apertureWidthArray_foreground = setParameter(apertureWidth_foreground); 
+			apertureHeightArray_foreground = setParameter(apertureHeight_foreground); 
+			//dotColorArray_foreground = setParameter(dotColor_foreground);  
+			//apertureCenterXArray_foreground = setParameter(apertureCenterX_foreground); 
+			//apertureCenterYArray_foreground = setParameter(apertureCenterY_foreground); 
+			//RDKArray_foreground = setParameter(RDK_foreground);
+			//apertureTypeArray_foreground = setParameter(apertureType_foreground);
+			//currentSetArray_foreground = setParameter(0); //Always starts at zero
 
 
 			//Loop through the number of apertures to make the dots
@@ -743,8 +909,10 @@ jsPsych.plugins["rdk_2"] = (function() {
         
 				//Make each 2d array and push it into the 3d array
 				dotArray3d.push(makeDotArray2d());
-				dotArray3d_center.push(makeDotArray2d_center());
+				dotArray3d_foreground.push(makeDotArray2d_foreground());
 			}
+
+
 		}
 		
 		//Function to set the parameters of the array
@@ -803,8 +971,23 @@ jsPsych.plugins["rdk_2"] = (function() {
 			borderThickness = borderThicknessArray[currentApertureNumber];
 			borderColor = borderColorArray[currentApertureNumber];
 
-			apertureWidth_center = apertureWidthArray_center[currentApertureNumber]; 
-			apertureHeight_center = apertureHeightArray_center[currentApertureNumber]; 
+			//foreground parameters
+			//nDots_foreground = nDotsArray_foreground[currentApertureNumber];
+			//nSets_foreground = nSetsArray_foreground[currentApertureNumber]; 
+			//coherentDirection_foreground = coherentDirectionArray_foreground[currentApertureNumber]; 
+			//coherence_foreground = coherenceArray_foreground[currentApertureNumber]; 
+			//oppositeCoherence_foreground = oppositeCoherenceArray_foreground[currentApertureNumber]; 
+			//dotRadius_foreground = dotRadiusArray_foreground[currentApertureNumber]; 
+			//dotLife_foreground = dotLifeArray_foreground[currentApertureNumber]; 
+			//moveDistance_foreground = moveDistanceArray_foreground[currentApertureNumber]; 
+			apertureWidth_foreground = apertureWidthArray_foreground[currentApertureNumber]; 
+			apertureHeight_foreground = apertureHeightArray_foreground[currentApertureNumber]; 
+			//dotColor_foreground = dotColorArray_foreground[currentApertureNumber]; 
+			//apertureCenterX_foreground = apertureCenterXArray_foreground[currentApertureNumber]; 
+			//apertureCenterY_foreground = apertureCenterYArray_foreground[currentApertureNumber]; 
+			//RDK_foreground = RDKArray_foreground[currentApertureNumber];
+			//apertureType_foreground = apertureTypeArray_foreground[currentApertureNumber];
+			//reinsertType_foreground = reinsertTypeArray_foreground[currentApertureNumber_foreground];
 
 			//Calculate the x and y jump sizes for coherent dots
 			coherentJumpSizeX = calculateCoherentJumpSizeX(coherentDirection);
@@ -830,7 +1013,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 			
 			//If the 3d array has been made, then choose the 2d array and the current set
 			dotArray2d = dotArray3d.length !==0 ? dotArray3d[currentApertureNumber] : undefined;
-			dotArray2d_center = dotArray3d_center.length !==0 ? dotArray3d_center[currentApertureNumber] : undefined;
+			dotArray2d_foreground = dotArray3d_foreground.length !==0 ? dotArray3d_foreground[currentApertureNumber] : undefined;
 			
 		}// End of initializeCurrentApertureParameters
 		
@@ -846,13 +1029,13 @@ jsPsych.plugins["rdk_2"] = (function() {
 			return moveDistance * Math.sin(angleInRadians);
 		}
 
-		function calculateCoherentJumpSizeX_foreground(coherentDirection) {
+		function calculateCoherentJumpSizeX_foreground(coherentDirection_foreground) {
 			var angleInRadians = coherentDirection * Math.PI / 180;
 			return moveDistance_foreground * Math.cos(angleInRadians);
 		}
 
 		//Calculate coherent jump size in the y direction
-		function calculateCoherentJumpSizeY_foreground(coherentDirection) {
+		function calculateCoherentJumpSizeY_foreground(coherentDirection_foreground) {
 			var angleInRadians = -coherentDirection * Math.PI / 180; //Negative sign because the y-axis is flipped on screen
 			return moveDistance_foreground * Math.sin(angleInRadians);
 		}
@@ -862,15 +1045,15 @@ jsPsych.plugins["rdk_2"] = (function() {
 			//For circle and square
 			if (apertureType == 1 || apertureType == 3) {
 				horizontalAxis = verticalAxis = apertureWidth/2;
-				horizontalAxis_center = verticalAxis = apertureWidth_center/2;
+				horizontalAxis_foreground = verticalAxis = apertureWidth_foreground/2;
 			}
 			//For ellipse and rectangle
 			else if (apertureType == 2 || apertureType == 4) {
 				horizontalAxis = apertureWidth / 2;
 				verticalAxis = apertureHeight / 2;
 				//center
-				horizontalAxis_center = apertureWidth_center / 2;
-				verticalAxis_center = apertureHeight_center / 2;
+				horizontalAxis_foreground = apertureWidth_foreground / 2;
+				verticalAxis_foreground = apertureHeight_foreground / 2;
 			}
 		}
 
@@ -887,20 +1070,20 @@ jsPsych.plugins["rdk_2"] = (function() {
 		}
 
 
-		//Make the 2d_center array, which is an array of array of dots
-		function makeDotArray2d_center() {
+		//Make the 2d_foreground array, which is an array of array of dots
+		function makeDotArray2d_foreground() {
 			//Declare an array to hold the sets of dot arrays
 			var tempArray = []
 			//Loop for each set of dot array
 			for (var i = 0; i < nSets; i++) {
-				tempArray.push(makeDotArray_center()); //Make a dot array and push it into the 2d array
+				tempArray.push(makeDotArray_foreground()); //Make a dot array and push it into the 2d array
 			}
 
 			return tempArray;
 		}
 
 		//Make the dot array
-		function makeDotArray_center() {
+		function makeDotArray_foreground() {
 			var tempArray = []
 			for (var i = 0; i < nDots_foreground; i++) {
 				//Initialize a dot to be modified and inserted into the array
@@ -918,7 +1101,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 				};
 				
 				//randomly set the x and y coordinates
-				dot = resetLocation_center(dot);
+				dot = resetLocation_foreground(dot);
 
 				//For the same && random position RDK type
 				if (RDK == 1) {
@@ -1141,6 +1324,9 @@ jsPsych.plugins["rdk_2"] = (function() {
 				//Draw on the canvas
 				draw();
 			}
+
+
+			
 		} 
 		
 		//Function that clears the dots on the canvas by drawing over it with the color of the baclground
@@ -1148,7 +1334,7 @@ jsPsych.plugins["rdk_2"] = (function() {
       
 	    	//Load in the current set of dot array for easy handling
 	    	var dotArray = dotArray2d[currentSetArray[currentApertureNumber]];
-			var dotArray_center = dotArray2d_center[currentSetArray[currentApertureNumber]];  
+			var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  
 
 			//Loop through the dots one by one and draw them
 			for (var i = 0; i < nDots; i++) {
@@ -1160,9 +1346,9 @@ jsPsych.plugins["rdk_2"] = (function() {
 			}
 
 			for (var i = 0; i < nDots_foreground; i++) {
-				dot_center = dotArray_center[i];
+				dot_foreground = dotArray_foreground[i];
 				ctx.beginPath();
-				ctx.arc(dot_center.x, dot_center.y, dotRadius, 0, Math.PI * 2);
+				ctx.arc(dot.x, dot.y, dotRadius+1, 0, Math.PI * 2);
 				ctx.fillStyle = "purple";
 				ctx.fill();
 			}
@@ -1174,7 +1360,7 @@ jsPsych.plugins["rdk_2"] = (function() {
       
     		//Load in the current set of dot array for easy handling
     		var dotArray = dotArray2d[currentSetArray[currentApertureNumber]];
-			var dotArray_center = dotArray2d_center[currentSetArray[currentApertureNumber]];  
+			var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  
 
 			//Loop through the dots one by one and draw them
 			for (var i = 0; i < nDots; i++) {
@@ -1189,27 +1375,25 @@ jsPsych.plugins["rdk_2"] = (function() {
 		    //Draw the fixation cross if we want it
 		    //if(fixationCross === true){
 			if(fixationCross === true){
-				
 				// Draw the ellipse
-				ctx.fillStyle = 'gray';
+				ctx.fillStyle = 'red';
 				ctx.beginPath();
-				ctx.ellipse(canvasWidth/2, canvasHeight/2, horizontalAxis_center+3, verticalAxis_center+3, Math.PI, 0, 2 * Math.PI);
+				ctx.ellipse(canvasWidth/2, canvasHeight/2, horizontalAxis_foreground+3, verticalAxis_foreground+3, Math.PI, 0, 2 * Math.PI);
 				//ctx.stroke();
 				ctx.fill();
 				for (var i = 0; i < nDots_foreground; i++) {
-					dot = dotArray_center[i];
+					dot = dotArray_foreground[i];
 					ctx.beginPath();
 					ctx.arc(dot.x, dot.y, dotRadius, 0, Math.PI * 2);
-					ctx.fillStyle = 'white';
+					ctx.fillStyle = 'red'
 					ctx.fill();
-					console.log(dotArray_center[i])
 				}
 
 			}
 
 			/* box type drawing */
 			// ctx.beginPath();
-			// ctx.lineWidth = borderThickness;
+			// ctx.lineWidth = bordeThickness;
 			// ctx.strokeRect(boxType[0], boxType[1], boxType[2], boxType[3]);
 			// ctx.stroke();
       
@@ -1250,7 +1434,7 @@ jsPsych.plugins["rdk_2"] = (function() {
       
     		//Load in the current set of dot array for easy handling
     		var dotArray = dotArray2d[currentSetArray[currentApertureNumber]];
-			var dotArray_center = dotArray2d_center[currentSetArray[currentApertureNumber]]; 
+			var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  
 			//Load in the current set of dot array for easy handling
 			//dotArray = dotArray2d[currentSetArray[currentApertureNumber]]; //Global variable, so the draw function also uses this array
 
@@ -1328,7 +1512,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 			} //End of for loop
 			//Loop through the dots one by one and update them accordingly /////// FOR CENTER
 			for (var i = 0; i < nDots_foreground; i++) {
-				var dot = dotArray_center[i]; //Load the current dot into the variable for easy handling
+				var dot = dotArray_foreground[i]; //Load the current dot into the variable for easy handling
 		
 				//Generate a random value
 				var randomValue = Math.random();
@@ -1382,17 +1566,17 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 				//Check if out of bounds or if life ended
 				if (lifeEnded(dot)) {
-					dot = resetLocation_center(dot);
+					dot = resetLocation_foreground(dot);
 				}
 
 				//If it goes out of bounds, do what is necessary (reinsert randomly or reinsert on the opposite edge) based on the parameter chosen
-				if (outOfBounds_center(dot)) {
+				if (outOfBounds_foreground(dot)) {
 					switch (reinsertType) {
 						case 1:
-							dot = resetLocation_center(dot);
+							dot = resetLocation_foreground(dot);
 							break;
 						case 2:
-							dot = reinsertOnOppositeEdge_center(dot);
+							dot = reinsertOnOppositeEdge_foreground(dot);
 							break;
 					} //End of switch statement
 				} //End of if
@@ -1440,10 +1624,10 @@ jsPsych.plugins["rdk_2"] = (function() {
 		}
 
 		//Function to check if dot is out of bounds
-		function outOfBounds_center(dot) {
+		function outOfBounds_foreground(dot) {
 			//For circle and ellipse
 			if (apertureType == 1 || apertureType == 2) {
-				if (dot.x < xValueNegative_center(dot.y) || dot.x > xValuePositive_center(dot.y) || dot.y < yValueNegative_center(dot.x) || dot.y > yValuePositive_center(dot.x)) {
+				if (dot.x < xValueNegative_foreground(dot.y) || dot.x > xValuePositive_foreground(dot.y) || dot.y < yValueNegative_foreground(dot.x) || dot.y > yValuePositive_foreground(dot.x)) {
 					return true;
 				} else {
 					return false;
@@ -1451,7 +1635,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 			}
 			//For square and rectangle
 			if (apertureType == 3 || apertureType == 4) {
-				if (dot.x < (apertureCenterX) - horizontalAxis_center || dot.x > (apertureCenterX) + horizontalAxis_center || dot.y < (apertureCenterY) - verticalAxis_center || dot.y > (apertureCenterY) + verticalAxis_center) {
+				if (dot.x < (apertureCenterX) - horizontalAxis_foreground || dot.x > (apertureCenterX) + horizontalAxis_foreground || dot.y < (apertureCenterY) - verticalAxis_foreground || dot.y > (apertureCenterY) + verticalAxis_foreground) {
 					return true;
 				} else {
 					return false;
@@ -1620,7 +1804,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		} //End of reinsertOnOppositeEdge
 
 		//Calculates a random position on the opposite edge to reinsert the dot
-		function reinsertOnOppositeEdge_center(dot) {
+		function reinsertOnOppositeEdge_foreground(dot) {
 			//If it is a circle or ellipse
 			if (apertureType == 1 || apertureType == 2) {
 				//Bring the dot back into the aperture by moving back one step
@@ -1666,26 +1850,26 @@ jsPsych.plugins["rdk_2"] = (function() {
 				var weightInXDirection = absX / (absX + absY);
 				var weightInYDirection = absY / (absX + absY);
 				//Calculate the weight of the edge the dot should appear from, based on direction of dot and ratio of the aperture edges
-				var weightOnVerticalEdge = (verticalAxis_center / (verticalAxis_center + horizontalAxis_center)) * weightInXDirection;
-				var weightOnHorizontalEdge = (horizontalAxis_center / (verticalAxis_center + horizontalAxis_center)) * weightInYDirection;
+				var weightOnVerticalEdge = (verticalAxis_foreground / (verticalAxis_foreground + horizontalAxis_foreground)) * weightInXDirection;
+				var weightOnHorizontalEdge = (horizontalAxis_foreground / (verticalAxis_foreground + horizontalAxis_foreground)) * weightInYDirection;
 
 
 				//Generate a bounded random number to determine if the dot should appear on the vertical edge or the horizontal edge
 				if (weightOnVerticalEdge > (weightOnHorizontalEdge + weightOnVerticalEdge) * Math.random()) { //If yes, appear on the left or right edge (vertical edge)
 					if (dot.latestXMove < 0) { //If dots move left, appear on right edge
 						dot.x = apertureCenterX + horizontalAxis;
-						dot.y = randomNumberBetween((apertureCenterY) - verticalAxis_center, (apertureCenterY) + verticalAxis_center);
+						dot.y = randomNumberBetween((apertureCenterY) - verticalAxis_foreground, (apertureCenterY) + verticalAxis_foreground);
 					} else { //Else dots move right, so they should appear on the left edge
 						dot.x = apertureCenterX - horizontalAxis;
-						dot.y = randomNumberBetween((apertureCenterY) - verticalAxis_center, (apertureCenterY) + verticalAxis_center);
+						dot.y = randomNumberBetween((apertureCenterY) - verticalAxis_foreground, (apertureCenterY) + verticalAxis_foreground);
 					}
 				} else { //Else appear on the top or bottom edge (horizontal edge)
 					if (dot.latestYMove < 0) { //If dots move upwards, then appear on bottom edge
-						dot.y = apertureCenterY + verticalAxis_center;
-						dot.x = randomNumberBetween((apertureCenterX) - horizontalAxis_center, (apertureCenterX) + horizontalAxis_center)
+						dot.y = apertureCenterY + verticalAxis_foreground;
+						dot.x = randomNumberBetween((apertureCenterX) - horizontalAxis_foreground, (apertureCenterX) + horizontalAxis_foreground)
 					} else { //If dots move downwards, then appear on top edge
-						dot.y = apertureCenterY - verticalAxis_center;
-						dot.x = randomNumberBetween((apertureCenterX) - horizontalAxis_center, (apertureCenterX) + horizontalAxis_center)
+						dot.y = apertureCenterY - verticalAxis_foreground;
+						dot.x = randomNumberBetween((apertureCenterX) - horizontalAxis_foreground, (apertureCenterX) + horizontalAxis_foreground)
 					}
 				}
 			} //End of apertureType == 3
@@ -1717,27 +1901,27 @@ jsPsych.plugins["rdk_2"] = (function() {
 		}
 
 		//Calculate the POSITIVE y value of a point on the edge of the ellipse given an x-value
-		function yValuePositive_center(x) {
+		function yValuePositive_foreground(x) {
 			var x = x - (apertureCenterX); //Bring it back to the (0,0) center to calculate accurately (ignore the y-coordinate because it is not necessary for calculation)
-			return verticalAxis_center * Math.sqrt(1 - (Math.pow(x, 2) / Math.pow(horizontalAxis_center, 2))) + apertureCenterY; //Calculated the positive y value and added apertureCenterY to recenter it on the screen 
+			return verticalAxis_foreground * Math.sqrt(1 - (Math.pow(x, 2) / Math.pow(horizontalAxis_foreground, 2))) + apertureCenterY; //Calculated the positive y value and added apertureCenterY to recenter it on the screen 
 		}
 
 		//Calculate the NEGATIVE y value of a point on the edge of the ellipse given an x-value
-		function yValueNegative_center(x) {
+		function yValueNegative_foreground(x) {
 			var x = x - (apertureCenterX); //Bring it back to the (0,0) center to calculate accurately (ignore the y-coordinate because it is not necessary for calculation)
-			return -verticalAxis_center * Math.sqrt(1 - (Math.pow(x, 2) / Math.pow(horizontalAxis_center, 2))) + apertureCenterY; //Calculated the negative y value and added apertureCenterY to recenter it on the screen
+			return -verticalAxis_foreground * Math.sqrt(1 - (Math.pow(x, 2) / Math.pow(horizontalAxis_foreground, 2))) + apertureCenterY; //Calculated the negative y value and added apertureCenterY to recenter it on the screen
 		}
 
 		//Calculate the POSITIVE x value of a point on the edge of the ellipse given a y-value
-		function xValuePositive_center(y) {
+		function xValuePositive_foreground(y) {
 			var y = y - (apertureCenterY); //Bring it back to the (0,0) center to calculate accurately (ignore the x-coordinate because it is not necessary for calculation)
-			return horizontalAxis_center * Math.sqrt(1 - (Math.pow(y, 2) / Math.pow(verticalAxis_center, 2))) + apertureCenterX; //Calculated the positive x value and added apertureCenterX to recenter it on the screen
+			return horizontalAxis_foreground * Math.sqrt(1 - (Math.pow(y, 2) / Math.pow(verticalAxis_foreground, 2))) + apertureCenterX; //Calculated the positive x value and added apertureCenterX to recenter it on the screen
 		}
 
 		//Calculate the NEGATIVE x value of a point on the edge of the ellipse given a y-value
-		function xValueNegative_center(y) {
+		function xValueNegative_foreground(y) {
 			var y = y - (apertureCenterY); //Bring it back to the (0,0) center to calculate accurately (ignore the x-coordinate because it is not necessary for calculation)
-			return -horizontalAxis_center * Math.sqrt(1 - (Math.pow(y, 2) / Math.pow(verticalAxis_center, 2))) + apertureCenterX; //Calculated the negative x value and added apertureCenterX to recenter it on the screen
+			return -horizontalAxis_foreground * Math.sqrt(1 - (Math.pow(y, 2) / Math.pow(verticalAxis_foreground, 2))) + apertureCenterX; //Calculated the negative x value and added apertureCenterX to recenter it on the screen
 		}
 
 		//Calculate a random x and y coordinate in the ellipse
@@ -1767,7 +1951,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		}
 
 			//Calculate a random x and y coordinate in the ellipse
-			function resetLocation_center(dot) {
+			function resetLocation_foreground(dot) {
 
 				//For circle and ellipse
 				if (apertureType == 1 || apertureType == 2) {
@@ -1777,16 +1961,16 @@ jsPsych.plugins["rdk_2"] = (function() {
 					x = Math.sqrt(rho) * Math.cos(phi);
 					y = Math.sqrt(rho) * Math.sin(phi);
 
-					x = x * horizontalAxis_center + apertureCenterX;
-					y = y * verticalAxis_center + apertureCenterY;
+					x = x * horizontalAxis_foreground + apertureCenterX;
+					y = y * verticalAxis_foreground + apertureCenterY;
 
 					dot.x = x;
 					dot.y = y;
 				}
 				//For square and rectangle
 				else if (apertureType == 3 || apertureType == 4) {
-					dot.x = randomNumberBetween((apertureCenterX) - horizontalAxis_center, (apertureCenterX) + horizontalAxis_center); //Between the left and right edges of the square / rectangle
-					dot.y = randomNumberBetween((apertureCenterY) - verticalAxis_center, (apertureCenterY) + verticalAxis_center); //Between the top and bottom edges of the square / rectangle
+					dot.x = randomNumberBetween((apertureCenterX) - horizontalAxis_foreground, (apertureCenterX) + horizontalAxis_foreground); //Between the left and right edges of the square / rectangle
+					dot.y = randomNumberBetween((apertureCenterY) - verticalAxis_foreground, (apertureCenterY) + verticalAxis_foreground); //Between the top and bottom edges of the square / rectangle
 				}
 
 				return dot;
