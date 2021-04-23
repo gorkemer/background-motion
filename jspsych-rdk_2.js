@@ -446,24 +446,24 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//// foreground parameter variables
 		//var nApertures_foreground = trial.foreground_number_of_apertures; //The number of apertures
-		//var nDots_foreground = trial.foreground_number_of_dots; //Number of dots per set (equivalent to number of dots per frame)
+		var nDots_foreground = trial.foreground_number_of_dots; //Number of dots per set (equivalent to number of dots per frame)
 		//var nSets_foreground = trial.foreground_number_of_sets; //Number of sets to cycle through per frame
 		//var coherentDirection_foreground = trial.foreground_coherent_direction; //The direction of the coherentDots in degrees. Starts at 3 o'clock and goes counterclockwise (0 == rightwards, 90 == upwards, 180 == leftwards, 270 == downwards), range 0 - 360
 		//var coherence_foreground = trial.foreground_coherence; //Proportion of dots to move together, range from 0 to 1
 		//var oppositeCoherence_foreground = trial.foreground_opposite_coherence; // The coherence for the dots going the opposite direction as the coherent dots
 		//var dotRadius_foreground = trial.foreground_dot_radius; //Radius of each dot in pixels
 		//var dotLife_foreground = trial.foreground_dot_life; //How many frames a dot will keep following its trajectory before it is redrawn at a random location. -1 denotes infinite life (the dot will only be redrawn if it reaches the end of the aperture).
-		//var moveDistance_foreground = trial.foreground_move_distance; //How many pixels the dots move per frame
+		var moveDistance_foreground = trial.foreground_move_distance; //How many pixels the dots move per frame
 		var apertureWidth_foreground = trial.foreground_aperture_width; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
-		//var apertureHeight_foreground = trial.foreground_aperture_height; //How many pixels high the aperture is. Only relevant for ellipse and rectangle apertures. For circle and square, this is ignored.
+		var apertureHeight_foreground = trial.foreground_aperture_height; //How many pixels high the aperture is. Only relevant for ellipse and rectangle apertures. For circle and square, this is ignored.
 		//var dotColor_foreground = trial.foreground_dot_color; //Color of the dots
 		var apertureCenterX_foreground = trial.foreground_aperture_center_x; // The x-coordinate of center of the aperture on the screen, in pixels
 		//var apertureCenterY_foreground = trial.foreground_aperture_center_y; // The y-coordinate of center of the aperture on the screen, in pixels
 
 		//var apertureWidth_foreground = 300; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
-		var apertureHeight_foreground = 300; 
-		var nDots_foreground = 50;
-		var moveDistance_foreground = 0.3;
+		//var apertureHeight_foreground = 300; 
+		//var nDots_foreground = 100;
+		//var moveDistance_foreground = 0.001;
 		//var apertureCenterX_foreground = window.innerWidth/2;
 		var apertureCenterY_foreground = window.innerHeight/2;
 		//var apertureCenterX_foreground = [(window.innerWidth/2)-200,(window.innerWidth/2)+200]
@@ -557,7 +557,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		canvas.style.margin = 0;
 		canvas.style.padding = 0;
 		// use absolute positioning in top left corner to get rid of scroll bars
-		//canvas.style.position = 'absolute';
+		canvas.style.position = 'absolute';
 		canvas.style.display = 'block';
 		canvas.style.top = 0;
 		canvas.style.left = 0;		
@@ -1395,11 +1395,23 @@ jsPsych.plugins["rdk_2"] = (function() {
 		    //if(fixationCross === true){
 			if(fixationCross === true){
 				// Draw the ellipse
-				ctx.fillStyle = 'red';
+				ctx.fillStyle = 'gray';
 				ctx.beginPath();
 				ctx.ellipse(apertureCenterX_foreground,apertureCenterY_foreground, horizontalAxis_foreground+3, verticalAxis_foreground+3, Math.PI, 0, 2 * Math.PI);
 				//ctx.stroke();
 				ctx.fill();
+
+				ctx.beginPath();
+		    	ctx.lineWidth = fixationCrossThickness;
+
+				ctx.arc(canvasWidth/2, canvasHeight/2, 3, 0, 2 * Math.PI);
+				ctx.fillStyle = "#FF0000";
+		    	ctx.fill();
+				//ctx.moveTo(canvasWidth/2 - fixationCrossWidth, canvasHeight/2);
+		    	//ctx.lineTo(canvasWidth/2 + fixationCrossWidth, canvasHeight/2);
+
+		    	ctx.stroke();
+
 				for (var i = 0; i < nDots_foreground; i++) {
 					dot = dotArray_foreground[i];
 					ctx.beginPath();

@@ -40,6 +40,65 @@ function saveData() {
   };
   xhr.send(jsPsych.data.get().json());
 }
+var trial_feature_list = []
+var ellipseRatioList = [
+[75.08,	218.18],
+[79.19,	206.85],
+[83.56,	196.17],
+[88.14,	185.99],
+[92.96,	176.31],
+[98.04,	167.13],
+[103.42,	158.46],
+[109.08,	150.22],
+[115.07,	142.44],
+[121.38,	135.05],
+[128.03,	128.03],
+[135.05,	121.38],
+[142.44,	115.07],
+[150.22,	109.08],
+[158.46,	103.42],
+[167.13,	98.04],
+[176.31,	92.96],
+[185.99,	88.14],
+[196.17,	83.56],
+[206.85,	79.19],
+[218.18,	75.08],
+];
+
+var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
+var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 1); // 21 
+var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 1);
+var motionSpeed_list_shuffled = jsPsych.randomization.repeat(motionSpeed_list, 2);
+console.log(motionSpeed_list_shuffled)
+
+for (i = 0; i < ellipses_shuffled_1.length; i++) {
+
+  var firstCloud = ellipses_shuffled_1[i];
+  var secondCloud = ellipses_shuffled_2[i];
+  var firstCloud_width = firstCloud[0];
+  var firstCloud_height = firstCloud[1];
+  var secondCloud_width = secondCloud[0];
+  var secondCloud_height = secondCloud[1];
+
+  var ellipsesFinal_width = [firstCloud_width,secondCloud_width];
+  var ellipsesFinal_height = [firstCloud_height,secondCloud_height];
+
+  aTrial = {
+      width                 : ellipsesFinal_width, 
+      height                : ellipsesFinal_height,
+      //apertureCenterX       : shapeX, // right side
+      //apertureCenterY       : shapeY, // top & bottom
+      //boxType               : boxType_list_shuffled[i],
+      //cueType               : cueList_shuffled[i],
+      //participant_id        : assignedParticipantID,
+      //boxType_number        : boxType_list_shuffled[i],
+      //dotCloud_number       : shuffled_dotFieldLocation_list[i],
+      //motionType            : finalMotion_direction,
+      motionSpeed           : motionSpeed_list_shuffled[i]
+
+    } 
+    trial_feature_list.push(aTrial)
+}
 
 var virtual_chinrest_trial = {
 type: 'virtual-chinrest',
@@ -48,6 +107,10 @@ blindspot_reps: 1,
 pixels_per_unit: 190,
 };
 
+var fullscreen_trial = {
+  type: 'fullscreen',
+  fullscreen_mode: true
+}
 /*set up instructions block*/
 var instructions = {
   type: "instructions",
@@ -61,27 +124,35 @@ var test_block = {
   type: "rdk_2", 
   aperture_type: 4,
   number_of_apertures: 2, //This needs to be set if more than one aperture
-  trial_duration: 10000,
+  trial_duration: 1000,
   RDK_type: 3, //Applied to all apertures if only one value
   aperture_width: window.innerWidth/2, 
   aperture_height: window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
   number_of_dots: 1, //Different parameter for each aperture. Array length must equal number_of_apertures
   aperture_center_x: [(window.innerWidth/2)-window.innerWidth/4,(window.innerWidth/2)+window.innerWidth/4], //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
-  coherence: 0.3,
+  coherence: 0,
   move_distance: 1,
-  number_of_dots: 400,
-  foreground_aperture_width: 200,
-  foreground_aperture_height: 100,
-  foreground_number_of_dots: 200,
-  foreground_move_distance: 0.6, //Different parameter for each aperture. Array length must equal number_of_apertures
-  foreground_aperture_center_x: [(window.innerWidth/2)-600,(window.innerWidth/2)+600], //[window.innerWidth/2],//
+  number_of_dots: 500,
+  foreground_aperture_width: jsPsych.timelineVariable('width'),
+  foreground_aperture_height: jsPsych.timelineVariable('height'),
+  foreground_number_of_dots: 75,
+  foreground_move_distance: jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
+  foreground_aperture_center_x: [(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   //foreground_number_of_apertures: 1
 };
 
   /*set up experiment structure*/
   var timeline = [];
+
+/* defining test timeline */
+  var testProcedure= {
+    timeline: [test_block], //responseFeedback, test_block_response, ydk_block
+    timeline_variables: trial_feature_list,
+  };
+
+  //timeline.push(fullscreen_trial)
   timeline.push(instructions);
-  timeline.push(test_block);
+  timeline.push(testProcedure);
 
   /*start experiment*/
   jsPsych.init({
