@@ -121,22 +121,23 @@ var instructions = {
 
 
 var test_block = {
-  type: "rdk_2", 
-  aperture_type: 4,
+  type: "rdk_2",  
+  aperture_type: 2,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 2, //This needs to be set if more than one aperture
-  trial_duration: 12000,
+  trial_duration: 5000,
   RDK_type: 3, //Applied to all apertures if only one value
-  aperture_width: window.innerWidth/2, 
-  aperture_height: window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
+  aperture_width: 300,//window.innerWidth/2, 
+  aperture_height: 400, //window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
   number_of_dots: 1, //Different parameter for each aperture. Array length must equal number_of_apertures
   aperture_center_x: [(window.innerWidth/2)-window.innerWidth/4,(window.innerWidth/2)+window.innerWidth/4], //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
-  coherence: 0,
+  coherence: 0.5,
+  move_distance: 0.9,
   //move_distance: 1,
-  number_of_dots: 500,
+  number_of_dots: 100,
   dot_life: -0.5,
   foreground_aperture_width: jsPsych.timelineVariable('width'),
   foreground_aperture_height: jsPsych.timelineVariable('height'),
-  foreground_number_of_dots: 15,
+  foreground_number_of_dots: 0,
   foreground_move_distance: jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
   foreground_aperture_center_x: [(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   //foreground_number_of_apertures: 1
