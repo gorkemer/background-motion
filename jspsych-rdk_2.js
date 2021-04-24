@@ -1398,11 +1398,11 @@ jsPsych.plugins["rdk_2"] = (function() {
     		var dotArray = dotArray2d[currentSetArray[currentApertureNumber]];
 			var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  
 
-				ctx.fillStyle = 'green';
+/* 				ctx.fillStyle = 'gray';
 				ctx.beginPath();
 				ctx.ellipse(apertureCenterX_foreground,apertureCenterY_foreground, horizontalAxis_foreground, verticalAxis_foreground, Math.PI, 0, 2 * Math.PI);
 				//ctx.stroke();
-				ctx.fill();
+				ctx.fill(); */
 
 
 			//Loop through the dots one by one and draw them
@@ -1731,7 +1731,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 			//For circle and ellipse
 			if (apertureType_foreground == 1 || apertureType_foreground == 2) {
-				if (dot.x < xValueNegative_foreground(dot.y) || dot.x > xValuePositive_foreground(dot.y) || dot.y < yValueNegative_foreground(dot.x) || dot.y > yValuePositive_foreground(dot.x)) {
+				if (dot.x > xValueNegative_foreground(dot.y) && dot.x < xValuePositive_foreground(dot.y) && dot.y > yValueNegative_foreground(dot.x) && dot.y < yValuePositive_foreground(dot.x)) {
 					return true;
 				} else {
 					return false;
@@ -1891,10 +1891,10 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		function randomDirectionUpdate_foreground(dot) {
 
-			dot.x += dot.vx2/5;
-			dot.y += dot.vy2/5;
-			dot.latestXMove = dot.vx2/10;
-			dot.latestYMove = dot.vy2/10;
+			dot.x += dot.vx2/20;
+			dot.y += dot.vy2/20;
+			dot.latestXMove = dot.vx2/20;
+			dot.latestYMove = dot.vy2/20;
 			return dot;
 		}
 
