@@ -405,15 +405,13 @@ jsPsych.plugins["rdk_2"] = (function() {
 		trial.foreground_RDK_type = assignParameterValue(trial.foreground_RDK_type, 3);
 		trial.foreground_aperture_type = assignParameterValue(trial.foreground_aperture_type, 2);
  */
-		trial.foreground_aperture_type = assignParameterValue(trial.foreground_aperture_type, 3);
+		trial.foreground_aperture_type = assignParameterValue(trial.foreground_aperture_type, 2);
 
 		//For square and circle, set the aperture height == aperture width
 		if (apertureType == 1 || apertureType == 3) {
 			trial.aperture_height = trial.aperture_width;
 		}
-		if (apertureType_foreground == 1 || apertureType_foreground == 3) {
-			trial.apertureType_foreground = trial.apertureType_foreground;
-		}
+
 
 		//Convert the parameter variables to those that the code below can use
 		
@@ -469,6 +467,11 @@ jsPsych.plugins["rdk_2"] = (function() {
 		//var apertureCenterX_foreground = [(window.innerWidth/2)-200,(window.innerWidth/2)+200]
 		//var apertureCenterY_foreground = [(window.innerHeight/2),(window.innerHeight/2)]
 
+
+		if (apertureType_foreground == 1 || apertureType_foreground == 3) {
+			trial.apertureHeight_foreground = trial.apertureWidth_foreground;
+		}
+
 		/* RDK type parameter
 		** See Fig. 1 in Scase, Braddick, and Raymond (1996) for a visual depiction of these different signal selection rules and noise types
 		-------------------
@@ -500,7 +503,8 @@ jsPsych.plugins["rdk_2"] = (function() {
 		 4 - Rectangle
 		*/
 		var apertureType = trial.aperture_type;
-		var apertureType_foreground = trial.foreground_aperture_type;
+		var apertureType_foreground = 2//trial.foreground_aperture_type;
+
 
 		/*
 		Out of Bounds Decision
@@ -997,6 +1001,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 			apertureType_foreground = apertureTypeArray_foreground[currentApertureNumber];
 			//reinsertType_foreground = reinsertTypeArray_foreground[currentApertureNumber_foreground];
 
+
 			//Calculate the x and y jump sizes for coherent dots
 			coherentJumpSizeX = calculateCoherentJumpSizeX(coherentDirection);
 			coherentJumpSizeY = calculateCoherentJumpSizeY(coherentDirection);
@@ -1167,8 +1172,8 @@ jsPsych.plugins["rdk_2"] = (function() {
 					}
         			//For opposite coherent dots
         			else if(i >= nCoherentDots_foreground && i < (nCoherentDots_foreground + nOppositeCoherentDots_foreground)){
-								dot = setvxvy_foreground(dot); // Set dot.vx and dot.vy
-        			  dot.updateType = "opposite direction";
+						dot = setvxvy_foreground(dot); // Set dot.vx and dot.vy
+        			  	dot.updateType = "opposite direction";
         			}
 					//For incoherent dots
 					else {
@@ -1225,6 +1230,15 @@ jsPsych.plugins["rdk_2"] = (function() {
 				
 				//randomly set the x and y coordinates
 				dot = resetLocation(dot);
+				
+/* 				if (insOfForeground(dot)){
+					console.log("gorkem_random_notIns")
+					setvx2vy2_foreground(dot);
+				}
+				if (!(insOfForeground(dot))){
+					console.log("gorkem_random_notIns")
+					setvx2vy2(dot);
+				} */
 
 				//For the same && random position RDK type
 				if (RDK == 1) {
@@ -1271,8 +1285,8 @@ jsPsych.plugins["rdk_2"] = (function() {
 					}
         			//For opposite coherent dots
         			else if(i >= nCoherentDots && i < (nCoherentDots + nOppositeCoherentDots)){
-								dot = setvxvy(dot); // Set dot.vx and dot.vy
-        			  dot.updateType = "opposite direction";
+						dot = setvxvy(dot); // Set dot.vx and dot.vy
+        			  	dot.updateType = "opposite direction";
         			}
 					//For incoherent dots
 					else {
@@ -1303,6 +1317,8 @@ jsPsych.plugins["rdk_2"] = (function() {
 					setvx2vy2(dot); // Set dot.vx2 and dot.vy2
 					dot.updateType = "constant direction or opposite direction or random direction";
 				} //End of RDK==6
+
+
 
 				tempArray.push(dot);
 			} //End of for loop
@@ -1373,13 +1389,21 @@ jsPsych.plugins["rdk_2"] = (function() {
 			}
 
 		}
-
+		console.log("horizontalAxis_foreground",horizontalAxis_foreground)
+		console.log("verticalAxis_foreground",verticalAxis_foreground)
 		//Draw the dots on the canvas after they're updated
 		function draw() {
       
     		//Load in the current set of dot array for easy handling
     		var dotArray = dotArray2d[currentSetArray[currentApertureNumber]];
 			var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  
+
+/* 				ctx.fillStyle = 'gray';
+				ctx.beginPath();
+				ctx.ellipse(apertureCenterX_foreground,apertureCenterY_foreground, horizontalAxis_foreground, verticalAxis_foreground, Math.PI, 0, 2 * Math.PI);
+				//ctx.stroke();
+				ctx.fill(); */
+
 
 			//Loop through the dots one by one and draw them
 			for (var i = 0; i < nDots; i++) {
@@ -1394,12 +1418,12 @@ jsPsych.plugins["rdk_2"] = (function() {
 		    //Draw the fixation cross if we want it
 		    //if(fixationCross === true){
 			if(fixationCross === true){
-				// Draw the ellipse
-				ctx.fillStyle = 'gray';
+				//Draw the ellipse
+/* 				ctx.fillStyle = 'gray';
 				ctx.beginPath();
 				ctx.ellipse(apertureCenterX_foreground,apertureCenterY_foreground, horizontalAxis_foreground+3, verticalAxis_foreground+3, Math.PI, 0, 2 * Math.PI);
 				//ctx.stroke();
-				ctx.fill();
+				ctx.fill(); */
 
 				ctx.beginPath();
 		    	ctx.lineWidth = fixationCrossThickness;
@@ -1416,7 +1440,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 					dot = dotArray_foreground[i];
 					ctx.beginPath();
 					ctx.arc(dot.x, dot.y, dotRadius, 0, Math.PI * 2);
-					ctx.fillStyle = dotColor
+					ctx.fillStyle = 'black'
 					ctx.fill();
 				}
 
@@ -1476,9 +1500,12 @@ jsPsych.plugins["rdk_2"] = (function() {
 			    //Generate a random value
 			    var randomValue = Math.random();
 
+
+
 				//Update based on the dot's update type
 				if (dot.updateType == "constant direction") {
 					dot = constantDirectionUpdate(dot);
+
 				} else if (dot.updateType == "opposite direction") {
 					dot = oppositeDirectionUpdate(dot);
 				} else if (dot.updateType == "random position") {
@@ -1486,7 +1513,13 @@ jsPsych.plugins["rdk_2"] = (function() {
 				} else if (dot.updateType == "random walk") {
 					dot = randomWalkUpdate(dot);
 				} else if (dot.updateType == "random direction") {
-					dot = randomDirectionUpdate(dot);
+					if (insOfForeground(dot)){
+						dot = randomDirectionUpdate_foreground(dot);
+					}
+					if (!(insOfForeground(dot))){
+						dot = randomDirectionUpdate(dot);
+					}
+					//dot = randomDirectionUpdate(dot);
 				} else if (dot.updateType == "constant direction or opposite direction or random position") {
 			        
 					//Randomly select if the dot goes in a constant direction or random position, weighted based on the coherence level
@@ -1517,6 +1550,10 @@ jsPsych.plugins["rdk_2"] = (function() {
 					}
 				}//End of if dot.updateType == ...
 
+/* 				if ((insOfForeground(dot))) {
+					dot = setvx2vy2_foreground(dot);
+					dot = setvxvy_foreground(dot);
+				} */
 
 				
 
@@ -1539,6 +1576,15 @@ jsPsych.plugins["rdk_2"] = (function() {
 							break;
 					} //End of switch statement
 				} //End of if
+				
+/* 				if (insOfForeground(dot)){
+					
+					setvx2vy2_foreground(dot);
+				}
+				if (!(insOfForeground(dot))){
+					
+					setvx2vy2(dot);
+				} */
 
 			} //End of for loop
 			//Loop through the dots one by one and update them accordingly /////// FOR CENTER
@@ -1547,6 +1593,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		
 				//Generate a random value
 				var randomValue = Math.random();
+				console.log("dot.updateType", dot.updateType)
 
 				//Update based on the dot's update type
 				if (dot.updateType == "constant direction") {
@@ -1610,7 +1657,9 @@ jsPsych.plugins["rdk_2"] = (function() {
 							dot = reinsertOnOppositeEdge_foreground(dot);
 							break;
 					} //End of switch statement
-				} //End of if
+				} 
+
+
 
 			}
 		} //End of updateDots function
@@ -1651,6 +1700,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 					return false;
 				}
 			}
+			/// check if dots enter the foreground region
 
 		}
 
@@ -1675,8 +1725,40 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		}
 
+
+		//Function to check if dot is out of bounds
+		function insOfForeground(dot) {
+
+			//For circle and ellipse
+			if (apertureType_foreground == 1 || apertureType_foreground == 2) {
+				if (dot.x > xValueNegative_foreground(dot.y) && dot.x < xValuePositive_foreground(dot.y) && dot.y > yValueNegative_foreground(dot.x) && dot.y < yValuePositive_foreground(dot.x)) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+			//For square and rectangle
+			if (apertureType_foreground == 3 || apertureType_foreground == 4) {
+				if (dot.x > (apertureCenterX_foreground) - horizontalAxis_foreground || dot.x < (apertureCenterX_foreground) + horizontalAxis_foreground || dot.y > (apertureCenterY_foreground) - verticalAxis_foreground || dot.y < (apertureCenterY_foreground) + verticalAxis_foreground) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+		}
+
 		//Set the vx and vy for the dot to the coherent jump sizes of the X and Y directions
 		function setvxvy(dot) {
+
+/* 			if (insOfForeground(dot)){
+				dot.vx = coherentJumpSizeX_foreground;
+				dot.vy = coherentJumpSizeY_foreground;
+			}
+			if (!(insOfForeground(dot))){
+				dot.vx = coherentJumpSizeX;
+				dot.vy = coherentJumpSizeY;
+			} */
 			dot.vx = coherentJumpSizeX;
 			dot.vy = coherentJumpSizeY;
 			return dot;
@@ -1690,9 +1772,22 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//Set the vx2 and vy2 based on a random angle
 		function setvx2vy2(dot) {
-			//Generate a random angle of movement
+
+/* 			if (insOfForeground(dot)){
+				//Generate a random angle of movement
+				var theta = randomNumberBetween(-Math.PI, Math.PI);
+				//Update properties vx2 and vy2 with the alternate directions
+				dot.vx2 = Math.cos(theta) * moveDistance_foreground;
+				dot.vy2 = -Math.sin(theta) * moveDistance_foreground;
+			}
+			if (!(insOfForeground(dot))){
+				//Generate a random angle of movement
+				var theta = randomNumberBetween(-Math.PI, Math.PI);
+				//Update properties vx2 and vy2 with the alternate directions
+				dot.vx2 = Math.cos(theta) * moveDistance;
+				dot.vy2 = -Math.sin(theta) * moveDistance;
+			} */
 			var theta = randomNumberBetween(-Math.PI, Math.PI);
-			//Update properties vx2 and vy2 with the alternate directions
 			dot.vx2 = Math.cos(theta) * moveDistance;
 			dot.vy2 = -Math.sin(theta) * moveDistance;
 			return dot;
@@ -1710,15 +1805,42 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//Updates the x and y coordinates by moving it in the x and y coherent directions
 		function constantDirectionUpdate(dot) {
+
+/* 			if (!(insOfForeground(dot))){
+				dot.x += dot.vx;
+				dot.y += dot.vy;
+				dot.latestXMove = dot.vx;
+				dot.latestYMove = dot.vy;
+			} */
+
 			dot.x += dot.vx;
 			dot.y += dot.vy;
 			dot.latestXMove = dot.vx;
 			dot.latestYMove = dot.vy;
+
+			if (insOfForeground(dot)){
+				dot.x += dot.vx/2
+				dot.y += dot.vy/2
+				dot.latestXMove = dot.vx/2
+				dot.latestYMove = dot.vy/2
+			}
 			return dot;
 		}
 
 	 	//Updates the x and y coordinates by moving it in the opposite x and y coherent directions
 		function oppositeDirectionUpdate(dot) {
+			if (insOfForeground(dot)){
+				dot.x -= dot.vx;
+				dot.y -= dot.vy;
+				dot.latestXMove = -dot.vx;
+				dot.latestYMove = -dot.vy;
+			}
+/* 			if (!(insOfForeground(dot))){
+				dot.x -= dot.vx;
+				dot.y -= dot.vy;
+				dot.latestXMove = -dot.vx;
+				dot.latestYMove = -dot.vy;
+			} */
 			dot.x -= dot.vx;
 			dot.y -= dot.vy;
 			dot.latestXMove = -dot.vx;
@@ -1754,10 +1876,25 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//Updates the x and y coordinates with the alternative move direction
 		function randomDirectionUpdate(dot) {
+/* 			if (!(insOfForeground(dot))){
+				dot.x += dot.vx2;
+				dot.y += dot.vy2;
+				dot.latestXMove = dot.vx2;
+				dot.latestYMove = dot.vy2;
+			} */
 			dot.x += dot.vx2;
 			dot.y += dot.vy2;
 			dot.latestXMove = dot.vx2;
 			dot.latestYMove = dot.vy2;
+			return dot;
+		}
+
+		function randomDirectionUpdate_foreground(dot) {
+
+			dot.x += dot.vx2/20;
+			dot.y += dot.vy2/20;
+			dot.latestXMove = dot.vx2/20;
+			dot.latestYMove = dot.vy2/20;
 			return dot;
 		}
 
@@ -1838,6 +1975,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		function reinsertOnOppositeEdge_foreground(dot) {
 			//If it is a circle or ellipse
 			if (apertureType_foreground == 1 || apertureType_foreground == 2) {
+				
 				//Bring the dot back into the aperture by moving back one step
 				dot.x -= dot.latestXMove;
 				dot.y -= dot.latestYMove;
@@ -1981,31 +2119,31 @@ jsPsych.plugins["rdk_2"] = (function() {
 			return dot;
 		}
 
-			//Calculate a random x and y coordinate in the ellipse
-			function resetLocation_foreground(dot) {
+		//Calculate a random x and y coordinate in the ellipse
+		function resetLocation_foreground(dot) {
 
-				//For circle and ellipse
-				if (apertureType_foreground == 1 || apertureType_foreground == 2) {
-					var phi = randomNumberBetween(-Math.PI, Math.PI);
-					var rho = Math.random();
+			//For circle and ellipse
+			if (apertureType_foreground == 1 || apertureType_foreground == 2) {
+				var phi = randomNumberBetween(-Math.PI, Math.PI);
+				var rho = Math.random();
 
-					x = Math.sqrt(rho) * Math.cos(phi);
-					y = Math.sqrt(rho) * Math.sin(phi);
+				x = Math.sqrt(rho) * Math.cos(phi);
+				y = Math.sqrt(rho) * Math.sin(phi);
 
-					x = x * horizontalAxis_foreground + apertureCenterX_foreground;
-					y = y * verticalAxis_foreground + apertureCenterY_foreground;
+				x = x * horizontalAxis_foreground + apertureCenterX_foreground;
+				y = y * verticalAxis_foreground + apertureCenterY_foreground;
 
-					dot.x = x;
-					dot.y = y;
-				}
-				//For square and rectangle
-				else if (apertureType_foreground == 3 || apertureType_foreground == 4) {
-					dot.x = randomNumberBetween((apertureCenterX_foreground) - horizontalAxis_foreground, (apertureCenterX_foreground) + horizontalAxis_foreground); //Between the left and right edges of the square / rectangle
-					dot.y = randomNumberBetween((apertureCenterY_foreground) - verticalAxis_foreground, (apertureCenterY_foreground) + verticalAxis_foreground); //Between the top and bottom edges of the square / rectangle
-				}
-
-				return dot;
+				dot.x = x;
+				dot.y = y;
 			}
+			//For square and rectangle
+			else if (apertureType_foreground == 3 || apertureType_foreground == 4) {
+				dot.x = randomNumberBetween((apertureCenterX_foreground) - horizontalAxis_foreground, (apertureCenterX_foreground) + horizontalAxis_foreground); //Between the left and right edges of the square / rectangle
+				dot.y = randomNumberBetween((apertureCenterY_foreground) - verticalAxis_foreground, (apertureCenterY_foreground) + verticalAxis_foreground); //Between the top and bottom edges of the square / rectangle
+			}
+
+			return dot;
+		}
 
 		//Generates a random number (with decimals) between 2 values
 		function randomNumberBetween(lowerBound, upperBound) {
