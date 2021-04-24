@@ -1504,7 +1504,13 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 				//Update based on the dot's update type
 				if (dot.updateType == "constant direction") {
-					dot = constantDirectionUpdate(dot);
+					if (insOfForeground(dot)){
+						dot = constantDirectionUpdate_foreground(dot);
+					}
+					if (!(insOfForeground(dot))){
+						dot = constantDirectionUpdate(dot);
+					}
+					//dot = constantDirectionUpdate(dot);
 
 				} else if (dot.updateType == "opposite direction") {
 					dot = oppositeDirectionUpdate(dot);
@@ -1819,10 +1825,24 @@ jsPsych.plugins["rdk_2"] = (function() {
 			dot.latestYMove = dot.vy;
 
 			if (insOfForeground(dot)){
-				dot.x += dot.vx/2
-				dot.y += dot.vy/2
-				dot.latestXMove = dot.vx/2
-				dot.latestYMove = dot.vy/2
+				var slowMagnitude = 3
+				dot.x += dot.vx/slowMagnitude;
+				dot.y += dot.vy/slowMagnitude;
+				dot.latestXMove = dot.vx/slowMagnitude;
+				dot.latestYMove = dot.vy/slowMagnitude;
+			}
+			return dot;
+		}
+
+		//Updates the x and y coordinates by moving it in the x and y coherent directions
+		function constantDirectionUpdate_foreground(dot) {
+
+			if (insOfForeground(dot)){
+				var slowMagnitude = 3
+				dot.x += dot.vx/slowMagnitude;
+				dot.y += dot.vy/slowMagnitude;
+				dot.latestXMove = dot.vx/slowMagnitude;
+				dot.latestYMove = dot.vy/slowMagnitude;
 			}
 			return dot;
 		}
@@ -1890,11 +1910,11 @@ jsPsych.plugins["rdk_2"] = (function() {
 		}
 
 		function randomDirectionUpdate_foreground(dot) {
-
-			dot.x += dot.vx2/20;
-			dot.y += dot.vy2/20;
-			dot.latestXMove = dot.vx2/20;
-			dot.latestYMove = dot.vy2/20;
+			var slowMagnitude = 3
+			dot.x += dot.vx2/slowMagnitude;
+			dot.y += dot.vy2/slowMagnitude;
+			dot.latestXMove = dot.vx2/slowMagnitude;
+			dot.latestYMove = dot.vy2/slowMagnitude;
 			return dot;
 		}
 
