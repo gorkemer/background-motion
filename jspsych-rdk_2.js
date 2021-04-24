@@ -70,7 +70,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		    number_of_dots: {
 		      type: jsPsych.plugins.parameterType.INT,
 		      pretty_name: "Number of dots",
-		      default: 300,
+		      default: 100,
 		      description: "The number of dots per set in the stimulus"
 		    },
 		    number_of_sets: {
@@ -1428,7 +1428,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 				ctx.beginPath();
 		    	ctx.lineWidth = fixationCrossThickness;
 
-				ctx.arc(canvasWidth/2, canvasHeight/2, 3, 0, 2 * Math.PI);
+				ctx.arc(canvasWidth/2, canvasHeight/2, 4, 0, 2 * Math.PI); // changed the size, it was 3 in original case.
 				ctx.fillStyle = "#FF0000";
 		    	ctx.fill();
 				//ctx.moveTo(canvasWidth/2 - fixationCrossWidth, canvasHeight/2);
