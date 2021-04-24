@@ -1726,14 +1726,12 @@ jsPsych.plugins["rdk_2"] = (function() {
 		}
 
 
-		console.log("xValuePositive_foreground(dot.y)", xValuePositive_foreground(dot.y))
-		console.log("xValueNegative_foreground(dot.y)", xValueNegative_foreground(dot.y))
 		//Function to check if dot is out of bounds
 		function insOfForeground(dot) {
 
 			//For circle and ellipse
 			if (apertureType_foreground == 1 || apertureType_foreground == 2) {
-				if (dot.x > (xValueNegative_foreground(dot.y)/2) || dot.x < xValuePositive_foreground(dot.y)/2 || dot.y > yValueNegative_foreground(dot.x)/2 || dot.y < yValuePositive_foreground(dot.x)/2) {
+				if (dot.x < xValueNegative_foreground(dot.y) || dot.x > xValuePositive_foreground(dot.y) || dot.y < yValueNegative_foreground(dot.x) || dot.y > yValuePositive_foreground(dot.x)) {
 					return true;
 				} else {
 					return false;
@@ -1893,8 +1891,8 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		function randomDirectionUpdate_foreground(dot) {
 
-			dot.x += dot.vx2/10;
-			dot.y += dot.vy2/10;
+			dot.x += dot.vx2/5;
+			dot.y += dot.vy2/5;
 			dot.latestXMove = dot.vx2/10;
 			dot.latestYMove = dot.vy2/10;
 			return dot;
