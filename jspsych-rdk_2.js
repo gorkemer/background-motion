@@ -1824,13 +1824,13 @@ jsPsych.plugins["rdk_2"] = (function() {
 			dot.latestXMove = dot.vx;
 			dot.latestYMove = dot.vy;
 
-			if (insOfForeground(dot)){
-				var slowMagnitude = 3
-				dot.x += dot.vx/slowMagnitude;
-				dot.y += dot.vy/slowMagnitude;
-				dot.latestXMove = dot.vx/slowMagnitude;
-				dot.latestYMove = dot.vy/slowMagnitude;
-			}
+/* 			if (insOfForeground(dot)){
+				var motionConstrast = 0.5
+				dot.x += dot.vx/motionConstrast;
+				dot.y += dot.vy/motionConstrast;
+				dot.latestXMove = dot.vx/motionConstrast;
+				dot.latestYMove = dot.vy/motionConstrast;
+			} */
 			return dot;
 		}
 
@@ -1838,23 +1838,23 @@ jsPsych.plugins["rdk_2"] = (function() {
 		function constantDirectionUpdate_foreground(dot) {
 
 			if (insOfForeground(dot)){
-				var slowMagnitude = 3
-				dot.x += dot.vx/slowMagnitude;
-				dot.y += dot.vy/slowMagnitude;
-				dot.latestXMove = dot.vx/slowMagnitude;
-				dot.latestYMove = dot.vy/slowMagnitude;
+				var motionConstrast = 0.5
+				dot.x += dot.vx/motionConstrast;
+				dot.y += dot.vy/motionConstrast;
+				dot.latestXMove = dot.vx/motionConstrast;
+				dot.latestYMove = dot.vy/motionConstrast;
 			}
 			return dot;
 		}
 
 	 	//Updates the x and y coordinates by moving it in the opposite x and y coherent directions
 		function oppositeDirectionUpdate(dot) {
-			if (insOfForeground(dot)){
+/* 			if (insOfForeground(dot)){
 				dot.x -= dot.vx;
 				dot.y -= dot.vy;
 				dot.latestXMove = -dot.vx;
 				dot.latestYMove = -dot.vy;
-			}
+			} */
 /* 			if (!(insOfForeground(dot))){
 				dot.x -= dot.vx;
 				dot.y -= dot.vy;
@@ -1896,12 +1896,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//Updates the x and y coordinates with the alternative move direction
 		function randomDirectionUpdate(dot) {
-/* 			if (!(insOfForeground(dot))){
-				dot.x += dot.vx2;
-				dot.y += dot.vy2;
-				dot.latestXMove = dot.vx2;
-				dot.latestYMove = dot.vy2;
-			} */
+
 			dot.x += dot.vx2;
 			dot.y += dot.vy2;
 			dot.latestXMove = dot.vx2;
@@ -1910,11 +1905,11 @@ jsPsych.plugins["rdk_2"] = (function() {
 		}
 
 		function randomDirectionUpdate_foreground(dot) {
-			var slowMagnitude = 3
-			dot.x += dot.vx2/slowMagnitude;
-			dot.y += dot.vy2/slowMagnitude;
-			dot.latestXMove = dot.vx2/slowMagnitude;
-			dot.latestYMove = dot.vy2/slowMagnitude;
+			var motionConstrast = 0.5
+			dot.x += dot.vx2/motionConstrast;
+			dot.y += dot.vy2/motionConstrast;
+			dot.latestXMove = dot.vx2/motionConstrast;
+			dot.latestYMove = dot.vy2/motionConstrast;
 			return dot;
 		}
 
