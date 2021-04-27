@@ -41,6 +41,11 @@ function saveData() {
   xhr.send(jsPsych.data.get().json());
 }
 var trial_feature_list = []
+var motionSpeed_list = [];
+var dotNumber_list = [];
+var motionContrast_list = [];
+var motionDirection_list_1 = [];
+var motionDirection_list_2 = [];
 var ellipseRatioList = [
 [75.08,	218.18],
 [79.19,	206.85],
@@ -65,7 +70,65 @@ var ellipseRatioList = [
 [218.18,	75.08],
 ];
 
-var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
+//generating random numbers for motion speed
+function generateRandomNumber_motionSpeed() {
+      var min = 0.30,
+          max = 1.50,
+          highlightedNumber = Math.random() * (max - min) + min;
+  return highlightedNumber;
+};
+
+function generateRandomNumber_dotNumber() {
+      var min = 400,
+          max = 800,
+          highlightedNumber = Math.random() * (max - min) + min;
+  return highlightedNumber;
+};
+
+function generateRandomNumber_motionContrast() {
+      var min = 0.1,
+          max = 2,
+          highlightedNumber = Math.random() * (max - min) + min;
+  return highlightedNumber;
+};
+
+function generateRandomNumber_motionDirection() {
+      var min = 0,
+          max = 360,
+          highlightedNumber = Math.random() * (max - min) + min;
+  return highlightedNumber;
+};
+
+function random_item(items)
+{
+return items[Math.floor(Math.random()*items.length)]; 
+}
+var direction_list = [270, 90, 0, 180, 360];
+
+for (i=0; i<20; i++){
+  a = generateRandomNumber_motionSpeed();
+  motionSpeed_list.push(a)
+}
+
+for (i=0; i<20; i++){
+  a = generateRandomNumber_dotNumber();
+  dotNumber_list.push(a)
+}
+
+for (i=0; i<20; i++){
+  a = generateRandomNumber_motionContrast();
+  motionContrast_list.push(a)
+}
+
+for (i=0; i<20; i++){
+  a = generateRandomNumber_motionDirection();
+  b = generateRandomNumber_motionDirection();
+  motionDirection_list_1.push(a)
+  motionDirection_list_2.push(b)
+}
+
+
+//var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
 var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 1); // 21 
 var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 1);
 var motionSpeed_list_shuffled = jsPsych.randomization.repeat(motionSpeed_list, 2);
@@ -94,7 +157,10 @@ for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
       //boxType_number        : boxType_list_shuffled[i],
       //dotCloud_number       : shuffled_dotFieldLocation_list[i],
       //motionType            : finalMotion_direction,
-      motionSpeed           : motionSpeed_list_shuffled[i]
+      motionSpeed           : motionSpeed_list_shuffled[i],
+      dotNumber             : dotNumber_list[i],
+      motionContrast        : motionContrast_list[i],
+      motionDirection       : motionDirection_list[i]
 
     } 
     trial_feature_list.push(aTrial)
@@ -122,16 +188,17 @@ var instructions = {
 
 var test_block = {
   type: "rdk_2",  
-  aperture_type: 2,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
+  aperture_type: 4,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 2, //This needs to be set if more than one aperture
-  trial_duration: 5000,
+  trial_duration: 1500,
   RDK_type: 3, //Applied to all apertures if only one value
-  aperture_width: 600,//window.innerWidth/2, 
-  aperture_height: 600, //window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
-  number_of_dots: 800, //Different parameter for each aperture. Array length must equal number_of_apertures
+  aperture_width: 300, //window.innerWidth/2, 
+  aperture_height: 300,//window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
+  number_of_dots: jsPsych.timelineVariable('dotNumber'), //Different parameter for each aperture. Array length must equal number_of_apertures
   aperture_center_x: [(window.innerWidth/2)-window.innerWidth/4,(window.innerWidth/2)+window.innerWidth/4], //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
-  coherence: 0,
-  move_distance: 0.5,
+  coherence: 0.50,
+  coherent_direction: jsPsych.timelineVariable('motionDirection'),
+  move_distance: 3,//jsPsych.timelineVariable('motionSpeed'),
   //move_distance: 1,
   dot_life: -0.5,
   foreground_aperture_width: jsPsych.timelineVariable('width'),
@@ -141,7 +208,8 @@ var test_block = {
   foreground_aperture_center_x: [(window.innerWidth/2)-window.innerWidth/4,(window.innerWidth/2)+window.innerWidth/4],//window.innerWidth/2,//[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   //foreground_number_of_apertures: 1
   foreground_move_distance: 1, // irrelevant, this is not feeded to the plugin not working
-  reinsert_type: 1
+  reinsert_type: 1,
+  motionContrast: 3//jsPsych.timelineVariable('motionContrast')
 };
 
   /*set up experiment structure*/

@@ -337,6 +337,12 @@ jsPsych.plugins["rdk_2"] = (function() {
 				default: 2,
 				description: "The shape of the aperture"
 			},
+			motionContrast: {
+				type: jsPsych.plugins.parameterType.FLOAT,
+				pretty_name: "foreground-background motion contrast",
+				default: 2,
+				description: "ow much the background motion speed is divided by"
+			},
 			
 	    }
 	 }
@@ -349,6 +355,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		//---------SET PARAMETERS BEGIN---------
 		//--------------------------------------
 		
+		var motionConstrast = trial.motionContrast;
 		
 		//Note on '||' logical operator: If the first option is 'undefined', it evalutes to 'false' and the second option is returned as the assignment
 		trial.choices = assignParameterValue(trial.choices, []);
@@ -1838,7 +1845,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		function constantDirectionUpdate_foreground(dot) {
 
 			if (insOfForeground(dot)){
-				var motionConstrast = 0.5
+				//var motionConstrast = 0.5
 				dot.x += dot.vx/motionConstrast;
 				dot.y += dot.vy/motionConstrast;
 				dot.latestXMove = dot.vx/motionConstrast;
@@ -1905,7 +1912,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		}
 
 		function randomDirectionUpdate_foreground(dot) {
-			var motionConstrast = 0.5
+			//var motionConstrast = 0.5
 			dot.x += dot.vx2/motionConstrast;
 			dot.y += dot.vy2/motionConstrast;
 			dot.latestXMove = dot.vx2/motionConstrast;
