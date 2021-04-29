@@ -337,6 +337,12 @@ jsPsych.plugins["rdk_2"] = (function() {
 				default: 2,
 				description: "The shape of the aperture"
 			},
+			motionContrast: {
+				type: jsPsych.plugins.parameterType.FLOAT,
+				pretty_name: "foreground-background motion contrast",
+				default: 2,
+				description: "ow much the background motion speed is divided by"
+			},
 			
 	    }
 	 }
@@ -349,6 +355,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		//---------SET PARAMETERS BEGIN---------
 		//--------------------------------------
 		
+		var motionConstrast = trial.motionContrast;
 		
 		//Note on '||' logical operator: If the first option is 'undefined', it evalutes to 'false' and the second option is returned as the assignment
 		trial.choices = assignParameterValue(trial.choices, []);
@@ -1521,13 +1528,13 @@ jsPsych.plugins["rdk_2"] = (function() {
 				} else if (dot.updateType == "random walk") {
 					dot = randomWalkUpdate(dot);
 				} else if (dot.updateType == "random direction") {
-					if (insOfForeground(dot)){
+/* 					if (insOfForeground(dot)){
 						dot = randomDirectionUpdate_foreground(dot);
 					}
 					if (!(insOfForeground(dot))){
 						dot = randomDirectionUpdate(dot);
-					}
-					//dot = randomDirectionUpdate(dot);
+					} */
+					dot = randomDirectionUpdate(dot);
 				} else if (dot.updateType == "constant direction or opposite direction or random position") {
 			        
 					//Randomly select if the dot goes in a constant direction or random position, weighted based on the coherence level
@@ -1849,20 +1856,18 @@ jsPsych.plugins["rdk_2"] = (function() {
 			return dot;
 		}
 
+		//Updates the x and y coordinates by moving it in the x and y coherent directions
+		function constantDirectionUpdate_foreground(dot) {
+
+			dot.x += dot.vx;
+			dot.y += dot.vy;
+			dot.latestXMove = dot.vx;
+			dot.latestYMove = dot.vy;
+			return dot;
+		}
+
 	 	//Updates the x and y coordinates by moving it in the opposite x and y coherent directions
 		function oppositeDirectionUpdate(dot) {
-			if (insOfForeground(dot)){
-				dot.x -= dot.vx;
-				dot.y -= dot.vy;
-				dot.latestXMove = -dot.vx;
-				dot.latestYMove = -dot.vy;
-			}
-/* 			if (!(insOfForeground(dot))){
-				dot.x -= dot.vx;
-				dot.y -= dot.vy;
-				dot.latestXMove = -dot.vx;
-				dot.latestYMove = -dot.vy;
-			} */
 			dot.x -= dot.vx;
 			dot.y -= dot.vy;
 			dot.latestXMove = -dot.vx;
@@ -1898,12 +1903,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//Updates the x and y coordinates with the alternative move direction
 		function randomDirectionUpdate(dot) {
-/* 			if (!(insOfForeground(dot))){
-				dot.x += dot.vx2;
-				dot.y += dot.vy2;
-				dot.latestXMove = dot.vx2;
-				dot.latestYMove = dot.vy2;
-			} */
+
 			dot.x += dot.vx2;
 			dot.y += dot.vy2;
 			dot.latestXMove = dot.vx2;
@@ -1912,6 +1912,11 @@ jsPsych.plugins["rdk_2"] = (function() {
 		}
 
 		function randomDirectionUpdate_foreground(dot) {
+			//var motionConstrast = 0.5
+			dot.x += dot.vx2/1;
+			dot.y += dot.vy2/1;
+			dot.latestXMove = dot.vx2/1;
+			dot.latestYMove = dot.vy2/1;
 
 			dot.x += dot.vx2/1;
 			dot.y += dot.vy2/1;
