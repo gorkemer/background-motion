@@ -124,23 +124,23 @@ var test_block = {
   type: "rdk_2",  
   aperture_type: 2,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 2, //This needs to be set if more than one aperture
-  trial_duration: 500,
+  trial_duration: 3000,
   RDK_type: 3, //Applied to all apertures if only one value
   aperture_width: 300,//window.innerWidth/2, 
   aperture_height: 300, //window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
-  number_of_dots: 100, //Different parameter for each aperture. Array length must equal number_of_apertures
+  number_of_dots: 300, //Different parameter for each aperture. Array length must equal number_of_apertures
   aperture_center_x: [(window.innerWidth/2)-window.innerWidth/4,(window.innerWidth/2)+window.innerWidth/4], //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
-  coherence: 0,
-  move_distance: 1,
+  coherence:1,
+  move_distance: 3,
   //move_distance: 1,
-  dot_life: -0.5,
+  dot_life: -1,
   foreground_aperture_width: jsPsych.timelineVariable('width'),
   foreground_aperture_height: jsPsych.timelineVariable('height'),
   foreground_number_of_dots: 0,
   foreground_move_distance: jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
   foreground_aperture_center_x: [(window.innerWidth/2)-window.innerWidth/4,(window.innerWidth/2)+window.innerWidth/4],//window.innerWidth/2,//[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   //foreground_number_of_apertures: 1
-  foreground_move_distance: 0.1,
+  foreground_move_distance: 1,
   reinsert_type: 1
 };
 
