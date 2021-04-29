@@ -79,8 +79,8 @@ function generateRandomNumber_motionSpeed() {
 };
 
 function generateRandomNumber_dotNumber() {
-      var min = 400,
-          max = 800,
+      var min = 800,
+          max = 1200,
           highlightedNumber = Math.random() * (max - min) + min;
   return highlightedNumber;
 };
@@ -196,22 +196,22 @@ var test_block = {
   RDK_type: 3, //Applied to all apertures if only one value
   aperture_width: 300, //window.innerWidth/2, 
   aperture_height: 300,//window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
-  number_of_dots: jsPsych.timelineVariable('dotNumber'), //Different parameter for each aperture. Array length must equal number_of_apertures
+  number_of_dots: 400,//jsPsych.timelineVariable('dotNumber'), //Different parameter for each aperture. Array length must equal number_of_apertures
   aperture_center_x: [(window.innerWidth/2)-window.innerWidth/4,(window.innerWidth/2)+window.innerWidth/4], //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
-  coherence: 0,
+  coherence: 0.90,
   coherent_direction: jsPsych.timelineVariable('motionDirection'),
-  move_distance: jsPsych.timelineVariable('motionSpeed'),
+  move_distance: 0.5,//jsPsych.timelineVariable('motionSpeed'),
   //move_distance: 1,
   dot_life: -0.3,
   foreground_aperture_width: jsPsych.timelineVariable('width'),
   foreground_aperture_height: jsPsych.timelineVariable('height'),
   foreground_number_of_dots: 0,
-  foreground_move_distance: jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
+  foreground_move_distance: 1, //jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
   foreground_aperture_center_x: [(window.innerWidth/2)-window.innerWidth/4,(window.innerWidth/2)+window.innerWidth/4],//window.innerWidth/2,//[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   //foreground_number_of_apertures: 1
   foreground_move_distance: 1, // irrelevant, this is not feeded to the plugin not working
   reinsert_type: 1,
-  motionContrast: jsPsych.timelineVariable('motionContrast')
+  motionContrast: 2//jsPsych.timelineVariable('motionContrast')
 };
 
   /*set up experiment structure*/

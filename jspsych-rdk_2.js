@@ -1850,6 +1850,14 @@ jsPsych.plugins["rdk_2"] = (function() {
 				dot.y += dot.vy/motionConstrast;
 				dot.latestXMove = dot.vx/motionConstrast;
 				dot.latestYMove = dot.vy/motionConstrast;
+				if (moveDistance==0){
+
+					dot.x += dot.vx*motionConstrast;
+					dot.y += dot.vy*motionConstrast;
+					dot.latestXMove = dot.vx*motionConstrast;
+					dot.latestYMove = dot.vy*motionConstrast;
+				}
+
 			}
 			return dot;
 		}
@@ -1917,6 +1925,13 @@ jsPsych.plugins["rdk_2"] = (function() {
 			dot.y += dot.vy2/motionConstrast;
 			dot.latestXMove = dot.vx2/motionConstrast;
 			dot.latestYMove = dot.vy2/motionConstrast;
+
+			if (moveDistance==0){
+				dot.x += dot.vx*motionConstrast;
+				dot.y += dot.vy*motionConstrast;
+				dot.latestXMove = dot.vx*motionConstrast;
+				dot.latestYMove = dot.vy*motionConstrast;
+			}
 			return dot;
 		}
 
