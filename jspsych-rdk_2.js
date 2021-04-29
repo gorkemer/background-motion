@@ -1904,20 +1904,27 @@ jsPsych.plugins["rdk_2"] = (function() {
 		//Updates the x and y coordinates with the alternative move direction
 		function randomDirectionUpdate(dot) {
 
-			dot.x += dot.vx2;
-			dot.y += dot.vy2;
-			dot.latestXMove = dot.vx2;
-			dot.latestYMove = dot.vy2;
+			if (insOfForeground(dot)){
+				dot.x += dot.vx2;
+				dot.y += dot.vy2;
+				dot.latestXMove = dot.vx2;
+				dot.latestYMove = dot.vy2;
+
+				
+			}
+			else if (!(insOfForeground(dot))){
+				dot.x += dot.vx2;
+				dot.y += dot.vy2;
+				dot.latestXMove = dot.vx2;
+				dot.latestYMove = dot.vy2;
+			}
+
+
 			return dot;
 		}
 
 		function randomDirectionUpdate_foreground(dot) {
 			//var motionConstrast = 0.5
-			dot.x += dot.vx2/1;
-			dot.y += dot.vy2/1;
-			dot.latestXMove = dot.vx2/1;
-			dot.latestYMove = dot.vy2/1;
-
 			dot.x += dot.vx2/1;
 			dot.y += dot.vy2/1;
 			dot.latestXMove = dot.vx2/1;
