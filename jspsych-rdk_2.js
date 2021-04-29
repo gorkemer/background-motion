@@ -1511,6 +1511,8 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 				//Update based on the dot's update type
 				if (dot.updateType == "constant direction") {
+
+					
 /* 					if (insOfForeground(dot)){
 						dot = constantDirectionUpdate_foreground(dot);
 					}
@@ -1818,17 +1820,39 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//Updates the x and y coordinates by moving it in the x and y coherent directions
 		function constantDirectionUpdate(dot) {
-			dot.x += dot.vx;
+
+/* 			dot.x += dot.vx;
 			dot.y += dot.vy;
 			dot.latestXMove = dot.vx;
 			dot.latestYMove = dot.vy;
-
+ */
 			if (insOfForeground(dot)){
-				dot.x += dot.vx
-				dot.y += dot.vy
-				dot.latestXMove = dot.vx
-				dot.latestYMove = dot.vy
+				dot.x += dot.vx;
+				dot.y += dot.vy;
+				dot.latestXMove = dot.vx;
+				dot.latestYMove = dot.vy;
+
+				
 			}
+			else if (!(insOfForeground(dot))){
+				dot.x += dot.vx;
+				dot.y += dot.vy;
+				dot.latestXMove = dot.vx;
+				dot.latestYMove = dot.vy;
+			}
+
+/* 			dot.x += dot.vx;
+			dot.y += dot.vy;
+			dot.latestXMove = dot.vx;
+			dot.latestYMove = dot.vy; */
+			return dot;
+		}
+
+		function constantDirectionUpdate_foreground(dot) {
+			dot.x += dot.vx/2
+			dot.y += dot.vy/2
+			dot.latestXMove = dot.vx/2
+			dot.latestYMove = dot.vy/2
 			return dot;
 		}
 
@@ -1894,6 +1918,10 @@ jsPsych.plugins["rdk_2"] = (function() {
 			dot.latestXMove = dot.vx2/1;
 			dot.latestYMove = dot.vy2/1;
 
+			dot.x += dot.vx2/1;
+			dot.y += dot.vy2/1;
+			dot.latestXMove = dot.vx2/1;
+			dot.latestYMove = dot.vy2/1;
 			return dot;
 		}
 
