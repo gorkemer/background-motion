@@ -355,7 +355,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		//---------SET PARAMETERS BEGIN---------
 		//--------------------------------------
 		
-		var motionConstrast = trial.motionContrast;
+		var motionContrast = trial.motionContrast;
 		
 		//Note on '||' logical operator: If the first option is 'undefined', it evalutes to 'false' and the second option is returned as the assignment
 		trial.choices = assignParameterValue(trial.choices, []);
@@ -1827,12 +1827,10 @@ jsPsych.plugins["rdk_2"] = (function() {
 			dot.latestYMove = dot.vy;
  */
 			if (insOfForeground(dot)){
-				dot.x += dot.vx;
-				dot.y += dot.vy;
-				dot.latestXMove = dot.vx;
-				dot.latestYMove = dot.vy;
-
-				
+				dot.x += dot.vx/motionContrast;
+				dot.y += dot.vy/motionContrast;
+				dot.latestXMove = dot.vx/motionContrast;
+				dot.latestYMove = dot.vy/motionContrast;
 			}
 			else if (!(insOfForeground(dot))){
 				dot.x += dot.vx;
@@ -1905,10 +1903,10 @@ jsPsych.plugins["rdk_2"] = (function() {
 		function randomDirectionUpdate(dot) {
 
 			if (insOfForeground(dot)){
-				dot.x += dot.vx2;
-				dot.y += dot.vy2;
-				dot.latestXMove = dot.vx2;
-				dot.latestYMove = dot.vy2;
+				dot.x += dot.vx2/motionContrast;
+				dot.y += dot.vy2/motionContrast;
+				dot.latestXMove = dot.vx2/motionContrast;
+				dot.latestYMove = dot.vy2/motionContrast;
 
 				
 			}
