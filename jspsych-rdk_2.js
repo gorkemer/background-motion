@@ -1414,6 +1414,20 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 			//Loop through the dots one by one and draw them
 			for (var i = 0; i < nDots; i++) {
+/* 				if (insOfForeground(dot)){
+					dot = dotArray[i];
+					ctx.beginPath();
+					ctx.arc(dot.x, dot.y, dotRadius, 0, Math.PI * 2);
+					ctx.fillStyle = dotColor;
+					ctx.fill();
+				}
+				else if (!(insOfForeground(dot))){
+					dot = dotArray[i];
+					ctx.beginPath();
+					ctx.arc(dot.x, dot.y, dotRadius, 0, Math.PI * 2);
+					ctx.fillStyle = dotColor;
+					ctx.fill();
+				} */
 				dot = dotArray[i];
 				ctx.beginPath();
 				ctx.arc(dot.x, dot.y, dotRadius, 0, Math.PI * 2);
@@ -1443,13 +1457,13 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		    	ctx.stroke();
 
-				for (var i = 0; i < nDots_foreground; i++) {
+/* 				for (var i = 0; i < nDots_foreground; i++) {
 					dot = dotArray_foreground[i];
 					ctx.beginPath();
 					ctx.arc(dot.x, dot.y, dotRadius, 0, Math.PI * 2);
 					ctx.fillStyle = 'black'
 					ctx.fill();
-				}
+				} */
 
 			}
 
@@ -1528,12 +1542,6 @@ jsPsych.plugins["rdk_2"] = (function() {
 				} else if (dot.updateType == "random walk") {
 					dot = randomWalkUpdate(dot);
 				} else if (dot.updateType == "random direction") {
-/* 					if (insOfForeground(dot)){
-						dot = randomDirectionUpdate_foreground(dot);
-					}
-					if (!(insOfForeground(dot))){
-						dot = randomDirectionUpdate(dot);
-					} */
 					dot = randomDirectionUpdate(dot);
 				} else if (dot.updateType == "constant direction or opposite direction or random position") {
 			        
@@ -1901,15 +1909,13 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//Updates the x and y coordinates with the alternative move direction
 		function randomDirectionUpdate(dot) {
-
 			if (insOfForeground(dot)){
 				dot.x += dot.vx2/motionContrast;
 				dot.y += dot.vy2/motionContrast;
 				dot.latestXMove = dot.vx2/motionContrast;
 				dot.latestYMove = dot.vy2/motionContrast;
-
-				
 			}
+			
 			else if (!(insOfForeground(dot))){
 				dot.x += dot.vx2;
 				dot.y += dot.vy2;

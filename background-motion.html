@@ -103,7 +103,7 @@ function random_item(items)
 {
 return items[Math.floor(Math.random()*items.length)]; 
 }
-var direction_list = [270, 90, 0, 180, 360];
+var direction_list = [270, 90, 0, 180];
 
 for (i=0; i<20; i++){
   a = generateRandomNumber_motionSpeed();
@@ -132,6 +132,9 @@ for (i=0; i<20; i++){
 var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 1); // 21 
 var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 1);
 var motionSpeed_list_shuffled = jsPsych.randomization.repeat(motionSpeed_list, 2);
+var direction_list_shuffed_1 = jsPsych.randomization.repeat(direction_list, 3);
+var direction_list_shuffed_2 = jsPsych.randomization.repeat(direction_list, 3);
+
 console.log(motionSpeed_list_shuffled)
 
 for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
@@ -147,6 +150,7 @@ for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
   var ellipsesFinal_height = [firstCloud_height,secondCloud_height];
 
   var motionDirectionPair = [motionDirection_list_1[i],motionDirection_list_2[i]]
+  var motionDirectionPair_discrete = [direction_list_shuffed_1[i],direction_list_shuffed_2[i]]
 
   aTrial = {
       width                 : ellipsesFinal_width, 
@@ -162,7 +166,7 @@ for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
       motionSpeed           : motionSpeed_list_shuffled[i],
       dotNumber             : dotNumber_list[i],
       motionContrast        : motionContrast_list[i],
-      motionDirection       : motionDirectionPair
+      motionDirection       : motionDirectionPair_discrete
 
     } 
     trial_feature_list.push(aTrial)
@@ -192,16 +196,18 @@ var test_block = {
   type: "rdk_2",  
   aperture_type: 4,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 2, //This needs to be set if more than one aperture
-  trial_duration: 3000,
+  trial_duration: 5000,
   RDK_type: 3, //Applied to all apertures if only one value
-  aperture_width: 900,//window.innerWidth/2, 
-  aperture_height: 900, //window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
+  aperture_width: 700,//window.innerWidth/2, 
+  aperture_height: 700, //window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
   number_of_dots: 1200, //Different parameter for each aperture. Array length must equal number_of_apertures
   aperture_center_x: [(window.innerWidth/2)-window.innerWidth/4,(window.innerWidth/2)+window.innerWidth/4], //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
-  coherence:0.80,
-  move_distance: 1,
+  coherence:0.5,
+  dot_color: "white",
+  background_color: "gray",
+  move_distance: 4, // 12
   coherent_direction: jsPsych.timelineVariable('motionDirection'),
-  dot_life: -1,
+  dot_life: -0.9,
   foreground_aperture_width: jsPsych.timelineVariable('width'),
   foreground_aperture_height: jsPsych.timelineVariable('height'),
   foreground_number_of_dots: 0,
@@ -210,7 +216,7 @@ var test_block = {
   //foreground_number_of_apertures: 1
   foreground_move_distance: 6, // irrelevant, this is not feeded to the plugin not working
   reinsert_type: 2,
-  motionContrast: 0.5//jsPsych.timelineVariable('motionContrast')
+  motionContrast: 1 /// 4 //jsPsych.timelineVariable('motionContrast')
 };
 
   /*set up experiment structure*/
