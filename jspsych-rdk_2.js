@@ -259,6 +259,18 @@ jsPsych.plugins["rdk_2"] = (function() {
 				default: undefined,
 				description: "The y-coordinate of the center of the aperture"
 			},
+			foreground_aperture_center_x_2: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Foreground Aperture center X",
+				default: undefined,
+				description: "The x-coordinate of the center of the aperture 2"
+			},
+			foreground_aperture_center_y_2: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Foreground Aperture center Y",
+				default: undefined,
+				description: "The y-coordinate of the center of the aperture 2 "
+			},
 			foreground_aperture_width: {
 				type: jsPsych.plugins.parameterType.INT,
 				pretty_name: "Foreground Aperture width",
@@ -463,14 +475,17 @@ jsPsych.plugins["rdk_2"] = (function() {
 		var apertureHeight_foreground = trial.foreground_aperture_height; //How many pixels high the aperture is. Only relevant for ellipse and rectangle apertures. For circle and square, this is ignored.
 		//var dotColor_foreground = trial.foreground_dot_color; //Color of the dots
 		var apertureCenterX_foreground = trial.foreground_aperture_center_x; // The x-coordinate of center of the aperture on the screen, in pixels
-		//var apertureCenterY_foreground = trial.foreground_aperture_center_y; // The y-coordinate of center of the aperture on the screen, in pixels
+		var apertureCenterY_foreground = trial.foreground_aperture_center_y; // The y-coordinate of center of the aperture on the screen, in pixels
+
+		var apertureCenterX_foreground_2 = trial.foreground_aperture_center_x_2; // The x-coordinate of center of the aperture on the screen, in pixels
+		var apertureCenterY_foreground_2 = trial.foreground_aperture_center_y_2; // The y-coordinate of center of the aperture on the screen, in pixels
 
 		//var apertureWidth_foreground = 300; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
 		//var apertureHeight_foreground = 300; 
 		//var nDots_foreground = 100;
 		//var moveDistance_foreground = 0.001;
 		//var apertureCenterX_foreground = window.innerWidth/2;
-		var apertureCenterY_foreground = window.innerHeight/2;
+		//var apertureCenterY_foreground = window.innerHeight/2;
 		//var apertureCenterX_foreground = [(window.innerWidth/2)-200,(window.innerWidth/2)+200]
 		//var apertureCenterY_foreground = [(window.innerHeight/2),(window.innerHeight/2)]
 
@@ -651,6 +666,8 @@ jsPsych.plugins["rdk_2"] = (function() {
 		var verticalAxis;
 		var horizontalAxis_foreground;
 		var verticalAxis_foreground;
+		var horizontalAxis_foreground_2;
+		var verticalAxis_foreground_2;
 
 		//Calculate the x and y jump sizes for coherent dots
 		var coherentJumpSizeX;
@@ -928,7 +945,7 @@ jsPsych.plugins["rdk_2"] = (function() {
         
 				//Make each 2d array and push it into the 3d array
 				dotArray3d.push(makeDotArray2d());
-				dotArray3d_foreground.push(makeDotArray2d_foreground());
+				//dotArray3d_foreground.push(makeDotArray2d_foreground());  ///// deactivated because I no longer create foreground dots
 			}
 
 
@@ -1079,12 +1096,15 @@ jsPsych.plugins["rdk_2"] = (function() {
 			//For circle and square
 			if (apertureType_foreground == 1 || apertureType_foreground == 3) {
 				horizontalAxis_foreground = verticalAxis = apertureWidth_foreground/2;
+				horizontalAxis_foreground_2 = apertureWidth_foreground/2;
 			}
 			//For ellipse and rectangle
 			else if (apertureType_foreground == 2 || apertureType_foreground == 4) {
 				//center
 				horizontalAxis_foreground = apertureWidth_foreground / 2;
 				verticalAxis_foreground = apertureHeight_foreground / 2;
+				horizontalAxis_foreground_2 = apertureWidth_foreground / 2;
+				verticalAxis_foreground_2 = apertureHeight_foreground / 2;
 			}
 		}
 
@@ -1376,7 +1396,7 @@ jsPsych.plugins["rdk_2"] = (function() {
       
 	    	//Load in the current set of dot array for easy handling
 	    	var dotArray = dotArray2d[currentSetArray[currentApertureNumber]];
-			var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  
+			//var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  // this is for generating foreground dots /// deprecated 
 
 			//Loop through the dots one by one and draw them
 			for (var i = 0; i < nDots; i++) {
@@ -1387,23 +1407,23 @@ jsPsych.plugins["rdk_2"] = (function() {
 				ctx.fill();
 			}
 
-			for (var i = 0; i < nDots_foreground; i++) {
+			// this is for generating foreground dots /// deprecated 
+/* 			for (var i = 0; i < nDots_foreground; i++) {
 				dot_foreground = dotArray_foreground[i];
 				ctx.beginPath();
 				ctx.arc(dot.x, dot.y, dotRadius+1, 0, Math.PI * 2);
 				ctx.fillStyle = backgroundColor;
 				ctx.fill();
-			}
+			} */
 
 		}
-		console.log("horizontalAxis_foreground",horizontalAxis_foreground)
-		console.log("verticalAxis_foreground",verticalAxis_foreground)
+
 		//Draw the dots on the canvas after they're updated
 		function draw() {
       
     		//Load in the current set of dot array for easy handling
     		var dotArray = dotArray2d[currentSetArray[currentApertureNumber]];
-			var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  
+			//var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  // this is for generating foreground dots /// deprecated 
 
 /* 				ctx.fillStyle = 'gray';
 				ctx.beginPath();
@@ -1510,7 +1530,9 @@ jsPsych.plugins["rdk_2"] = (function() {
       
     		//Load in the current set of dot array for easy handling
     		var dotArray = dotArray2d[currentSetArray[currentApertureNumber]];
-			var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  
+			// var dotArray_foreground = dotArray2d_foreground[currentSetArray[currentApertureNumber]];  // this is for generating foreground dots /// deprecated 
+
+
 			//Load in the current set of dot array for easy handling
 			//dotArray = dotArray2d[currentSetArray[currentApertureNumber]]; //Global variable, so the draw function also uses this array
 
@@ -1610,8 +1632,13 @@ jsPsych.plugins["rdk_2"] = (function() {
 				} */
 
 			} //End of for loop
+
+
+			// this is for generating foreground dots /// deprecated 
+			// this is for generating foreground dots /// deprecated 
+			// this is for generating foreground dots /// deprecated 
 			//Loop through the dots one by one and update them accordingly /////// FOR CENTER
-			for (var i = 0; i < nDots_foreground; i++) {
+/* 			for (var i = 0; i < nDots_foreground; i++) {
 				var dot = dotArray_foreground[i]; //Load the current dot into the variable for easy handling
 		
 				//Generate a random value
@@ -1684,7 +1711,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 
 
-			}
+			} */
 		} //End of updateDots function
 
 		//Function to check if dot life has ended
@@ -1756,9 +1783,14 @@ jsPsych.plugins["rdk_2"] = (function() {
 			if (apertureType_foreground == 1 || apertureType_foreground == 2) {
 				if (dot.x > xValueNegative_foreground(dot.y) && dot.x < xValuePositive_foreground(dot.y) && dot.y > yValueNegative_foreground(dot.x) && dot.y < yValuePositive_foreground(dot.x)) {
 					return true;
-				} else {
+				} 
+				if (dot.x > xValueNegative_foreground_2(dot.y) && dot.x < xValuePositive_foreground_2(dot.y) && dot.y > yValueNegative_foreground_2(dot.x) && dot.y < yValuePositive_foreground_2(dot.x)){
+					return true;
+				}
+				else {
 					return false;
 				}
+
 			}
 			//For square and rectangle
 			if (apertureType_foreground == 3 || apertureType_foreground == 4) {
@@ -2130,6 +2162,31 @@ jsPsych.plugins["rdk_2"] = (function() {
 			var y = y - (apertureCenterY_foreground); //Bring it back to the (0,0) center to calculate accurately (ignore the x-coordinate because it is not necessary for calculation)
 			return -horizontalAxis_foreground * Math.sqrt(1 - (Math.pow(y, 2) / Math.pow(verticalAxis_foreground, 2))) + apertureCenterX_foreground; //Calculated the negative x value and added apertureCenterX to recenter it on the screen
 		}
+
+		//Calculate the POSITIVE y value of a point on the edge of the ellipse given an x-value
+		function yValuePositive_foreground_2(x) {
+			var x = x - (apertureCenterX_foreground_2); //Bring it back to the (0,0) center to calculate accurately (ignore the y-coordinate because it is not necessary for calculation)
+			return verticalAxis_foreground_2 * Math.sqrt(1 - (Math.pow(x, 2) / Math.pow(horizontalAxis_foreground_2, 2))) + apertureCenterY_foreground_2; //Calculated the positive y value and added apertureCenterY to recenter it on the screen 
+		}
+
+		//Calculate the NEGATIVE y value of a point on the edge of the ellipse given an x-value
+		function yValueNegative_foreground_2(x) {
+			var x = x - (apertureCenterX_foreground_2); //Bring it back to the (0,0) center to calculate accurately (ignore the y-coordinate because it is not necessary for calculation)
+			return -verticalAxis_foreground_2 * Math.sqrt(1 - (Math.pow(x, 2) / Math.pow(horizontalAxis_foreground_2, 2))) + apertureCenterY_foreground_2; //Calculated the negative y value and added apertureCenterY to recenter it on the screen
+		}
+
+		//Calculate the POSITIVE x value of a point on the edge of the ellipse given a y-value
+		function xValuePositive_foreground_2(y) {
+			var y = y - (apertureCenterY_foreground_2); //Bring it back to the (0,0) center to calculate accurately (ignore the x-coordinate because it is not necessary for calculation)
+			return horizontalAxis_foreground_2 * Math.sqrt(1 - (Math.pow(y, 2) / Math.pow(verticalAxis_foreground_2, 2))) + apertureCenterX_foreground_2; //Calculated the positive x value and added apertureCenterX to recenter it on the screen
+		}
+
+		//Calculate the NEGATIVE x value of a point on the edge of the ellipse given a y-value
+		function xValueNegative_foreground_2(y) {
+			var y = y - (apertureCenterY_foreground_2); //Bring it back to the (0,0) center to calculate accurately (ignore the x-coordinate because it is not necessary for calculation)
+			return -horizontalAxis_foreground_2 * Math.sqrt(1 - (Math.pow(y, 2) / Math.pow(verticalAxis_foreground_2, 2))) + apertureCenterX_foreground_2; //Calculated the negative x value and added apertureCenterX to recenter it on the screen
+		}
+
 
 		//Calculate a random x and y coordinate in the ellipse
 		function resetLocation(dot) {
