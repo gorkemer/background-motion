@@ -157,8 +157,8 @@ for (i=0; i<20; i++){
 
 
 //var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
-var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList_larger, 1); // 21 
-var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList_larger, 1);
+var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 1); // 21 
+var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 1);
 var motionSpeed_list_shuffled = jsPsych.randomization.repeat(motionSpeed_list, 2);
 var direction_list_shuffed_1 = jsPsych.randomization.repeat(direction_list, 3);
 var direction_list_shuffed_2 = jsPsych.randomization.repeat(direction_list, 3);
@@ -237,7 +237,7 @@ var test_block = {
   aperture_height: function(){
     return window.innerHeight;
   },
-  number_of_dots: 1200, //Different parameter for each aperture. Array length must equal number_of_apertures
+  number_of_dots: 2400, //Different parameter for each aperture. Array length must equal number_of_apertures
   aperture_center_x: function(){
     return (window.innerWidth/2)
   }, //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
@@ -247,7 +247,7 @@ var test_block = {
   move_distance: 1, // 12
   coherent_direction: jsPsych.timelineVariable('motionDirection_1'),
   coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
-  dot_life: 120,
+  dot_life: 40,
   foreground_aperture_width:  jsPsych.timelineVariable('width_1'),
   foreground_aperture_height: jsPsych.timelineVariable('height_1'),
   foreground_aperture_width_2: jsPsych.timelineVariable('width_2'),
@@ -269,7 +269,7 @@ var test_block = {
   //foreground_number_of_apertures: 1
   foreground_move_distance: 6, // irrelevant, this is not feeded to the plugin not working
   reinsert_type: 2,
-  motionContrast: 0.5 /// 4 //jsPsych.timelineVariable('motionContrast')
+  motionContrast: 0.3 /// 4 //jsPsych.timelineVariable('motionContrast')
 };
 
 
