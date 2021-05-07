@@ -166,7 +166,8 @@ for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
       motionSpeed           : motionSpeed_list_shuffled[i],
       dotNumber             : dotNumber_list[i],
       motionContrast        : motionContrast_list[i],
-      motionDirection       : motionDirection_list_1[i]
+      motionDirection_1       : motionDirection_list_1[i],
+      motionDirection_2       : motionDirection_list_2[i]
 
     } 
     trial_feature_list.push(aTrial)
@@ -206,10 +207,11 @@ var test_block = {
   dot_color: "white",
   background_color: "gray",
   move_distance: 1, // 12
-  coherent_direction: jsPsych.timelineVariable('motionDirection'),
+  coherent_direction: jsPsych.timelineVariable('motionDirection_1'),
+  coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
   dot_life: 120,
-  foreground_aperture_width: 300,//jsPsych.timelineVariable('width'),
-  foreground_aperture_height: 400, //jsPsych.timelineVariable('height'),
+  foreground_aperture_width: 100,//jsPsych.timelineVariable('width'),
+  foreground_aperture_height: 500, //jsPsych.timelineVariable('height'),
   foreground_number_of_dots: 0,
   foreground_move_distance: 1, //jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
   foreground_aperture_center_x: window.innerWidth/2 - 300, //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//

@@ -85,6 +85,12 @@ jsPsych.plugins["rdk_2"] = (function() {
 		      default: 0,
 		      description: "The direction of coherent motion in degrees"
 		    },
+			coherent_direction_2: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Coherent direction 2 ",
+				default: 0,
+				description: "The direction of coherent motion 2 in degrees"
+			  },
 		    coherence: {
 		      type: jsPsych.plugins.parameterType.FLOAT,
 		      pretty_name: "Coherence",
@@ -463,7 +469,8 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		var apertureCenterX_foreground_2 = trial.foreground_aperture_center_x_2; // The x-coordinate of center of the aperture on the screen, in pixels
 		var apertureCenterY_foreground_2 = trial.foreground_aperture_center_y_2; // The y-coordinate of center of the aperture on the screen, in pixels
-
+		var coherentDirection_2 = trial.coherent_direction_2; //The direction of the coherentDots in degrees. Starts at 3 o'clock and goes counterclockwise (0 == rightwards, 90 == upwards, 180 == leftwards, 270 == downwards), range 0 - 360
+		
 		//var apertureWidth_foreground = 300; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
 		//var apertureHeight_foreground = 300; 
 		//var nDots_foreground = 100;
@@ -658,6 +665,8 @@ jsPsych.plugins["rdk_2"] = (function() {
 		var coherentJumpSizeY;
 		var coherentJumpSizeX_foreground;
 		var coherentJumpSizeY_foreground;
+		var coherentJumpSizeX_2;
+		var coherentJumpsizeY_2;
 
 		//Calculate the number of coherent, opposite coherent, and incoherent dots
 		var nCoherentDots;
@@ -1010,6 +1019,11 @@ jsPsych.plugins["rdk_2"] = (function() {
 			//Calculate the x and y jump sizes for coherent dots
 			coherentJumpSizeX_foreground = calculateCoherentJumpSizeX_foreground(coherentDirection);
 			coherentJumpSizeY_foreground = calculateCoherentJumpSizeY_foreground(coherentDirection);
+
+			/// CALCULATE FOR THE SECOND SHAPE ///
+			//Calculate the x and y jump sizes for coherent dots
+			coherentJumpSizeX_2 = calculateCoherentJumpSizeX(coherentDirection_2);
+			coherentJumpSizeY_2 = calculateCoherentJumpSizeY(coherentDirection_2);
 
 			//Initialize the aperture parameters
 			initializeApertureDimensions();
@@ -1760,19 +1774,40 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		}
 
+		function insOfSecondShape(dot){
+			//For circle and ellipse
+			if (apertureType_foreground == 1 || apertureType_foreground == 2) {
+				if (dot.x > xValueNegative_foreground_2(dot.y) && dot.x < xValuePositive_foreground_2(dot.y) && dot.y > yValueNegative_foreground_2(dot.x) && dot.y < yValuePositive_foreground_2(dot.x)){
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			//For square and rectangle
+			if (apertureType_foreground == 3 || apertureType_foreground == 4) {
+				if (dot.x > (apertureCenterX_foreground) - horizontalAxis_foreground || dot.x < (apertureCenterX_foreground) + horizontalAxis_foreground || dot.y > (apertureCenterY_foreground) - verticalAxis_foreground || dot.y < (apertureCenterY_foreground) + verticalAxis_foreground) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+		}
+
 		//Set the vx and vy for the dot to the coherent jump sizes of the X and Y directions
 		function setvxvy(dot) {
 
-/* 			if (insOfForeground(dot)){
-				dot.vx = coherentJumpSizeX_foreground;
-				dot.vy = coherentJumpSizeY_foreground;
+			if (insOfSecondShape(dot)){
+				dot.vx = coherentJumpSizeX_2;
+				dot.vy = coherentJumpSizeY_2;
 			}
-			if (!(insOfForeground(dot))){
+			else if (!(insOfSecondShape(dot))){
 				dot.vx = coherentJumpSizeX;
 				dot.vy = coherentJumpSizeY;
-			} */
-			dot.vx = coherentJumpSizeX;
-			dot.vy = coherentJumpSizeY;
+			}
+/* 			dot.vx = coherentJumpSizeX;
+			dot.vy = coherentJumpSizeY; */
 			return dot;
 		}
 
@@ -1830,24 +1865,9 @@ jsPsych.plugins["rdk_2"] = (function() {
 				dot.latestXMove = dot.vx2;
 				dot.latestYMove = dot.vy2;
 			}
-
-/* 			dot.x += dot.vx;
-			dot.y += dot.vy;
-			dot.latestXMove = dot.vx;
-			dot.latestYMove = dot.vy; */
 			return dot;
 		}
 
-
-		//Updates the x and y coordinates by moving it in the x and y coherent directions
-		function constantDirectionUpdate_foreground(dot) {
-
-			dot.x += dot.vx;
-			dot.y += dot.vy;
-			dot.latestXMove = dot.vx;
-			dot.latestYMove = dot.vy;
-			return dot;
-		}
 
 	 	//Updates the x and y coordinates by moving it in the opposite x and y coherent directions
 		function oppositeDirectionUpdate(dot) {
@@ -1899,25 +1919,6 @@ jsPsych.plugins["rdk_2"] = (function() {
 				dot.latestXMove = dot.vx2;
 				dot.latestYMove = dot.vy2;
 			}
-
-
-			return dot;
-		}
-
-		function randomDirectionUpdate_test(dot) {
-				dot.x += dot.vx2;
-				dot.y += dot.vy2;
-				dot.latestXMove = dot.vx2;
-				dot.latestYMove = dot.vy2;
-			return dot;
-		}
-
-		function randomDirectionUpdate_foreground(dot) {
-			//var motionConstrast = 0.5
-			dot.x += dot.vx2/1;
-			dot.y += dot.vy2/1;
-			dot.latestXMove = dot.vx2/1;
-			dot.latestYMove = dot.vy2/1;
 			return dot;
 		}
 
