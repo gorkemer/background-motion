@@ -196,8 +196,8 @@ for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
       motionSpeed           : motionSpeed_list_shuffled[i],
       dotNumber             : dotNumber_list[i],
       motionContrast        : motionContrast_list[i],
-      motionDirection_1       : motionDirection_list_1[i],
-      motionDirection_2       : motionDirection_list_2[i]
+      motionDirection_1       : direction_list_shuffed_1[i],
+      motionDirection_2       : direction_list_shuffed_2[i]
 
     } 
     trial_feature_list.push(aTrial)
@@ -229,7 +229,7 @@ var test_block = {
   type: "rdk_2",  
   aperture_type: 4,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 1, //This needs to be set if more than one aperture
-  trial_duration: 500,
+  trial_duration: 5000,
   RDK_type: 3, //Applied to all apertures if only one value
   aperture_width: function(){
     return window.innerWidth;

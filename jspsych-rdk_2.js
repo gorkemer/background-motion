@@ -1598,6 +1598,17 @@ jsPsych.plugins["rdk_2"] = (function() {
 				//Increment the life count
 				dot.lifeCount++;
 
+
+				// check if dots are in the second shape area or not
+				if (insOfSecondShape(dot)){
+					dot.vx = coherentJumpSizeX_2;
+					dot.vy = coherentJumpSizeY_2;
+				}
+				else if (!(insOfSecondShape(dot))){
+					dot.vx = coherentJumpSizeX;
+					dot.vy = coherentJumpSizeY;
+				}
+
 				//Check if out of bounds or if life ended
 				if (lifeEnded(dot)) {
 					dot = resetLocation(dot);
