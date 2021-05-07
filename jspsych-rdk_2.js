@@ -588,7 +588,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		canvas.style.margin = 0;
 		canvas.style.padding = 0;
 		// use absolute positioning in top left corner to get rid of scroll bars
-		canvas.style.position = 'absolute';
+		//canvas.style.position = 'absolute';
 		canvas.style.display = 'block';
 		canvas.style.top = 0;
 		canvas.style.left = 0;		
