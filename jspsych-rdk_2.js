@@ -1578,6 +1578,16 @@ jsPsych.plugins["rdk_2"] = (function() {
 				//Increment the life count
 				dot.lifeCount++;
 
+
+				
+				if (insOfSecondShape(dot)){
+					dot.vx = coherentJumpSizeX_2;
+					dot.vy = coherentJumpSizeY_2;
+				}
+				else if (!(insOfSecondShape(dot))){
+					dot.vx = coherentJumpSizeX;
+					dot.vy = coherentJumpSizeY;
+				}
 				//Check if out of bounds or if life ended
 				if (lifeEnded(dot)) {
 					dot = resetLocation(dot);
@@ -1852,7 +1862,15 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//Updates the x and y coordinates by moving it in the x and y coherent directions
 		function constantDirectionUpdate(dot) {
-
+/* 
+			if (insOfSecondShape(dot)){
+				dot.vx = coherentJumpSizeX_2;
+				dot.vy = coherentJumpSizeY_2;
+			}
+			else if (!(insOfSecondShape(dot))){
+				dot.vx = coherentJumpSizeX;
+				dot.vy = coherentJumpSizeY;
+			} */
 			if (insOfForeground(dot)){
 				dot.x += dot.vx/motionContrast;
 				dot.y += dot.vy/motionContrast;
@@ -1865,6 +1883,9 @@ jsPsych.plugins["rdk_2"] = (function() {
 				dot.latestXMove = dot.vx2;
 				dot.latestYMove = dot.vy2;
 			}
+
+
+
 			return dot;
 		}
 
