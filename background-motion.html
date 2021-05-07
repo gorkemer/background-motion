@@ -153,8 +153,10 @@ for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
   var motionDirectionPair_discrete = [direction_list_shuffed_1[i],direction_list_shuffed_2[i]]
 
   aTrial = {
-      width                 : ellipsesFinal_width, 
-      height                : ellipsesFinal_height,
+      width_1                 : firstCloud_width, 
+      height_1                : firstCloud_height,
+      width_2                 : secondCloud_width, 
+      height_2                : secondCloud_height,
       //apertureCenterX       : shapeX, // right side
       //apertureCenterY       : shapeY, // top & bottom
       //boxType               : boxType_list_shuffled[i],
@@ -177,13 +179,15 @@ var virtual_chinrest_trial = {
 type: 'virtual-chinrest',
 resize_units: "deg",
 blindspot_reps: 1,
-pixels_per_unit: 190,
+pixels_per_unit: 70,
 };
 
 var fullscreen_trial = {
   type: 'fullscreen',
   fullscreen_mode: true
 }
+
+
 /*set up instructions block*/
 var instructions = {
   type: "instructions",
@@ -197,12 +201,14 @@ var test_block = {
   type: "rdk_2",  
   aperture_type: 4,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 1, //This needs to be set if more than one aperture
-  trial_duration: 500,
+  trial_duration: 1500,
   RDK_type: 3, //Applied to all apertures if only one value
   aperture_width: 1200,//window.innerWidth/2, 
   aperture_height: 1200, //window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
   number_of_dots: 1200, //Different parameter for each aperture. Array length must equal number_of_apertures
-  aperture_center_x: (window.innerWidth/2), //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
+  aperture_center_x: function(){
+    return (window.innerWidth/2)
+  }, //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
   coherence: 1,
   dot_color: "white",
   background_color: "gray",
@@ -210,14 +216,24 @@ var test_block = {
   coherent_direction: jsPsych.timelineVariable('motionDirection_1'),
   coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
   dot_life: 120,
-  foreground_aperture_width: 100,//jsPsych.timelineVariable('width'),
-  foreground_aperture_height: 500, //jsPsych.timelineVariable('height'),
+  foreground_aperture_width: jsPsych.timelineVariable('width_1'),
+  foreground_aperture_height: jsPsych.timelineVariable('height_1'),
+  foreground_aperture_width_2:jsPsych.timelineVariable('width_2'),
+  foreground_aperture_height_2: jsPsych.timelineVariable('height_2'),
   foreground_number_of_dots: 0,
   foreground_move_distance: 1, //jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
-  foreground_aperture_center_x: window.innerWidth/2 - 300, //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
-  foreground_aperture_center_y: window.innerHeight/2,
-  foreground_aperture_center_x_2: window.innerWidth/2 + 300,
-  foreground_aperture_center_y_2: window.innerHeight/2,
+  foreground_aperture_center_x: function(){
+        return window.innerWidth/2 - 300 //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+      return window.innerHeight/2;
+  },
+  foreground_aperture_center_x_2: function(){
+      return window.innerWidth/2 + 300;
+  },
+  foreground_aperture_center_y_2: function(){
+      return window.innerHeight/2;
+  },
   //foreground_number_of_apertures: 1
   foreground_move_distance: 6, // irrelevant, this is not feeded to the plugin not working
   reinsert_type: 2,
@@ -235,6 +251,9 @@ var test_block = {
   };
 
   //timeline.push(fullscreen_trial)
+  timeline.push(instructions);
+  timeline.push(fullscreen_trial);
+  timeline.push(virtual_chinrest_trial);
   timeline.push(instructions);
   timeline.push(testProcedure);
 

@@ -277,6 +277,18 @@ jsPsych.plugins["rdk_2"] = (function() {
 				default: 400,
 				description: "The height of the aperture in pixels"
 			},
+			foreground_aperture_width_2: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Foreground Aperture width for the 2nd shape",
+				default: 600,
+				description: "The width of the aperture in pixels"
+			},
+			foreground_aperture_height_2: {
+				type: jsPsych.plugins.parameterType.INT,
+				pretty_name: "Foreground Aperture height for the 2nd shape",
+				default: 400,
+				description: "The height of the aperture in pixels"
+			},
 			foreground_dot_color: {
 				type: jsPsych.plugins.parameterType.STRING,
 				pretty_name: "Foreground Dot color",
@@ -441,8 +453,6 @@ jsPsych.plugins["rdk_2"] = (function() {
 		var backgroundColor = trial.background_color; //Color of the background
 		var apertureCenterX = trial.aperture_center_x; // The x-coordinate of center of the aperture on the screen, in pixels
 		var apertureCenterY = trial.aperture_center_y; // The y-coordinate of center of the aperture on the screen, in pixels
-		var canvasWidth_new = trial.canvas_width;
-		var canvasHeight_new = trial.canvas_height;
 
 		if (apertureCenterX[0] == apertureCenterX[1]){
 			apertureConfiguration = 0
@@ -463,6 +473,10 @@ jsPsych.plugins["rdk_2"] = (function() {
 		var moveDistance_foreground = trial.foreground_move_distance; //How many pixels the dots move per frame
 		var apertureWidth_foreground = trial.foreground_aperture_width; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
 		var apertureHeight_foreground = trial.foreground_aperture_height; //How many pixels high the aperture is. Only relevant for ellipse and rectangle apertures. For circle and square, this is ignored.
+		var apertureWidth_foreground_2 = trial.foreground_aperture_width_2; // How many pixels wide the aperture is. For square aperture this will be the both height and width. For circle, this will be the diameter.
+		var apertureHeight_foreground_2 = trial.foreground_aperture_height_2; //How many pixels high the aperture is. Only relevant for ellipse and rectangle apertures. For circle and square, this is ignored.
+		
+		
 		//var dotColor_foreground = trial.foreground_dot_color; //Color of the dots
 		var apertureCenterX_foreground = trial.foreground_aperture_center_x; // The x-coordinate of center of the aperture on the screen, in pixels
 		var apertureCenterY_foreground = trial.foreground_aperture_center_y; // The y-coordinate of center of the aperture on the screen, in pixels
@@ -1087,15 +1101,15 @@ jsPsych.plugins["rdk_2"] = (function() {
 			//For circle and square
 			if (apertureType_foreground == 1 || apertureType_foreground == 3) {
 				horizontalAxis_foreground = verticalAxis = apertureWidth_foreground/2;
-				horizontalAxis_foreground_2 = apertureWidth_foreground/2;
+				horizontalAxis_foreground_2 = apertureWidth_foreground_2/2;
 			}
 			//For ellipse and rectangle
 			else if (apertureType_foreground == 2 || apertureType_foreground == 4) {
 				//center
 				horizontalAxis_foreground = apertureWidth_foreground / 2;
 				verticalAxis_foreground = apertureHeight_foreground / 2;
-				horizontalAxis_foreground_2 = apertureWidth_foreground / 2;
-				verticalAxis_foreground_2 = apertureHeight_foreground / 2;
+				horizontalAxis_foreground_2 = apertureWidth_foreground_2 / 2;
+				verticalAxis_foreground_2 = apertureHeight_foreground_2 / 2;
 			}
 		}
 
@@ -1426,11 +1440,17 @@ jsPsych.plugins["rdk_2"] = (function() {
 		    //if(fixationCross === true){
 			if(fixationCross === true){
 				//Draw the ellipse
-/* 				ctx.fillStyle = 'gray';
+				ctx.fillStyle = 'green';
 				ctx.beginPath();
 				ctx.ellipse(apertureCenterX_foreground,apertureCenterY_foreground, horizontalAxis_foreground+3, verticalAxis_foreground+3, Math.PI, 0, 2 * Math.PI);
 				//ctx.stroke();
-				ctx.fill(); */
+				ctx.fill();
+
+				ctx.fillStyle = 'blue';
+				ctx.beginPath();
+				ctx.ellipse(apertureCenterX_foreground_2,apertureCenterY_foreground_2, horizontalAxis_foreground_2+3, verticalAxis_foreground_2+3, Math.PI, 0, 2 * Math.PI);
+				//ctx.stroke();
+				ctx.fill();
 
 				ctx.beginPath();
 		    	ctx.lineWidth = fixationCrossThickness;
