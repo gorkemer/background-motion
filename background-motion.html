@@ -70,6 +70,34 @@ var ellipseRatioList = [
 [218.18,	75.08],
 ];
 
+
+var ellipseRatioList_larger = [
+[150.15,	436.3590168],
+[158.382,	413.7066923],
+[167.115,	392.3469438],
+[176.2761,	371.9772682],
+[185.9175,	352.6235975],
+[196.08,	334.2662576],
+[206.8305,	316.9143958],
+[218.16,	300.4489285],
+[230.1375,	284.8728614],
+[242.76,	270.0902899],
+[256.0635,	256.0635],
+[270.0902899,	242.76],
+[284.8728614,	230.1375],
+[300.4489285,	218.16],
+[316.9143958,	206.8305],
+[334.2662576,	196.08],
+[352.6235975,	185.9175],
+[371.9772682,	176.2761],
+[392.3469438,	167.115],
+[413.7066923,	158.382],
+[436.3590168,	150.15],
+];
+
+
+
+
 //generating random numbers for motion speed
 function generateRandomNumber_motionSpeed() {
       var min = 0.50,
@@ -129,8 +157,8 @@ for (i=0; i<20; i++){
 
 
 //var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
-var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 1); // 21 
-var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 1);
+var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList_larger, 1); // 21 
+var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList_larger, 1);
 var motionSpeed_list_shuffled = jsPsych.randomization.repeat(motionSpeed_list, 2);
 var direction_list_shuffed_1 = jsPsych.randomization.repeat(direction_list, 3);
 var direction_list_shuffed_2 = jsPsych.randomization.repeat(direction_list, 3);
@@ -201,10 +229,14 @@ var test_block = {
   type: "rdk_2",  
   aperture_type: 4,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 1, //This needs to be set if more than one aperture
-  trial_duration: 1500,
+  trial_duration: 500,
   RDK_type: 3, //Applied to all apertures if only one value
-  aperture_width: 1200,//window.innerWidth/2, 
-  aperture_height: 1200, //window.innerHeight, //window.innerHeight,//Applied to all apertures if only one value
+  aperture_width: function(){
+    return window.innerWidth;
+  },
+  aperture_height: function(){
+    return window.innerHeight;
+  },
   number_of_dots: 1200, //Different parameter for each aperture. Array length must equal number_of_apertures
   aperture_center_x: function(){
     return (window.innerWidth/2)
@@ -216,20 +248,20 @@ var test_block = {
   coherent_direction: jsPsych.timelineVariable('motionDirection_1'),
   coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
   dot_life: 120,
-  foreground_aperture_width: jsPsych.timelineVariable('width_1'),
+  foreground_aperture_width:  jsPsych.timelineVariable('width_1'),
   foreground_aperture_height: jsPsych.timelineVariable('height_1'),
-  foreground_aperture_width_2:jsPsych.timelineVariable('width_2'),
+  foreground_aperture_width_2: jsPsych.timelineVariable('width_2'),
   foreground_aperture_height_2: jsPsych.timelineVariable('height_2'),
   foreground_number_of_dots: 0,
   foreground_move_distance: 1, //jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
   foreground_aperture_center_x: function(){
-        return window.innerWidth/2 - 300 //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+        return window.innerWidth/2 - window.innerWidth/4 //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
     }, 
   foreground_aperture_center_y: function(){
       return window.innerHeight/2;
   },
   foreground_aperture_center_x_2: function(){
-      return window.innerWidth/2 + 300;
+      return window.innerWidth/2 + window.innerWidth/4;
   },
   foreground_aperture_center_y_2: function(){
       return window.innerHeight/2;
@@ -237,7 +269,7 @@ var test_block = {
   //foreground_number_of_apertures: 1
   foreground_move_distance: 6, // irrelevant, this is not feeded to the plugin not working
   reinsert_type: 2,
-  motionContrast: 1 /// 4 //jsPsych.timelineVariable('motionContrast')
+  motionContrast: 0.5 /// 4 //jsPsych.timelineVariable('motionContrast')
 };
 
 
@@ -253,7 +285,7 @@ var test_block = {
   //timeline.push(fullscreen_trial)
   timeline.push(instructions);
   timeline.push(fullscreen_trial);
-  timeline.push(virtual_chinrest_trial);
+  //timeline.push(virtual_chinrest_trial);
   timeline.push(instructions);
   timeline.push(testProcedure);
 

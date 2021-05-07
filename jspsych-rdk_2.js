@@ -1440,7 +1440,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 		    //if(fixationCross === true){
 			if(fixationCross === true){
 				//Draw the ellipse
-				ctx.fillStyle = 'green';
+/* 				ctx.fillStyle = 'green';
 				ctx.beginPath();
 				ctx.ellipse(apertureCenterX_foreground,apertureCenterY_foreground, horizontalAxis_foreground+3, verticalAxis_foreground+3, Math.PI, 0, 2 * Math.PI);
 				//ctx.stroke();
@@ -1450,7 +1450,7 @@ jsPsych.plugins["rdk_2"] = (function() {
 				ctx.beginPath();
 				ctx.ellipse(apertureCenterX_foreground_2,apertureCenterY_foreground_2, horizontalAxis_foreground_2+3, verticalAxis_foreground_2+3, Math.PI, 0, 2 * Math.PI);
 				//ctx.stroke();
-				ctx.fill();
+				ctx.fill(); */
 
 				ctx.beginPath();
 		    	ctx.lineWidth = fixationCrossThickness;
@@ -1839,7 +1839,6 @@ jsPsych.plugins["rdk_2"] = (function() {
 
 		//Set the vx2 and vy2 based on a random angle
 		function setvx2vy2(dot) {
-			console.log("buraya girmemesi lazim")
 /* 			if (insOfForeground(dot)){
 				//Generate a random angle of movement
 				var theta = randomNumberBetween(-Math.PI, Math.PI);
