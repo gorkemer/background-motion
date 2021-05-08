@@ -823,7 +823,18 @@ jsPsych.plugins["rdk_2"] = (function() {
 				"border_color": trial.border_color,
 				"canvas_width": canvasWidth,
 				"canvas_height": canvasHeight,
-				"aperture_configuration": apertureConfiguration
+				"aperture_configuration": apertureConfiguration,
+
+				//// this is for background-motion parameters
+				"foreground_aperture_center_x": trial.foreground_aperture_center_x,
+				"foreground_aperture_center_y": trial.foreground_aperture_center_y,
+				"foreground_aperture_center_x_2": trial.foreground_aperture_center_x_2,
+				"foreground_aperture_center_y_2": trial.foreground_aperture_center_y_2,
+				"foreground_aperture_width": trial.foreground_aperture_width,
+				"foreground_aperture_height": trial.foreground_aperture_height,
+				"foreground_aperture_width_2": trial.foreground_aperture_width_2,
+				"foreground_aperture_height_2": trial.foreground_aperture_height_2,
+				"motion_contrast": trial.motion_contrast
 			}
 			
 			//Remove the canvas as the child of the display_element element

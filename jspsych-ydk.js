@@ -1321,17 +1321,12 @@ jsPsych.plugins["ydk"] = (function() {
 				"canvas_height": canvasHeight,
 				"finalSlider_value": response.response, 
 
-				"ellipse1_width"				:jsPsych.data.get().last(3).values()[0].ellipse1_width,
+/* 				"ellipse1_width"				:jsPsych.data.get().last(3).values()[0].ellipse1_width,
 				"ellipse2_width"				:jsPsych.data.get().last(3).values()[0].ellipse2_width,
 				"ellipse1_height"				:jsPsych.data.get().last(3).values()[0].ellipse1_height, //Applied to all apertures if only one value
 				"ellipse2_height"				:jsPsych.data.get().last(3).values()[0].ellipse2_height,
 				"ellipse1_AR"					:(jsPsych.data.get().last(3).values()[0].ellipse1_height)/(jsPsych.data.get().last(3).values()[0].ellipse1_width),
 				"ellipse2_AR"					:(jsPsych.data.get().last(3).values()[0].ellipse2_height)/(jsPsych.data.get().last(3).values()[0].ellipse2_width),
-				"boxType_number"				:jsPsych.data.get().last(3).values()[0].boxType_number,
-				"aperture1_center_x"			:jsPsych.data.get().last(3).values()[0].aperture_center_x[0],
-				"aperture1_center_y"			:jsPsych.data.get().last(3).values()[0].aperture_center_y[0],
-				"aperture2_center_x"			:jsPsych.data.get().last(3).values()[0].aperture_center_x[1],
-				"aperture2_center_y"			:jsPsych.data.get().last(3).values()[0].aperture_center_y[1],
 				"aperture_center_height"		:jsPsych.data.get().last(3).values()[0].aperture_center_height,
 				"aperture_center_width"			:jsPsych.data.get().last(3).values()[0].aperture_center_width,
 				"aperture_configuration"		:jsPsych.data.get().last(3).values()[0].aperture_configuration,
@@ -1351,13 +1346,13 @@ jsPsych.plugins["ydk"] = (function() {
 				"trial_number_of_frames"		:jsPsych.data.get().last(3).values()[0].number_of_frames,
 				"fixation_duration"				:jsPsych.data.get().last(5).values()[1].fixationDuration,
 				"ellipse1_move_direction"		:jsPsych.data.get().last(3).values()[0].moving_direction[0],
-				"ellipse2_move_direction"		:jsPsych.data.get().last(3).values()[0].moving_direction[1],
+				"ellipse2_move_direction"		:jsPsych.data.get().last(3).values()[0].moving_direction[1], */
 
-				"selected_ellipse_logAR"		:selectedAperture_logAR,
+/* 				"selected_ellipse_logAR"		:selectedAperture_logAR,
 				"cued_ellipse_logAR"			:cuedEllipse_logAR,
 				"uncued_ellipse_logAR"			:uncuedEllipse_logAR,
 
-				"coherence_level"				:jsPsych.data.get().last(3).values()[0].coherence,
+				"coherence_level"				:jsPsych.data.get().last(3).values()[0].coherence, */
 
 			}
 			
