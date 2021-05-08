@@ -262,7 +262,7 @@ var test_block = {
   move_distance: 1, // 12
   coherent_direction: jsPsych.timelineVariable('motionDirection_1'),
   coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
-  dot_life: 120,
+  dot_life: 25,
   foreground_aperture_width:  jsPsych.timelineVariable('width_1'),
   foreground_aperture_height: jsPsych.timelineVariable('height_1'),
   foreground_aperture_width_2: jsPsych.timelineVariable('width_2'),
@@ -271,45 +271,46 @@ var test_block = {
   foreground_move_distance: 1, //jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
   foreground_aperture_center_x: function(){
       if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 3){
-        selectedShapeLocation = window.innerWidth/2 - window.innerWidth/4
+        selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
       }
       else if (jsPsych.timelineVariable('shapeLocationNumber') == 4){
-        selectedShapeLocation = window.innerWidth/2 + window.innerWidth/4
+        selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
       }
       return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
     }, 
   foreground_aperture_center_y: function(){
     if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 3 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
-        selectedShapeLocation = window.innerHeight/2 - window.innerHeight/4
+        selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
       }
       else if (jsPsych.timelineVariable('shapeLocationNumber') == 2){
-        selectedShapeLocation = window.innerHeight/2 + window.innerHeight/4
+        selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
       }
       return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   },
   foreground_aperture_center_x_2: function(){
     if (jsPsych.timelineVariable('shapeLocationNumber') == 3){
-      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/4
+      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
       }
       else if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
-        selectedShapeLocation = window.innerWidth/2 + window.innerWidth/4
+        selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
       }
       return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   },
   foreground_aperture_center_y_2: function(){
     if (jsPsych.timelineVariable('shapeLocationNumber') == 1){
-        selectedShapeLocation = window.innerHeight/2 - window.innerHeight/4
+        selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
       }
       else if (jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 3 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
-        selectedShapeLocation = window.innerHeight/2 + window.innerHeight/4
+        selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
       }
       return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   },
   //foreground_number_of_apertures: 1
   foreground_move_distance: 6, // irrelevant, this is not feeded to the plugin not working
   reinsert_type: 2,
-  motionContrast: 0.3, /// 4 //jsPsych.timelineVariable('motionContrast'),
-  post_trial_gap: 350
+  motionContrast: 0.4, /// 4 //jsPsych.timelineVariable('motionContrast'),
+  post_trial_gap: 350,
+  dot_radius: 1.2
 };
 
 var ydk_block = {
@@ -353,7 +354,8 @@ var ydk_block = {
   },
   on_finish: function() {
     count++;
-  }
+  },
+  //post_trial_gap: 350,
 }
 /*       if (count == boxType_list_shuffled.length){
         count = 0; // resetting count
@@ -464,7 +466,11 @@ var blankTrial = {
   aperture_center_x: 0,
   aperture_center_y: 0,
   box_type:0,
-  box_sizes:0
+  box_sizes:0,
+  foreground_aperture_center_x:0,
+  foreground_aperture_center_y:0,
+  foreground_aperture_center_x_2:0,
+  foreground_aperture_center_y_2:0,
 };
 
 var cueTrial = {
@@ -524,6 +530,11 @@ var cueTrial = {
     }, */
 };
 
+var redirect_trial = {
+	type: 'html-keyboard-response',
+	stimulus: '<p>You have completed the experiment.</p><p><a href="url-to-redirect-to">Please click here to return to SONA to get the chits. Yay! Thank you again...</a></p>',
+	choices: jsPsych.NO_KEYS
+}
 
 function getDotFieldLocations(widthX, heightY){
 
@@ -577,7 +588,7 @@ if (widthX==1 && heightY == 1){
 
 /* defining test timeline */
   var testProcedure= {
-    timeline: [test_block,cueTrial, ydk_block], //responseFeedback, test_block_response, ydk_block
+    timeline: [test_block,cueTrial, ydk_block, blankTrial], //responseFeedback, test_block_response, ydk_block
     timeline_variables: trial_feature_list,
   };
 
@@ -587,7 +598,7 @@ if (widthX==1 && heightY == 1){
   //timeline.push(virtual_chinrest_trial);
   timeline.push(instructions);
   timeline.push(testProcedure);
-
+  timeline.push(redirect_trial);
   /*start experiment*/
   jsPsych.init({
       timeline: timeline,

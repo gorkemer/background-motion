@@ -342,6 +342,11 @@ jsPsych.plugins["ydk"] = (function() {
 		trial.border = assignParameterValue(trial.border, false);
 		trial.border_thickness = assignParameterValue(trial.border_thickness, 1);
 		trial.border_color = assignParameterValue(trial.border_color, "black");
+
+		trial.foreground_aperture_center_x =  assignParameterValue(trial.foreground_aperture_center_x, window.innerWidth/2);
+		trial.foreground_aperture_center_y =  assignParameterValue(trial.foreground_aperture_center_y, window.innerWidth/2);
+		trial.foreground_aperture_center_x_2 =  assignParameterValue(trial.foreground_aperture_center_x_2, window.innerWidth/2);
+		trial.foreground_aperture_center_y_2 =  assignParameterValue(trial.foreground_aperture_center_y_2, window.innerWidth/2);
 		
 		//For square and circle, set the aperture height == aperture width
 		if (apertureType == 1 || apertureType == 3) {
