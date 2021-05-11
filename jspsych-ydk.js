@@ -677,12 +677,14 @@ jsPsych.plugins["ydk"] = (function() {
 
 
 		/// identifiying log AR of ellipses ///
-		ellipse1_height = jsPsych.data.get().last(3).values()[0].ellipse1_height
-		ellipse1_width = jsPsych.data.get().last(3).values()[0].ellipse1_width
-		ellipse2_height = jsPsych.data.get().last(3).values()[0].ellipse2_height
-		ellipse2_width = jsPsych.data.get().last(3).values()[0].ellipse2_width
+		ellipse1_height = jsPsych.data.get().last(3).values()[1].foreground_aperture_height
+		ellipse1_width = jsPsych.data.get().last(3).values()[1].foreground_aperture_width
+		ellipse2_height =  jsPsych.data.get().last(3).values()[1].foreground_aperture_height_2
+		ellipse2_width = jsPsych.data.get().last(3).values()[1].foreground_aperture_width_2
 
 		if (jsPsych.data.get().last(1).values()[0].cue_type == 1) {
+			cuedMotionDirection = jsPsych.data.get().last(3).values()[1].coherent_direction_1
+			unCuedMotionDirection = jsPsych.data.get().last(3).values()[1].coherent_direction_2
 			//cued ellipse is 1
 			if (ellipse1_height == 75.08 & ellipse1_width == 218.18){
 				cuedEllipse_logAR = -0.463318662
@@ -812,9 +814,12 @@ jsPsych.plugins["ydk"] = (function() {
 			if (ellipse2_height == 218.18 & ellipse2_width == 75.08){
 				uncuedEllipse_logAR = 0.463317702
 			}
+			
 		}
 
 		if (jsPsych.data.get().last(1).values()[0].cue_type == 2) {
+			cuedMotionDirection = jsPsych.data.get().last(3).values()[1].coherent_direction_2
+			unCuedMotionDirection = jsPsych.data.get().last(3).values()[1].coherent_direction_1
 			if (ellipse2_height == 75.08 & ellipse2_width == 218.18){
 				cuedEllipse_logAR = -0.463318662
 			}
@@ -1326,38 +1331,37 @@ jsPsych.plugins["ydk"] = (function() {
 				"canvas_height": canvasHeight,
 				"finalSlider_value": response.response, 
 
-/* 				"ellipse1_width"				:jsPsych.data.get().last(3).values()[0].ellipse1_width,
-				"ellipse2_width"				:jsPsych.data.get().last(3).values()[0].ellipse2_width,
-				"ellipse1_height"				:jsPsych.data.get().last(3).values()[0].ellipse1_height, //Applied to all apertures if only one value
-				"ellipse2_height"				:jsPsych.data.get().last(3).values()[0].ellipse2_height,
-				"ellipse1_AR"					:(jsPsych.data.get().last(3).values()[0].ellipse1_height)/(jsPsych.data.get().last(3).values()[0].ellipse1_width),
-				"ellipse2_AR"					:(jsPsych.data.get().last(3).values()[0].ellipse2_height)/(jsPsych.data.get().last(3).values()[0].ellipse2_width),
-				"aperture_center_height"		:jsPsych.data.get().last(3).values()[0].aperture_center_height,
-				"aperture_center_width"			:jsPsych.data.get().last(3).values()[0].aperture_center_width,
-				"aperture_configuration"		:jsPsych.data.get().last(3).values()[0].aperture_configuration,
-				"canvas_height" 				:jsPsych.data.get().last(3).values()[0].canvas_height,
-				"canvas_width" 					:jsPsych.data.get().last(3).values()[0].canvas_width,
+ 				"ellipse1_width"				:jsPsych.data.get().last(3).values()[1].foreground_aperture_width,
+				"ellipse2_width"				:jsPsych.data.get().last(3).values()[1].foreground_aperture_width_2,
+				"ellipse1_height"				:jsPsych.data.get().last(3).values()[1].foreground_aperture_height, //Applied to all apertures if only one value
+				"ellipse2_height"				:jsPsych.data.get().last(3).values()[1].foreground_aperture_height_2,
+				"ellipse1_AR"					:(jsPsych.data.get().last(3).values()[1].foreground_aperture_height)/(jsPsych.data.get().last(3).values()[1].foreground_aperture_width),
+				"ellipse2_AR"					:(jsPsych.data.get().last(3).values()[1].foreground_aperture_height_2)/(jsPsych.data.get().last(3).values()[1].foreground_aperture_width_2),
+				"shapeOrganizationNumber"		:jsPsych.data.get().last(3).values()[1].selectedShapeLocation,
+				"backgroundDotFieldWidth" 		:jsPsych.data.get().last(3).values()[1].aperture_width,
+				"backgroundDotFieldHeight" 		:jsPsych.data.get().last(3).values()[1].aperture_height,
 				"cueArrow_number"				:cuedShown,
 				"cueArrow_html"					:jsPsych.data.get().last(1).values()[0].stimulus,
 				"cueType"						:jsPsych.data.get().last(1).values()[0].cue_type,
-				"trial_num"						:jsPsych.data.get().last(3).values()[0].trial_number,
-				"box_start_loc_x"				:jsPsych.data.get().last(3).values()[0].box_type[0][0],
-				"box_start_loc_y"				:jsPsych.data.get().last(3).values()[0].box_type[1][0],
-				"round_number"					:jsPsych.data.get().last(3).values()[0].round_number,
-				"boxType_number"				:jsPsych.data.get().last(3).values()[0].boxType_number,
-				"dotCloud_number"				:jsPsych.data.get().last(3).values()[0].dotCloud_number,
+				"trial_num"						:jsPsych.data.get().last(3).values()[1].trial_number,
+				//"round_number"					:jsPsych.data.get().last(3).values()[0].round_number,
+				//"boxType_number"				:jsPsych.data.get().last(3).values()[0].boxType_number,
+				//"dotCloud_number"				:jsPsych.data.get().last(3).values()[0].dotCloud_number,
 				"slider_start_value"			:trial.slider_start,
-				"trial_frame_rate"				:jsPsych.data.get().last(3).values()[0].frame_rate,
-				"trial_number_of_frames"		:jsPsych.data.get().last(3).values()[0].number_of_frames,
-				"fixation_duration"				:jsPsych.data.get().last(5).values()[1].fixationDuration,
-				"ellipse1_move_direction"		:jsPsych.data.get().last(3).values()[0].moving_direction[0],
-				"ellipse2_move_direction"		:jsPsych.data.get().last(3).values()[0].moving_direction[1], */
+				"trial_frame_rate"				:jsPsych.data.get().last(3).values()[1].frame_rate,
+				"trial_number_of_frames"		:jsPsych.data.get().last(3).values()[1].number_of_frames,
+				"fix_dur"				:jsPsych.data.get().last(3).values()[1].postTrial_gap,
+				"ellipse1_move_direction"		:jsPsych.data.get().last(3).values()[1].coherent_direction_1,
+				"ellipse2_move_direction"		:jsPsych.data.get().last(3).values()[1].coherent_direction_2,
 
-/* 				"selected_ellipse_logAR"		:selectedAperture_logAR,
+				"selected_ellipse_logAR"		:selectedAperture_logAR,
 				"cued_ellipse_logAR"			:cuedEllipse_logAR,
 				"uncued_ellipse_logAR"			:uncuedEllipse_logAR,
 
-				"coherence_level"				:jsPsych.data.get().last(3).values()[0].coherence, */
+				"coherence_level"				:jsPsych.data.get().last(3).values()[1].coherence,
+				"cuedMotionDirection"			:cuedMotionDirection,
+				"unCuedMotionDirection"			:unCuedMotionDirection,
+				"differenceBetweenCuedAndReported": selectedAperture_logAR - cuedEllipse_logAR
 
 			}
 			

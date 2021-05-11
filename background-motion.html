@@ -38,7 +38,7 @@ function saveData() {
       console.log(response.success);
     }
   };
-  xhr.send(jsPsych.data.get().json());
+  xhr.send(jsPsych.data.get().last(1).filter([{GE_trial_type: "response-trial"}, {GE_trial_type: 'virtual-chinrest' }]).json());
 }
 
 var count =  []
@@ -212,7 +212,9 @@ for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
       motionContrast        : motionContrast_list[i],
       motionDirection_1       : direction_list_shuffed_1[i],
       motionDirection_2       : direction_list_shuffed_2[i],
-      shapeLocationNumber    : shape_location_list_shuffled[i]
+      shapeLocationNumber    : shape_location_list_shuffled[i],
+      trialCue:               getRndInteger(1,2),
+      postTrial_gap           :Math.floor(Math.random() * 1000) + 1
 
     } 
     trial_feature_list.push(aTrial)
@@ -244,7 +246,7 @@ var test_block = {
   type: "rdk_2",  
   aperture_type: 4,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 1, //This needs to be set if more than one aperture
-  trial_duration: 500,
+  trial_duration: 200,
   RDK_type: 3, //Applied to all apertures if only one value
   aperture_width: function(){
     return window.innerWidth;
@@ -256,13 +258,13 @@ var test_block = {
   aperture_center_x: function(){
     return (window.innerWidth/2)
   }, //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
-  coherence: 1,
+  coherence: 0.8,
   dot_color: "white",
   background_color: "gray",
   move_distance: 1, // 12
   coherent_direction: jsPsych.timelineVariable('motionDirection_1'),
   coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
-  dot_life: 25,
+  dot_life: 70,
   foreground_aperture_width:  jsPsych.timelineVariable('width_1'),
   foreground_aperture_height: jsPsych.timelineVariable('height_1'),
   foreground_aperture_width_2: jsPsych.timelineVariable('width_2'),
@@ -308,9 +310,15 @@ var test_block = {
   //foreground_number_of_apertures: 1
   foreground_move_distance: 6, // irrelevant, this is not feeded to the plugin not working
   reinsert_type: 2,
-  motionContrast: 0.4, /// 4 //jsPsych.timelineVariable('motionContrast'),
-  post_trial_gap: 350,
-  dot_radius: 1.2
+  motionContrast: 0.2, /// 4 //jsPsych.timelineVariable('motionContrast'),
+  post_trial_gap: jsPsych.timelineVariable('postTrial_gap'),
+  dot_radius: 2,
+  data: {
+    coherent_direction_1: jsPsych.timelineVariable('motionDirection_1'),
+    coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
+    selectedShapeLocation: jsPsych.timelineVariable('shapeLocationNumber'),
+    postTrial_gap: jsPsych.timelineVariable('postTrial_gap')
+  },
 };
 
 var ydk_block = {
@@ -354,7 +362,12 @@ var ydk_block = {
   },
   on_finish: function() {
     count++;
+    saveData()
   },
+  data: {
+    trial_number: count,
+    GE_trial_type: "response-trial",
+  }
   //post_trial_gap: 350,
 }
 /*       if (count == boxType_list_shuffled.length){
@@ -481,7 +494,7 @@ var cueTrial = {
     },
   stimulus: function(){
 
-    selectedCue = getRndInteger(1,2)
+    selectedCue = jsPsych.timelineVariable('trialCue')
     console.log(jsPsych.timelineVariable('shapeLocationNumber'))
 /*     if (round == 0){
     var selectedCueList = shuffled_dotFieldLocation_list[count]
@@ -519,12 +532,10 @@ var cueTrial = {
   },
   choices: jsPsych.NO_KEYS,
   trial_duration: 500,
-/*   data: {
-    cue_type: jsPsych.timelineVariable('cueType'),
-    trial_participant_id: jsPsych.timelineVariable('participant_id'),
-    GE_trial_type: "cue-trial"
+  data: {
+    cue_type: jsPsych.timelineVariable('trialCue')
   }, 
-  on_finish: function() {
+/*   on_finish: function() {
         //document.body.style.backgroundColor = "white"
         //document.body.style.color = 'black'
     }, */
@@ -532,7 +543,7 @@ var cueTrial = {
 
 var redirect_trial = {
 	type: 'html-keyboard-response',
-	stimulus: '<p>You have completed the experiment.</p><p><a href="url-to-redirect-to">Please click here to return to SONA to get the chits. Yay! Thank you again...</a></p>',
+	stimulus: '<p>You have completed the experiment.</p><p><a href="url-to-redirect-to">Please click here to return to SONA to get the chits. Thank you again</a></p>',
 	choices: jsPsych.NO_KEYS
 }
 
@@ -598,7 +609,7 @@ if (widthX==1 && heightY == 1){
   //timeline.push(virtual_chinrest_trial);
   timeline.push(instructions);
   timeline.push(testProcedure);
-  timeline.push(redirect_trial);
+  //timeline.push(redirect_trial);
   /*start experiment*/
   jsPsych.init({
       timeline: timeline,
