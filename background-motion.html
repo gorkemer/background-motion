@@ -38,8 +38,11 @@ function saveData() {
       console.log(response.success);
     }
   };
-  xhr.send(jsPsych.data.get().json());
+  xhr.send(jsPsych.data.get().last(1).filter([{GE_trial_type: "response-trial"}, {GE_trial_type: 'virtual-chinrest' }]).json());
 }
+
+var count =  []
+var shape_location_list = []
 var trial_feature_list = []
 var motionSpeed_list = [];
 var dotNumber_list = [];
@@ -96,7 +99,8 @@ var ellipseRatioList_larger = [
 ];
 
 
-
+var fixationCircleRadius = 3
+var displacementfromFixation = 7 * fixationCircleRadius
 
 //generating random numbers for motion speed
 function generateRandomNumber_motionSpeed() {
@@ -120,6 +124,10 @@ function generateRandomNumber_motionContrast() {
   return highlightedNumber;
 };
 
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function generateRandomNumber_motionDirection() {
       var min = 0,
           max = 360,
@@ -132,6 +140,7 @@ function random_item(items)
 return items[Math.floor(Math.random()*items.length)]; 
 }
 var direction_list = [270, 90, 0, 180];
+var cue_list = []
 
 for (i=0; i<20; i++){
   a = generateRandomNumber_motionSpeed();
@@ -143,25 +152,31 @@ for (i=0; i<20; i++){
   dotNumber_list.push(a)
 }
 
-for (i=0; i<20; i++){
+for (i=0; i<ellipseRatioList.length; i++){
   a = generateRandomNumber_motionContrast();
   motionContrast_list.push(a)
 }
 
-for (i=0; i<20; i++){
+/* for (i=0; i<20; i++){
   a = generateRandomNumber_motionDirection();
   b = generateRandomNumber_motionDirection();
   motionDirection_list_1.push(a)
   motionDirection_list_2.push(b)
+} */
+
+for (i=0; i<ellipseRatioList.length; i++){
+    selectedDotLocationNumber = getRndInteger(1,4)
+    shape_location_list.push(selectedDotLocationNumber)
 }
 
 
 //var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
-var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 1); // 21 
-var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 1);
-var motionSpeed_list_shuffled = jsPsych.randomization.repeat(motionSpeed_list, 2);
-var direction_list_shuffed_1 = jsPsych.randomization.repeat(direction_list, 3);
-var direction_list_shuffed_2 = jsPsych.randomization.repeat(direction_list, 3);
+var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 4); // 21 
+var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 4);
+var shape_location_list_shuffled = jsPsych.randomization.repeat(shape_location_list, 5);
+var motionSpeed_list_shuffled = jsPsych.randomization.repeat(motionSpeed_list, 6);
+var direction_list_shuffed_1 = jsPsych.randomization.repeat(direction_list, 5);
+var direction_list_shuffed_2 = jsPsych.randomization.repeat(direction_list, 5);
 
 console.log(motionSpeed_list_shuffled)
 
@@ -177,7 +192,6 @@ for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
   var ellipsesFinal_width = [firstCloud_width,secondCloud_width];
   var ellipsesFinal_height = [firstCloud_height,secondCloud_height];
 
-  var motionDirectionPair = [motionDirection_list_1[i],motionDirection_list_2[i]]
   var motionDirectionPair_discrete = [direction_list_shuffed_1[i],direction_list_shuffed_2[i]]
 
   aTrial = {
@@ -197,7 +211,10 @@ for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
       dotNumber             : dotNumber_list[i],
       motionContrast        : motionContrast_list[i],
       motionDirection_1       : direction_list_shuffed_1[i],
-      motionDirection_2       : direction_list_shuffed_2[i]
+      motionDirection_2       : direction_list_shuffed_2[i],
+      shapeLocationNumber    : shape_location_list_shuffled[i],
+      trialCue:               getRndInteger(1,2),
+      postTrial_gap           :Math.floor(Math.random() * 1000) + 1
 
     } 
     trial_feature_list.push(aTrial)
@@ -229,7 +246,7 @@ var test_block = {
   type: "rdk_2",  
   aperture_type: 4,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 1, //This needs to be set if more than one aperture
-  trial_duration: 5000,
+  trial_duration: 200,
   RDK_type: 3, //Applied to all apertures if only one value
   aperture_width: function(){
     return window.innerWidth;
@@ -241,13 +258,13 @@ var test_block = {
   aperture_center_x: function(){
     return (window.innerWidth/2)
   }, //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
-  coherence: 1,
+  coherence: 0.8,
   dot_color: "white",
   background_color: "gray",
   move_distance: 1, // 12
   coherent_direction: jsPsych.timelineVariable('motionDirection_1'),
   coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
-  dot_life: 40,
+  dot_life: 70,
   foreground_aperture_width:  jsPsych.timelineVariable('width_1'),
   foreground_aperture_height: jsPsych.timelineVariable('height_1'),
   foreground_aperture_width_2: jsPsych.timelineVariable('width_2'),
@@ -255,30 +272,334 @@ var test_block = {
   foreground_number_of_dots: 0,
   foreground_move_distance: 1, //jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
   foreground_aperture_center_x: function(){
-        return window.innerWidth/2 - window.innerWidth/4 //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+      if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 3){
+        selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      }
+      else if (jsPsych.timelineVariable('shapeLocationNumber') == 4){
+        selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      }
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
     }, 
   foreground_aperture_center_y: function(){
-      return window.innerHeight/2;
+    if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 3 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
+        selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      }
+      else if (jsPsych.timelineVariable('shapeLocationNumber') == 2){
+        selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+      }
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   },
   foreground_aperture_center_x_2: function(){
-      return window.innerWidth/2 + window.innerWidth/4;
+    if (jsPsych.timelineVariable('shapeLocationNumber') == 3){
+      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      }
+      else if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
+        selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      }
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   },
   foreground_aperture_center_y_2: function(){
-      return window.innerHeight/2;
+    if (jsPsych.timelineVariable('shapeLocationNumber') == 1){
+        selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      }
+      else if (jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 3 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
+        selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+      }
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   },
   //foreground_number_of_apertures: 1
   foreground_move_distance: 6, // irrelevant, this is not feeded to the plugin not working
   reinsert_type: 2,
-  motionContrast: 0.3 /// 4 //jsPsych.timelineVariable('motionContrast')
+  motionContrast: 0.2, /// 4 //jsPsych.timelineVariable('motionContrast'),
+  post_trial_gap: jsPsych.timelineVariable('postTrial_gap'),
+  dot_radius: 2,
+  data: {
+    coherent_direction_1: jsPsych.timelineVariable('motionDirection_1'),
+    coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
+    selectedShapeLocation: jsPsych.timelineVariable('shapeLocationNumber'),
+    postTrial_gap: jsPsych.timelineVariable('postTrial_gap')
+  },
 };
 
+var ydk_block = {
+  type: "ydk",
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 0,
+  //trial_duration: 5000,
+  coherence: 0,
+  RDK_type: 3, // #6 guzel Applied to all apertures if only one value
+  aperture_width: 150, //Applied to all apertures if only one value
+  aperture_height: 100,
+  correct_choice: "P",
+  number_of_dots: 100, //Different parameter for each aperture. Array length must equal number_of_apertures
+  aperture_center_x: function(){
+  return window.innerWidth/2;
+  },
+  aperture_center_y: function(){
+  return window.innerHeight/2; //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+  },
+  fixation_cross: false,
+  fixation_cross_width: 20,
+  fixation_cross_height: 20,
+  labels: ['Tall<br>','Flat'],
+  //prompt: '<p>Question here?</p>',
+  stimulus: '<p>Running</p>',
+  response_ends_trial_ydk: true,
+  min: 1,
+  max: 27,
+  slider_start: function(){
+    return Math.floor(Math.random() * 25) + 1; // Between 1 and max
+  },
+  require_movement: true,
+  border: false,
+  reinsert_type: 1,
+  dot_life: -0.5,
+  canvas_width: function(){
+    return window.innerWidth ///trial_data.px2deg
+  },
+  canvas_height: function(){
+    return window.innerHeight
+  },
+  on_finish: function() {
+    count++;
+    saveData()
+  },
+  data: {
+    trial_number: count,
+    GE_trial_type: "response-trial",
+  }
+  //post_trial_gap: 350,
+}
+/*       if (count == boxType_list_shuffled.length){
+        count = 0; // resetting count
+        round++
+        console.log("this is the end of the first round, count:", count)
+        console.log("and round is:", round)
+      }
+      var progress = count/nTrials;
+      jsPsych.setProgressBar(progress); */
+    //},
+/*   data: {
+		trial_participant_id: jsPsych.timelineVariable('participant_id'),
+    GE_trial_type: "response-trial",
+	}
+};
+
+/* var fixationTrial = {
+    type: "rdk_2", 
+    on_start: function() {
+        //document.body.style.backgroundColor = "#808080"
+        //document.body.style.color = 'black'
+        //document.body.style.color = 'white'
+    },
+    trial_duration: function(){
+    fixationDuration = Math.floor(Math.random() * 1000) + 1
+    console.log("fixationDuration is: ",fixationDuration);
+    return fixationDuration
+    },
+    post_trial_gap: 0,
+    number_of_dots: 0,
+    choices: ["a", "l"],
+    correct_choice: "a",
+    coherent_direction: 180,
+    aperture_center_x: 0,
+    aperture_center_y: 0,
+    box_type:0,
+    box_sizes:0,
+    fixation_cross: true,
+    fixation_cross_width: fixationCircleRadius,
+    //on_finish: saveData,
+     data: {
+		trial_participant_id: jsPsych.timelineVariable('participant_id'),
+    fixationDuration: fixationDuration
+	}, 
+  on_finish: function(data){
+    data.fixationDuration= fixationDuration;
+  }
+}; */
+var taskBreakScreen1 = {
+  type: "instructions",
+  pages: ["<p> You have finished one third of the experiment. You can take a minute of break. <br>Press 'next' to continue.</p>"],
+  show_clickable_nav:true,
+/*   on_load: function() {
+  jsPsych.setProgressBar(0.05);
+  }, */
+  on_start: function() {
+        // set progress bar to 0 at the start of experiment
+        jsPsych.setProgressBar(0);
+        saveData()
+    },
+
+};
+
+var taskBreakScreen2 = {
+  type: "instructions",
+  pages: ["<p> You have finished two third of the experiment. You can take a minute of break. <br>Press 'next' to continue.</p>"],
+  show_clickable_nav:true,
+/*   on_load: function() {
+  jsPsych.setProgressBar(0.05);
+  }, */
+  on_start: function() {
+        // set progress bar to 0 at the start of experiment
+        jsPsych.setProgressBar(0);
+        saveData()
+    },
+};
+
+var taskStartScreen = {
+  type: "instructions",
+  pages: ["<p>The experiment will run in full screen mode. Please do not exit the full screen mode. Ready? <br>Press 'continue' to start.</p>"
+  + "<p>You will receive 2 research chits toward your psychology research requirement for participating. You will not be redirected to SONA to receive that. It will be administered manually within 24 hours.</p>"],
+  show_clickable_nav:true,
+/*   on_load: function() {
+  jsPsych.setProgressBar(0.05);
+  }, */
+  on_start: function() {
+        // set progress bar to 0 at the start of experiment
+        jsPsych.setProgressBar(0);
+    }
+};
+
+var blankTrial = {
+  type: 'rdk_2',
+  // stimulus: function(){
+  //   var curr_progress_bar_value = jsPsych.getProgressBarCompleted();
+  //   jsPsych.setProgressBar(curr_progress_bar_value + (1/nTrials));
+  //   return '<p style="font-size: 48px;">' + curr_progress_bar_value + '+</p>'
+  // },
+  choices: jsPsych.NO_KEYS,
+  post_trial_gap: 0,
+  number_of_dots: 0,
+  choices: ["a", "l"],
+  correct_choice: "a",
+  coherent_direction: 180,
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  trial_duration: 1000,
+  aperture_center_x: 0,
+  aperture_center_y: 0,
+  box_type:0,
+  box_sizes:0,
+  foreground_aperture_center_x:0,
+  foreground_aperture_center_y:0,
+  foreground_aperture_center_x_2:0,
+  foreground_aperture_center_y_2:0,
+};
+
+var cueTrial = {
+  type: 'html-keyboard-response',
+  on_start: function() {
+        document.body.style.backgroundColor = "#808080"
+        document.body.style.color = 'white'
+    },
+  stimulus: function(){
+
+    selectedCue = jsPsych.timelineVariable('trialCue')
+    console.log(jsPsych.timelineVariable('shapeLocationNumber'))
+/*     if (round == 0){
+    var selectedCueList = shuffled_dotFieldLocation_list[count]
+    }
+    if (round == 1){
+      var selectedCueList = shuffled_dotFieldLocation_list_secondRound[count]
+    }
+    if (round == 2){
+      var selectedCueList = shuffled_dotFieldLocation_list_thirdRound[count]
+    } */
+    if (jsPsych.timelineVariable('shapeLocationNumber')==1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 ) {// this means if shapes are configured horizontally
+      if (selectedCue==1){
+        html_cue = '<p style="font-size: 90px;">&#x2190</p>' // horizontal up (left)
+        html_cue_arrow = "left"
+      } 
+      else if (selectedCue==2){
+        html_cue = '<p style="font-size: 90px;">&#x2192</p>'
+        html_cue_arrow = "right"
+      }
+    }
+    else if (jsPsych.timelineVariable('shapeLocationNumber')==3 || jsPsych.timelineVariable('shapeLocationNumber') == 4 ) {// this means if shapes are configured vertically
+      if (selectedCue==1){
+        html_cue = '<p style="font-size: 90px;">&#x2191</p>'
+        html_cue_arrow = "up"
+      } 
+      else if (selectedCue==2){
+        html_cue = '<p style="font-size: 90px;">&#x2193</p>'
+        html_cue_arrow = "down"
+      } 
+    }
+    else {
+      console.log("ELSE'deyim, somethings WRONG!")
+    }
+    return html_cue
+  },
+  choices: jsPsych.NO_KEYS,
+  trial_duration: 500,
+  data: {
+    cue_type: jsPsych.timelineVariable('trialCue')
+  }, 
+/*   on_finish: function() {
+        //document.body.style.backgroundColor = "white"
+        //document.body.style.color = 'black'
+    }, */
+};
+
+var redirect_trial = {
+	type: 'html-keyboard-response',
+	stimulus: '<p>You have completed the experiment.</p><p><a href="url-to-redirect-to">Please click here to return to SONA to get the chits. Thank you again</a></p>',
+	choices: jsPsych.NO_KEYS
+}
+
+function getDotFieldLocations(widthX, heightY){
+
+var displacementX = window.innerWidth/8 //640 //6.4 degrees to the center 200 cikariyorum
+var displacementY = window.innerWidth/8
+
+var DotField_xLocation_right = (window.innerWidth/2+displacementX)
+var DotField_xLocation_left = (window.innerWidth/2-displacementX)
+var DotField_yLocation_top = (window.innerHeight/2-displacementY) 
+var DotField_yLocation_bot = (window.innerHeight/2+displacementY)
+
+/* if (round == 0){
+  var shapeType = shuffled_dotFieldLocation_list[count]
+}
+if (round == 1){
+  var shapeType = shuffled_dotFieldLocation_list_secondRound[count]
+}
+if (round == 2){
+  var shapeType = shuffled_dotFieldLocation_list_thirdRound[count]
+} */
+
+if (shapeType==1){ //this means selected shape is vertical left
+  selectedShape = shapeType_left;
+}
+if (shapeType==2){ //this means selected shape is vertical right
+  selectedShape = shapeType_right;
+}
+if (shapeType==3){ //this means selected shape is horizontal top
+  selectedShape = shapeType_top;
+}
+if (shapeType==4){ //this means selected shape is horizontal bottom
+  selectedShape = shapeType_bot;
+}
+
+var shapeX = selectedShape[0];
+var shapeY = selectedShape[1];
+
+if (widthX == 1){
+  return shapeX
+}
+if (heightY == 1){
+  return shapeY
+}
+if (widthX==1 && heightY == 1){
+  return [0,0]
+}
+}
 
 /*set up experiment structure*/
   var timeline = [];
 
 /* defining test timeline */
   var testProcedure= {
-    timeline: [test_block], //responseFeedback, test_block_response, ydk_block
+    timeline: [test_block,cueTrial, ydk_block, blankTrial], //responseFeedback, test_block_response, ydk_block
     timeline_variables: trial_feature_list,
   };
 
@@ -288,7 +609,7 @@ var test_block = {
   //timeline.push(virtual_chinrest_trial);
   timeline.push(instructions);
   timeline.push(testProcedure);
-
+  //timeline.push(redirect_trial);
   /*start experiment*/
   jsPsych.init({
       timeline: timeline,
