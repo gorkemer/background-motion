@@ -716,8 +716,8 @@ jsPsych.plugins["ydk"] = (function() {
 			if (ellipse1_height == 121.38 & ellipse1_width == 135.05){
 				cuedEllipse_logAR = -0.046332298
 			}
-			if (ellipse1_height == 128.03 & ellipse1_width == 128.03){
-				cuedEllipse_logAR = -0.000000479895668
+			if (ellipse1_height == ellipse1_width ){ //both are 128 and/or any combo
+				cuedEllipse_logAR = 0
 			}
 			if (ellipse1_height == 135.05 & ellipse1_width == 121.38){
 				cuedEllipse_logAR = 0.046331338
@@ -781,8 +781,8 @@ jsPsych.plugins["ydk"] = (function() {
 			if (ellipse2_height == 121.38 & ellipse2_width == 135.05){
 				uncuedEllipse_logAR = -0.046332298
 			}
-			if (ellipse2_height == 128.03 & ellipse2_width == 128.03){
-				uncuedEllipse_logAR = -0.000000479895668
+			if (ellipse2_height == ellipse2_width){
+				uncuedEllipse_logAR = 0
 			}
 			if (ellipse2_height == 135.05 & ellipse2_width == 121.38){
 				uncuedEllipse_logAR = 0.046331338
@@ -850,8 +850,8 @@ jsPsych.plugins["ydk"] = (function() {
 			if (ellipse2_height == 121.38 & ellipse2_width == 135.05){
 				cuedEllipse_logAR = -0.046332298
 			}
-			if (ellipse2_height == 128.03 & ellipse2_width == 128.03){
-				cuedEllipse_logAR = -0.000000479895668
+			if (ellipse2_height == ellipse2_width){
+				cuedEllipse_logAR = 0// -0.000000479895668
 			}
 			if (ellipse2_height == 135.05 & ellipse2_width == 121.38){
 				cuedEllipse_logAR = 0.046331338
@@ -1361,8 +1361,12 @@ jsPsych.plugins["ydk"] = (function() {
 				"coherence_level"				:jsPsych.data.get().last(3).values()[1].coherence,
 				"cuedMotionDirection"			:cuedMotionDirection,
 				"unCuedMotionDirection"			:unCuedMotionDirection,
-				"differenceBetweenCuedAndReported": selectedAperture_logAR - cuedEllipse_logAR
-
+				"differenceBetweenCuedAndReported": selectedAperture_logAR - cuedEllipse_logAR,
+				"trial_participant_id": 			jsPsych.data.get().last(3).values()[1].trial_participant_id,
+				"foreground_aperture_center_x": jsPsych.data.get().last(3).values()[1].foreground_aperture_center_x,
+				"foreground_aperture_center_y": jsPsych.data.get().last(3).values()[1].foreground_aperture_center_y,
+				"foreground_aperture_center_x_2": jsPsych.data.get().last(3).values()[1].foreground_aperture_center_x_2,
+				"foreground_aperture_center_y_2": jsPsych.data.get().last(3).values()[1].foreground_aperture_center_y_2,
 			}
 			
 			//Remove the canvas as the child of the display_element element

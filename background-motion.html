@@ -41,6 +41,7 @@ function saveData() {
   xhr.send(jsPsych.data.get().last(1).filter([{GE_trial_type: "response-trial"}, {GE_trial_type: 'virtual-chinrest' }]).json());
 }
 
+var assignedParticipantID   = Math.floor(Math.random() * (1000000 - 1 + 1)) + 1;
 var count =  []
 var shape_location_list = []
 var trial_feature_list = []
@@ -141,6 +142,7 @@ return items[Math.floor(Math.random()*items.length)];
 }
 var direction_list = [270, 90, 0, 180];
 var cue_list = []
+var coherence_list =[0.4,0.8,0.4,0.8]
 
 for (i=0; i<20; i++){
   a = generateRandomNumber_motionSpeed();
@@ -169,14 +171,46 @@ for (i=0; i<ellipseRatioList.length; i++){
     shape_location_list.push(selectedDotLocationNumber)
 }
 
+trialShapeList = []
+trialCoherenceList = []
+
+/// FOR EQUAL SHAPE 1/5 CHANCE //// 
+for (i=0; i< ellipseRatioList.length; i++){
+  diceValue = getRndInteger(1,5)
+  if (diceValue == 1) { // this means the trial will have equal shape, 1/5 chance
+  resultingShape = 1
+  }
+  else { // this means the resulting shape will not be equal, rather it will selected from the list of ARs 
+    resultingShape = 0
+  }
+  trialShapeList.push(resultingShape)
+}
+
+/// FOR COHERENCE 1/3 CHANCE //// 
+for (i=0; i< ellipseRatioList.length; i++){
+  diceValue = getRndInteger(1,3)
+  if (diceValue == 1) { // this means the trial will have 0 coherence
+  resultingCoherence = 1
+  }
+  else { // this means the resulting trial will have 1 coherence
+    resultingCoherence = 0
+  }
+  trialCoherenceList.push(resultingCoherence)
+}
+
 
 //var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
 var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 4); // 21 
 var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 4);
+var trialShapeList_shuffled = jsPsych.randomization.repeat(trialShapeList, 4);
+var trialCoherenceIncZeroList_shuffled = jsPsych.randomization.repeat(trialCoherenceList, 4);
+
 var shape_location_list_shuffled = jsPsych.randomization.repeat(shape_location_list, 5);
 var motionSpeed_list_shuffled = jsPsych.randomization.repeat(motionSpeed_list, 6);
-var direction_list_shuffed_1 = jsPsych.randomization.repeat(direction_list, 5);
-var direction_list_shuffed_2 = jsPsych.randomization.repeat(direction_list, 5);
+var direction_list_shuffed_1 = jsPsych.randomization.repeat(direction_list, 5 * 4);
+var direction_list_shuffed_2 = jsPsych.randomization.repeat(direction_list, 5 * 4);
+var trial_coherence_list_shuffled = jsPsych.randomization.repeat(coherence_list, 5 * 4);
+
 
 console.log(motionSpeed_list_shuffled)
 
@@ -214,8 +248,11 @@ for (i = 0; i < ellipses_shuffled_1.length/2; i++) {
       motionDirection_2       : direction_list_shuffed_2[i],
       shapeLocationNumber    : shape_location_list_shuffled[i],
       trialCue:               getRndInteger(1,2),
-      postTrial_gap           :Math.floor(Math.random() * 1000) + 1
-
+      postTrial_gap           :Math.floor(Math.random() * 1000) + 1,
+      participant_id        : assignedParticipantID,
+      trialCoherence:       trial_coherence_list_shuffled[i],
+      trialShape:            trialShapeList_shuffled[i],
+      trialCoherenceIncZero:     trialCoherenceIncZeroList_shuffled[i]
     } 
     trial_feature_list.push(aTrial)
 }
@@ -246,7 +283,7 @@ var test_block = {
   type: "rdk_2",  
   aperture_type: 4,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 1, //This needs to be set if more than one aperture
-  trial_duration: 200,
+  trial_duration: 2000,
   RDK_type: 3, //Applied to all apertures if only one value
   aperture_width: function(){
     return window.innerWidth;
@@ -258,19 +295,44 @@ var test_block = {
   aperture_center_x: function(){
     return (window.innerWidth/2)
   }, //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
-  coherence: 0.8,
+  coherence: function(){
+    if (jsPsych.timelineVariable('trialCoherenceIncZero') == 1) {   /// 1 equals it will be RANDOM, coh:0
+    coherence = 0
+    }
+    else {
+    coherence = 1 //jsPsych.timelineVariable('trialCoherence')
+    }
+    console.log("coherence",coherence)
+    return coherence
+  },
   dot_color: "white",
   background_color: "gray",
   move_distance: 1, // 12
   coherent_direction: jsPsych.timelineVariable('motionDirection_1'),
   coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
-  dot_life: 70,
-  foreground_aperture_width:  jsPsych.timelineVariable('width_1'),
-  foreground_aperture_height: jsPsych.timelineVariable('height_1'),
+  dot_life: 120,
+  foreground_aperture_width: function(){
+    if(jsPsych.timelineVariable('trialShape')==1){ // this means the shape 1 will be equal to shape 2
+      width = jsPsych.timelineVariable('width_2')
+    }
+    else {
+      width = jsPsych.timelineVariable('width_1')
+    }
+    return width
+  },
+  foreground_aperture_height: function(){
+    if(jsPsych.timelineVariable('trialShape')==1){
+      height = jsPsych.timelineVariable('height_2')
+    }
+    else {
+      height = jsPsych.timelineVariable('height_1')
+    }
+    return height
+  },
   foreground_aperture_width_2: jsPsych.timelineVariable('width_2'),
   foreground_aperture_height_2: jsPsych.timelineVariable('height_2'),
   foreground_number_of_dots: 0,
-  foreground_move_distance: 1, //jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
+  foreground_move_distance: 2, //jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
   foreground_aperture_center_x: function(){
       if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 3){
         selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
@@ -310,14 +372,15 @@ var test_block = {
   //foreground_number_of_apertures: 1
   foreground_move_distance: 6, // irrelevant, this is not feeded to the plugin not working
   reinsert_type: 2,
-  motionContrast: 0.2, /// 4 //jsPsych.timelineVariable('motionContrast'),
+  motionContrast: 0.25, /// 0.3333 4 //jsPsych.timelineVariable('motionContrast'),
   post_trial_gap: jsPsych.timelineVariable('postTrial_gap'),
   dot_radius: 2,
   data: {
     coherent_direction_1: jsPsych.timelineVariable('motionDirection_1'),
     coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
     selectedShapeLocation: jsPsych.timelineVariable('shapeLocationNumber'),
-    postTrial_gap: jsPsych.timelineVariable('postTrial_gap')
+    postTrial_gap: jsPsych.timelineVariable('postTrial_gap'),
+    trial_participant_id: jsPsych.timelineVariable('participant_id'),
   },
 };
 
@@ -599,7 +662,7 @@ if (widthX==1 && heightY == 1){
 
 /* defining test timeline */
   var testProcedure= {
-    timeline: [test_block,cueTrial, ydk_block, blankTrial], //responseFeedback, test_block_response, ydk_block
+    timeline: [test_block, cueTrial, ydk_block, blankTrial], //responseFeedback, test_block_response, ydk_block
     timeline_variables: trial_feature_list,
   };
 
