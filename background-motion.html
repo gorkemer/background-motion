@@ -404,7 +404,7 @@ for (i = 0; i < ellipses_shuffled_1.length; i++) {
 var virtual_chinrest_trial = {
   type: 'virtual-chinrest',
   resize_units: "deg",
-  blindspot_reps: 4,
+  blindspot_reps: 1,
   pixels_per_unit: 70,
   data: {
     GE_trial_type: 'virtual-chinrest',
@@ -595,6 +595,7 @@ var ydk_block = {
       }
       var progress = count/nTrials;
       jsPsych.setProgressBar(progress);
+      //saveData()
     },
   //post_trial_gap: 350,
 }
@@ -845,10 +846,10 @@ var practiceTestTrial_horizontal_top = {
   number_of_dots: 2400,
   dot_life: 120,
   aperture_width: function(){
-    return 700
+    return window.innerWidth
   },
   aperture_height: function(){
-    return 600;
+    return window.innerHeight
   },
   foreground_aperture_center_x: function(){
       selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
@@ -892,10 +893,10 @@ var practiceTestTrial_vertical_left = {
   correct_choice: "P",
   number_of_dots: 2400,
   aperture_width: function(){
-    return 700
+    return window.innerWidth
   },
   aperture_height: function(){
-    return 600;
+    return window.innerHeight
   },
   foreground_aperture_center_x: function(){
       selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
@@ -939,10 +940,10 @@ var practiceTestTrial_horizontal_bottom = {
   correct_choice: "P",
   number_of_dots: 2400,
   aperture_width: function(){
-    return 700
+    return window.innerWidth
   },
   aperture_height: function(){
-    return 600;
+    return window.innerHeight
   },
   foreground_aperture_center_x: function(){
       selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
@@ -987,10 +988,10 @@ var practiceTestTrial_vertical_right = {
   correct_choice: "P",
   number_of_dots: 2400,
   aperture_width: function(){
-    return 700
+    return window.innerWidth
   },
   aperture_height: function(){
-    return 600;
+    return window.innerHeight
   },
   foreground_aperture_center_x: function(){
       selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
@@ -1882,7 +1883,7 @@ var practice_procedure = {
 
   timeline.push(testProcedure_1);
   timeline.push(taskBreakScreen1);
-  
+
   timeline.push(testProcedure_2);
   timeline.push(taskBreakScreen2);
   timeline.push(testProcedure_3);

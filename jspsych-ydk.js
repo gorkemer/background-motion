@@ -818,8 +818,16 @@ jsPsych.plugins["ydk"] = (function() {
 		}
 
 		if (jsPsych.data.get().last(1).values()[0].cue_type == 2) {
-			cuedMotionDirection = jsPsych.data.get().last(3).values()[1].coherent_direction_2
-			unCuedMotionDirection = jsPsych.data.get().last(3).values()[1].coherent_direction_1
+			
+			
+			// add if coherence is 0; equalize the cuedMotionDirection AND unCuedMotionDirection to some arbitrary value, which could be 999 //
+			
+
+
+			cuedMotionDirection = jsPsych.data.get().last(4).values()[1].coherent_direction_2
+			unCuedMotionDirection = jsPsych.data.get().last(4).values()[1].coherent_direction_1
+
+			console.log("ama:", cuedMotionDirection)
 			if (ellipse2_height == 75.08 & ellipse2_width == 218.18){
 				cuedEllipse_logAR = -0.463318662
 			}
@@ -1371,7 +1379,8 @@ jsPsych.plugins["ydk"] = (function() {
 				"round_num"					:jsPsych.data.get().last(3).values()[0].round_number,
 				"trial_num"						:jsPsych.data.get().last(3).values()[0].trial_number,
 			}
-			
+			console.log("unCuedMotionDirection:", unCuedMotionDirection)
+			console.log("cuedMotionDirection:", cuedMotionDirection)
 			//Remove the canvas as the child of the display_element element
 			display_element.innerHTML='';
 
