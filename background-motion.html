@@ -157,8 +157,8 @@ function generateRandomNumber_motionDirection() {
 };
 
 function generateRandomNumber() {
-      var min = 100,
-          max = 350,
+      var min = 800,
+          max = 1000,
           highlightedNumber = Math.random() * (max - min) + min;
   return highlightedNumber;
 };
@@ -672,7 +672,7 @@ var blankTrial = {
   coherent_direction: 180,
   fixation_cross: true,
   fixation_cross_width: fixationCircleRadius,
-  trial_duration: 1000,
+  trial_duration: generateRandomNumber(),
   aperture_center_x: 0,
   aperture_center_y: 0,
   box_type:0,
