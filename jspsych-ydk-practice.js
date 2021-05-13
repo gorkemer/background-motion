@@ -28,7 +28,7 @@
 */
 		
 		
-jsPsych.plugins["ydk"] = (function() {
+jsPsych.plugins["ydk-practice"] = (function() {
 
 	var plugin = {};
 	
@@ -342,11 +342,6 @@ jsPsych.plugins["ydk"] = (function() {
 		trial.border = assignParameterValue(trial.border, false);
 		trial.border_thickness = assignParameterValue(trial.border_thickness, 1);
 		trial.border_color = assignParameterValue(trial.border_color, "black");
-
-		trial.foreground_aperture_center_x =  assignParameterValue(trial.foreground_aperture_center_x, window.innerWidth/2);
-		trial.foreground_aperture_center_y =  assignParameterValue(trial.foreground_aperture_center_y, window.innerWidth/2);
-		trial.foreground_aperture_center_x_2 =  assignParameterValue(trial.foreground_aperture_center_x_2, window.innerWidth/2);
-		trial.foreground_aperture_center_y_2 =  assignParameterValue(trial.foreground_aperture_center_y_2, window.innerWidth/2);
 		
 		//For square and circle, set the aperture height == aperture width
 		if (apertureType == 1 || apertureType == 3) {
@@ -493,7 +488,7 @@ jsPsych.plugins["ydk"] = (function() {
 		canvas.style.backgroundColor = backgroundColor;
 
 		//--------Set up Canvas end-------
-
+/* 
 		arrowArrow = jsPsych.data.get().last(1).values()[0].stimulus
 		if (arrowArrow == '<p style="font-size: 90px;">&#x2191</p>'){
 			cuedShown = 1 //up
@@ -507,7 +502,7 @@ jsPsych.plugins["ydk"] = (function() {
 		if (arrowArrow == '<p style="font-size: 90px;">&#x2192</p>'){
 			cuedShown = 4 //right
 		}
-
+ */
 
 		// add submit button
 		var html = '<div id="jspsych-canvas-slider-response-wrapper" style="margin: 100px 0px;">';
@@ -675,16 +670,12 @@ jsPsych.plugins["ydk"] = (function() {
 		//show the dot cloud depending on the starter value
 
 
-
-		/// identifiying log AR of ellipses ///
-		ellipse1_height = jsPsych.data.get().last(4).values()[1].foreground_aperture_height
-		ellipse1_width = jsPsych.data.get().last(4).values()[1].foreground_aperture_width
-		ellipse2_height =  jsPsych.data.get().last(4).values()[1].foreground_aperture_height_2
-		ellipse2_width = jsPsych.data.get().last(4).values()[1].foreground_aperture_width_2
+		/* ellipse1_height = jsPsych.data.get().last(3).values()[0].ellipse1_height
+		ellipse1_width = jsPsych.data.get().last(3).values()[0].ellipse1_width
+		ellipse2_height = jsPsych.data.get().last(3).values()[0].ellipse2_height
+		ellipse2_width = jsPsych.data.get().last(3).values()[0].ellipse2_width
 
 		if (jsPsych.data.get().last(1).values()[0].cue_type == 1) {
-			cuedMotionDirection = jsPsych.data.get().last(4).values()[1].coherent_direction_1
-			unCuedMotionDirection = jsPsych.data.get().last(4).values()[1].coherent_direction_2
 			//cued ellipse is 1
 			if (ellipse1_height == 75.08 & ellipse1_width == 218.18){
 				cuedEllipse_logAR = -0.463318662
@@ -716,8 +707,8 @@ jsPsych.plugins["ydk"] = (function() {
 			if (ellipse1_height == 121.38 & ellipse1_width == 135.05){
 				cuedEllipse_logAR = -0.046332298
 			}
-			if (ellipse1_height == ellipse1_width ){ //both are 128 and/or any combo
-				cuedEllipse_logAR = 0
+			if (ellipse1_height == 128.03 & ellipse1_width == 128.03){
+				cuedEllipse_logAR = -0.000000479895668
 			}
 			if (ellipse1_height == 135.05 & ellipse1_width == 121.38){
 				cuedEllipse_logAR = 0.046331338
@@ -781,8 +772,8 @@ jsPsych.plugins["ydk"] = (function() {
 			if (ellipse2_height == 121.38 & ellipse2_width == 135.05){
 				uncuedEllipse_logAR = -0.046332298
 			}
-			if (ellipse2_height == ellipse2_width){
-				uncuedEllipse_logAR = 0
+			if (ellipse2_height == 128.03 & ellipse2_width == 128.03){
+				uncuedEllipse_logAR = -0.000000479895668
 			}
 			if (ellipse2_height == 135.05 & ellipse2_width == 121.38){
 				uncuedEllipse_logAR = 0.046331338
@@ -814,12 +805,9 @@ jsPsych.plugins["ydk"] = (function() {
 			if (ellipse2_height == 218.18 & ellipse2_width == 75.08){
 				uncuedEllipse_logAR = 0.463317702
 			}
-			
 		}
 
 		if (jsPsych.data.get().last(1).values()[0].cue_type == 2) {
-			cuedMotionDirection = jsPsych.data.get().last(3).values()[1].coherent_direction_2
-			unCuedMotionDirection = jsPsych.data.get().last(3).values()[1].coherent_direction_1
 			if (ellipse2_height == 75.08 & ellipse2_width == 218.18){
 				cuedEllipse_logAR = -0.463318662
 			}
@@ -850,8 +838,8 @@ jsPsych.plugins["ydk"] = (function() {
 			if (ellipse2_height == 121.38 & ellipse2_width == 135.05){
 				cuedEllipse_logAR = -0.046332298
 			}
-			if (ellipse2_height == ellipse2_width){
-				cuedEllipse_logAR = 0// -0.000000479895668
+			if (ellipse2_height == 128.03 & ellipse2_width == 128.03){
+				cuedEllipse_logAR = -0.000000479895668
 			}
 			if (ellipse2_height == 135.05 & ellipse2_width == 121.38){
 				cuedEllipse_logAR = 0.046331338
@@ -949,7 +937,7 @@ jsPsych.plugins["ydk"] = (function() {
 				uncuedEllipse_logAR = 0.463317702
 			}
 		}
-
+ */
 
 
 
@@ -1331,45 +1319,43 @@ jsPsych.plugins["ydk"] = (function() {
 				"canvas_height": canvasHeight,
 				"finalSlider_value": response.response, 
 
- 				"ellipse1_width"				:jsPsych.data.get().last(4).values()[1].foreground_aperture_width,
-				"ellipse2_width"				:jsPsych.data.get().last(4).values()[1].foreground_aperture_width_2,
-				"ellipse1_height"				:jsPsych.data.get().last(4).values()[1].foreground_aperture_height, //Applied to all apertures if only one value
-				"ellipse2_height"				:jsPsych.data.get().last(4).values()[1].foreground_aperture_height_2,
-				"ellipse1_AR"					:(jsPsych.data.get().last(4).values()[1].foreground_aperture_height)/(jsPsych.data.get().last(3).values()[1].foreground_aperture_width),
-				"ellipse2_AR"					:(jsPsych.data.get().last(4).values()[1].foreground_aperture_height_2)/(jsPsych.data.get().last(3).values()[1].foreground_aperture_width_2),
-				"shapeOrganizationNumber"		:jsPsych.data.get().last(4).values()[1].selectedShapeLocation,
-				"backgroundDotFieldWidth" 		:jsPsych.data.get().last(4).values()[1].aperture_width,
-				"backgroundDotFieldHeight" 		:jsPsych.data.get().last(4).values()[1].aperture_height,
-				"cueArrow_number"				:cuedShown,
-				"cueArrow_html"					:jsPsych.data.get().last(1).values()[0].stimulus,
-				"cueType"						:jsPsych.data.get().last(1).values()[0].cue_type,
-				"trial_num"						:jsPsych.data.get().last(4).values()[1].trial_number,
-				//"round_number"					:jsPsych.data.get().last(3).values()[0].round_number,
-				//"boxType_number"				:jsPsych.data.get().last(3).values()[0].boxType_number,
-				//"dotCloud_number"				:jsPsych.data.get().last(3).values()[0].dotCloud_number,
-				"slider_start_value"			:trial.slider_start,
-				"trial_frame_rate"				:jsPsych.data.get().last(4).values()[1].frame_rate,
-				"trial_number_of_frames"		:jsPsych.data.get().last(4).values()[1].number_of_frames,
-				"fix_dur"				:jsPsych.data.get().last(3).values()[1].postTrial_gap,
-				"ellipse1_move_direction"		:jsPsych.data.get().last(4).values()[1].coherent_direction_1,
-				"ellipse2_move_direction"		:jsPsych.data.get().last(4).values()[1].coherent_direction_2,
+				// "ellipse1_width":           jsPsych.data.get().last(3).values()[0].ellipse1_width,
+				// "ellipse2_width":           jsPsych.data.get().last(3).values()[0].ellipse2_width,
+				// "ellipse1_height":          jsPsych.data.get().last(3).values()[0].ellipse1_height, //Applied to all apertures if only one value
+				// "ellipse2_height":          jsPsych.data.get().last(3).values()[0].ellipse2_height,
+				// "ellipse1_AR":				(jsPsych.data.get().last(3).values()[0].ellipse1_height)/(jsPsych.data.get().last(3).values()[0].ellipse1_width),
+				// "ellipse2_AR":				(jsPsych.data.get().last(3).values()[0].ellipse2_height)/(jsPsych.data.get().last(3).values()[0].ellipse2_width),
+				// "boxType_number":           jsPsych.data.get().last(3).values()[0].boxType_number,
+				// "aperture1_center_x":        jsPsych.data.get().last(3).values()[0].aperture_center_x[0],
+				// "aperture1_center_y":        jsPsych.data.get().last(3).values()[0].aperture_center_y[0],
+				// "aperture2_center_x":        jsPsych.data.get().last(3).values()[0].aperture_center_x[1],
+				// "aperture2_center_y":        jsPsych.data.get().last(3).values()[0].aperture_center_y[1],
+				// "aperture_center_height":   jsPsych.data.get().last(3).values()[0].aperture_center_height,
+				// "aperture_center_width":    jsPsych.data.get().last(3).values()[0].aperture_center_width,
+				// "aperture_configuration":   jsPsych.data.get().last(3).values()[0].aperture_configuration,
+				// "canvas_height" :           jsPsych.data.get().last(3).values()[0].canvas_height,
+				// "canvas_width" :            jsPsych.data.get().last(3).values()[0].canvas_width,
+				// //"cueArrow_number":          cuedShown,
+				// //"cueArrow_html":			jsPsych.data.get().last(1).values()[0].stimulus,
+				// //"cueType":                  jsPsych.data.get().last(1).values()[0].cue_type,
+				// "trial_num": 				jsPsych.data.get().last(3).values()[0].trial_number,
+				// "box_start_loc_x":			jsPsych.data.get().last(3).values()[0].box_type[0][0],
+				// "box_start_loc_y":			jsPsych.data.get().last(3).values()[0].box_type[1][0],
+				// "round_number":				jsPsych.data.get().last(3).values()[0].round_number,
+				// "boxType_number":			jsPsych.data.get().last(3).values()[0].boxType_number,
+				// "dotCloud_number":			jsPsych.data.get().last(3).values()[0].dotCloud_number,
+				// "slider_start_value":		trial.slider_start,
+				// "trial_frame_rate":			jsPsych.data.get().last(3).values()[0].frame_rate,
+				// "trial_number_of_frames":	jsPsych.data.get().last(3).values()[0].number_of_frames,
+				// "fixation_duration":		jsPsych.data.get().last(5).values()[1].fixationDuration,
+				// //"ellipse1_move_direction": 	jsPsych.data.get().last(3).values()[0].moving_direction[0],
+				// //"ellipse2_move_direction": 	jsPsych.data.get().last(3).values()[0].moving_direction[1],
 
-				"selected_ellipse_logAR"		:selectedAperture_logAR,
-				"cued_ellipse_logAR"			:cuedEllipse_logAR,
-				"uncued_ellipse_logAR"			:uncuedEllipse_logAR,
+				//"selected_ellipse_logAR":   selectedAperture_logAR,
+				//"cued_ellipse_logAR": 	    cuedEllipse_logAR,
+				//"uncued_ellipse_logAR": 	uncuedEllipse_logAR,
 
-				"coherence_level"				:jsPsych.data.get().last(4).values()[1].coherence,
-				"cuedMotionDirection"			:cuedMotionDirection,
-				"unCuedMotionDirection"			:unCuedMotionDirection,
-				"differenceBetweenCuedAndReported": selectedAperture_logAR - cuedEllipse_logAR,
-				"trial_participant_id": 			jsPsych.data.get().last(4).values()[1].trial_participant_id,
-				"foreground_aperture_center_x": jsPsych.data.get().last(4).values()[1].foreground_aperture_center_x,
-				"foreground_aperture_center_y": jsPsych.data.get().last(4).values()[1].foreground_aperture_center_y,
-				"foreground_aperture_center_x_2": jsPsych.data.get().last(4).values()[1].foreground_aperture_center_x_2,
-				"foreground_aperture_center_y_2": jsPsych.data.get().last(4).values()[1].foreground_aperture_center_y_2,
-
-				"round_num"					:jsPsych.data.get().last(3).values()[0].round_number,
-				"trial_num"						:jsPsych.data.get().last(3).values()[0].trial_number,
+				"coherence_level":			jsPsych.data.get().last(3).values()[0].coherence
 			}
 			
 			//Remove the canvas as the child of the display_element element
