@@ -509,6 +509,7 @@ jsPsych.plugins["ydk"] = (function() {
 		}
 
 
+
 		// add submit button
 		var html = '<div id="jspsych-canvas-slider-response-wrapper" style="margin: 100px 0px;">';
         //html += '<div id="jspsych-canvas-slider-response-stimulus">' + '<canvas id="jspsych-canvas-stimulus" height="' + trial.canvas_size[0] + '" width="' + trial.canvas_size[1] + '"></canvas>' + '</div>';
@@ -681,10 +682,13 @@ jsPsych.plugins["ydk"] = (function() {
 		ellipse1_width = jsPsych.data.get().last(4).values()[1].foreground_aperture_width
 		ellipse2_height =  jsPsych.data.get().last(4).values()[1].foreground_aperture_height_2
 		ellipse2_width = jsPsych.data.get().last(4).values()[1].foreground_aperture_width_2
+		coherence_coherence = jsPsych.data.get().last(4).values()[1].coherence
+
 
 		if (jsPsych.data.get().last(1).values()[0].cue_type == 1) {
 			cuedMotionDirection = jsPsych.data.get().last(4).values()[1].coherent_direction_1
 			unCuedMotionDirection = jsPsych.data.get().last(4).values()[1].coherent_direction_2
+
 			//cued ellipse is 1
 			if (ellipse1_height == 75.08 & ellipse1_width == 218.18){
 				cuedEllipse_logAR = -0.463318662
@@ -814,6 +818,11 @@ jsPsych.plugins["ydk"] = (function() {
 			if (ellipse2_height == 218.18 & ellipse2_width == 75.08){
 				uncuedEllipse_logAR = 0.463317702
 			}
+			if (coherence_coherence == 0){
+
+				cuedMotionDirection = 9999
+				unCuedMotionDirection = 9999
+			}
 			
 		}
 
@@ -827,7 +836,6 @@ jsPsych.plugins["ydk"] = (function() {
 			cuedMotionDirection = jsPsych.data.get().last(4).values()[1].coherent_direction_2
 			unCuedMotionDirection = jsPsych.data.get().last(4).values()[1].coherent_direction_1
 
-			console.log("ama:", cuedMotionDirection)
 			if (ellipse2_height == 75.08 & ellipse2_width == 218.18){
 				cuedEllipse_logAR = -0.463318662
 			}
@@ -956,8 +964,14 @@ jsPsych.plugins["ydk"] = (function() {
 			if (ellipse1_height == 218.18 & ellipse1_width == 75.08){
 				uncuedEllipse_logAR = 0.463317702
 			}
-		}
 
+			
+			if (coherence_coherence == 0){
+				cuedMotionDirection = 9999
+				unCuedMotionDirection = 9999
+
+			}
+		}
 
 
 
@@ -1358,7 +1372,7 @@ jsPsych.plugins["ydk"] = (function() {
 				"slider_start_value"			:trial.slider_start,
 				"trial_frame_rate"				:jsPsych.data.get().last(4).values()[1].frame_rate,
 				"trial_number_of_frames"		:jsPsych.data.get().last(4).values()[1].number_of_frames,
-				"fix_dur"				:jsPsych.data.get().last(3).values()[1].postTrial_gap,
+				"fix_dur"						:jsPsych.data.get().last(5).values()[1].trial_duration,
 				"ellipse1_move_direction"		:jsPsych.data.get().last(4).values()[1].coherent_direction_1,
 				"ellipse2_move_direction"		:jsPsych.data.get().last(4).values()[1].coherent_direction_2,
 
@@ -1378,9 +1392,10 @@ jsPsych.plugins["ydk"] = (function() {
 
 				"round_num"					:jsPsych.data.get().last(3).values()[0].round_number,
 				"trial_num"						:jsPsych.data.get().last(3).values()[0].trial_number,
+				"canvas_height_backup" 				:jsPsych.data.get().last(3).values()[0].canvas_height,
+				"canvas_width_backup" 					:jsPsych.data.get().last(3).values()[0].canvas_width,
 			}
-			console.log("unCuedMotionDirection:", unCuedMotionDirection)
-			console.log("cuedMotionDirection:", cuedMotionDirection)
+
 			//Remove the canvas as the child of the display_element element
 			display_element.innerHTML='';
 
