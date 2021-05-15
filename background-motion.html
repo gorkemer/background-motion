@@ -227,8 +227,8 @@ for (i=0; i< ellipseRatioList.length; i++){
 
 
 //var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
-var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 9); // 21 
-var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 9);
+var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 7); // 21 
+var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 7);
 var trialShapeList_shuffled = jsPsych.randomization.repeat(trialShapeList, 11);
 var trialCoherenceIncZeroList_shuffled = jsPsych.randomization.repeat(trialCoherenceList, 11);
 
@@ -288,8 +288,8 @@ for (i = 0; i < ellipses_shuffled_1.length; i++) {
 }
 
 //var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
-var ellipses_shuffled_1_round2 = jsPsych.randomization.repeat(ellipseRatioList, 9); // 21 
-var ellipses_shuffled_2_round2 = jsPsych.randomization.repeat(ellipseRatioList, 9);
+var ellipses_shuffled_1_round2 = jsPsych.randomization.repeat(ellipseRatioList, 7); // 21 
+var ellipses_shuffled_2_round2 = jsPsych.randomization.repeat(ellipseRatioList, 7);
 var trialShapeList_shuffled_round2 = jsPsych.randomization.repeat(trialShapeList, 11);
 var trialCoherenceIncZeroList_shuffled_round2 = jsPsych.randomization.repeat(trialCoherenceList, 11);
 
@@ -346,8 +346,8 @@ for (i = 0; i < ellipses_shuffled_1.length; i++) {
 }
 
 //var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
-var ellipses_shuffled_1_round3 = jsPsych.randomization.repeat(ellipseRatioList, 9); // 21 
-var ellipses_shuffled_2_round3 = jsPsych.randomization.repeat(ellipseRatioList, 9);
+var ellipses_shuffled_1_round3 = jsPsych.randomization.repeat(ellipseRatioList, 7); // 21 
+var ellipses_shuffled_2_round3 = jsPsych.randomization.repeat(ellipseRatioList, 7);
 var trialShapeList_shuffled_round3 = jsPsych.randomization.repeat(trialShapeList, 11);
 var trialCoherenceIncZeroList_shuffled_round3 = jsPsych.randomization.repeat(trialCoherenceList, 11);
 
@@ -485,37 +485,37 @@ var test_block = {
   foreground_move_distance: 2, //jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
   foreground_aperture_center_x: function(){
       if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 3){
-        selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+        selectedShapeLocation = window.innerWidth/2 - 240
       }
       else if (jsPsych.timelineVariable('shapeLocationNumber') == 4){
-        selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+        selectedShapeLocation = window.innerWidth/2 + 240
       }
       return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
     }, 
   foreground_aperture_center_y: function(){
     if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 3 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
-        selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+        selectedShapeLocation = window.innerHeight/2 - 240
       }
       else if (jsPsych.timelineVariable('shapeLocationNumber') == 2){
-        selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+        selectedShapeLocation = window.innerHeight/2 + 240
       }
       return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   },
   foreground_aperture_center_x_2: function(){
     if (jsPsych.timelineVariable('shapeLocationNumber') == 3){
-      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      selectedShapeLocation = window.innerWidth/2 - 240
       }
       else if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
-        selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+        selectedShapeLocation = window.innerWidth/2 + 240
       }
       return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   },
   foreground_aperture_center_y_2: function(){
     if (jsPsych.timelineVariable('shapeLocationNumber') == 1){
-        selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+        selectedShapeLocation = window.innerHeight/2 - 240
       }
       else if (jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 3 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
-        selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+        selectedShapeLocation = window.innerHeight/2 + 240
       }
       return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
   },
