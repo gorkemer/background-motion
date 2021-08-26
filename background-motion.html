@@ -42,6 +42,7 @@ function saveData() {
   xhr.send(jsPsych.data.get().last(nTrial4DataSaving).filter([{GE_trial_type: "response-trial"}, {GE_trial_type: 'virtual-chinrest' }]).json());
 }
 
+//test
 
 // getting the participant ID from the URL
 var participantID = jsPsych.data.getURLVariable('ParticipantID');
