@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Background Motion Task</title>
+
+            <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <!-- css -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
+    <!-- SVG.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.3/svg.min.js"></script>
+
+    <script src="../jspsych-6.0.5/jspsych.js"></script>
+    <script src="../jspsych-6.0.5/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src=../jspsych-6.0.5/plugins/jspsych-image-keyboard-response.js"></script>
+    <link href="../jspsych-6.0.5/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    <script src="../jspsych-6.0.5/plugins/jspsych-fullscreen.js"></script>
+    <script src="../jspsych-6.0.5/plugins/jspsych-survey-text.js"></script>
+    <script src="../jspsych-6.0.5/plugins/jspsych-instructions.js"></script>
+      <script src="jspsych-virtual-chinrest.js"></script>
+      <script src="jspsych-rdk_2.js"></script>
+      <script src="jspsych-ydk.js"></script>
+      <script src="jspsych-ydk-practice.js"></script>
+
+</head>
+<body>
+</body>
+<script>
+
+function saveData() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'write_data.php'); // change 'write_data.php' to point to php script.
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
+    if(xhr.status == 200){
+      var response = JSON.parse(xhr.responseText);
+      console.log(response.success);
+    }
+  };
+  xhr.send(jsPsych.data.get().last(nTrial4DataSaving).filter([{GE_trial_type: "response-trial"}, {GE_trial_type: 'virtual-chinrest' }]).json());
+}
+
+//test
+
+// getting the participant ID from the URL
+var participantID = jsPsych.data.getURLVariable('ParticipantID');
+console.log('Participant ID is:', participantID);
+if (typeof participantID === "undefined") {
+alert("participant ID is undefined, assigning arbitrarily. ");
+var participantID = 1;
+}
+jsPsych.data.addProperties({participant_ID: participantID});
+
+var moveDistanceValue = 1 // default is 1
+var motionContrastValue = 0.2 // default is 0.2, which mean x5
+var assignedParticipantID   = Math.floor(Math.random() * (1000000 - 1 + 1)) + 1;
+var count                   = 0;
+var round                   = 0;
+var nTrials = 20;
+var motion_type = 3
+var shape_location_list = []
+var trial_feature_list_1 = []
+var trial_feature_list_2 = []
+var trial_feature_list_3 = []
+var motionSpeed_list = [];
+var dotNumber_list = [];
+var motionContrast_list = [];
+var motionDirection_list_1 = [];
+var motionDirection_list_2 = [];
+var currentdate = new Date();
+var getDay = currentdate.getDate();
+var ellipseRatioList = [
+[75.08,	218.18],
+[79.19,	206.85],
+[83.56,	196.17],
+[88.14,	185.99],
+[92.96,	176.31],
+[98.04,	167.13],
+[103.42,	158.46],
+[109.08,	150.22],
+[115.07,	142.44],
+[121.38,	135.05],
+[128.03,	128.03],
+[135.05,	121.38],
+[142.44,	115.07],
+[150.22,	109.08],
+[158.46,	103.42],
+[167.13,	98.04],
+[176.31,	92.96],
+[185.99,	88.14],
+[196.17,	83.56],
+[206.85,	79.19],
+[218.18,	75.08],
+];
+
+
+var ellipseRatioList_larger = [
+[150.15,	436.3590168],
+[158.382,	413.7066923],
+[167.115,	392.3469438],
+[176.2761,	371.9772682],
+[185.9175,	352.6235975],
+[196.08,	334.2662576],
+[206.8305,	316.9143958],
+[218.16,	300.4489285],
+[230.1375,	284.8728614],
+[242.76,	270.0902899],
+[256.0635,	256.0635],
+[270.0902899,	242.76],
+[284.8728614,	230.1375],
+[300.4489285,	218.16],
+[316.9143958,	206.8305],
+[334.2662576,	196.08],
+[352.6235975,	185.9175],
+[371.9772682,	176.2761],
+[392.3469438,	167.115],
+[413.7066923,	158.382],
+[436.3590168,	150.15],
+];
+
+
+var fixationCircleRadius = 3
+var displacementfromFixation = 7 * fixationCircleRadius
+
+//generating random numbers for motion speed
+function generateRandomNumber_motionSpeed() {
+      var min = 0.50,
+          max = 1.50,
+          highlightedNumber = Math.random() * (max - min) + min;
+  return highlightedNumber;
+};
+
+function generateRandomNumber_dotNumber() {
+      var min = 800,
+          max = 1200,
+          highlightedNumber = Math.random() * (max - min) + min;
+  return highlightedNumber;
+};
+
+function generateRandomNumber_motionContrast() {
+      var min = 0.1,
+          max = 2,
+          highlightedNumber = Math.random() * (max - min) + min;
+  return highlightedNumber;
+};
+
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function generateRandomNumber_motionDirection() {
+      var min = 0,
+          max = 360,
+          highlightedNumber = Math.random() * (max - min) + min;
+  return highlightedNumber;
+};
+
+function generateRandomNumber() {
+      var min = 800,
+          max = 1000,
+          highlightedNumber = Math.random() * (max - min) + min;
+  return highlightedNumber;
+};
+
+function random_item(items)
+{
+return items[Math.floor(Math.random()*items.length)]; 
+}
+var direction_list = [270, 90, 0, 180];
+var cue_list = []
+var coherence_list =[0.4,0.8,0.4,0.8]
+
+for (i=0; i<20; i++){
+  a = generateRandomNumber_motionSpeed();
+  motionSpeed_list.push(a)
+}
+
+for (i=0; i<20; i++){
+  a = generateRandomNumber_dotNumber();
+  dotNumber_list.push(a)
+}
+
+for (i=0; i<ellipseRatioList.length; i++){
+  a = generateRandomNumber_motionContrast();
+  motionContrast_list.push(a)
+}
+
+/* for (i=0; i<20; i++){
+  a = generateRandomNumber_motionDirection();
+  b = generateRandomNumber_motionDirection();
+  motionDirection_list_1.push(a)
+  motionDirection_list_2.push(b)
+} */
+
+for (i=0; i<ellipseRatioList.length; i++){
+    selectedDotLocationNumber = getRndInteger(1,4)
+    shape_location_list.push(selectedDotLocationNumber)
+}
+
+trialShapeList = []
+trialCoherenceList = []
+
+/// FOR EQUAL SHAPE 1/5 CHANCE //// 
+for (i=0; i< ellipseRatioList.length; i++){
+  diceValue = getRndInteger(1,5)
+  if (diceValue == 1) { // this means the trial will have equal shape, 1/5 chance
+  resultingShape = 1
+  }
+  else { // this means the resulting shape will not be equal, rather it will selected from the list of ARs 
+    resultingShape = 0
+  }
+  trialShapeList.push(resultingShape)
+}
+
+/// FOR COHERENCE 1/3 CHANCE //// 
+for (i=0; i< ellipseRatioList.length; i++){
+  diceValue = getRndInteger(1,3)
+  if (diceValue == 1) { // this means the trial will have 0 coherence
+  resultingCoherence = 1
+  }
+  else { // this means the resulting trial will have 1 coherence
+    resultingCoherence = 0
+  }
+  trialCoherenceList.push(resultingCoherence)
+}
+
+
+//var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
+var ellipses_shuffled_1 = jsPsych.randomization.repeat(ellipseRatioList, 7); // 21 
+var ellipses_shuffled_2 = jsPsych.randomization.repeat(ellipseRatioList, 7);
+var trialShapeList_shuffled = jsPsych.randomization.repeat(trialShapeList, 11);
+var trialCoherenceIncZeroList_shuffled = jsPsych.randomization.repeat(trialCoherenceList, 11);
+
+var shape_location_list_shuffled = jsPsych.randomization.repeat(shape_location_list, 11);
+var motionSpeed_list_shuffled = jsPsych.randomization.repeat(motionSpeed_list, 11);
+var direction_list_shuffed_1 = jsPsych.randomization.repeat(direction_list, 5 * 11);
+var direction_list_shuffed_2 = jsPsych.randomization.repeat(direction_list, 5 * 11);
+var trial_coherence_list_shuffled = jsPsych.randomization.repeat(coherence_list, 5 * 11);
+
+
+console.log(motionSpeed_list_shuffled)
+
+nTrials =  ellipses_shuffled_1.length;
+nTrial4DataSaving = (nTrials*6) + 3// +5 is for including virtual-head-set plugin, and *6 for accounting 6 different types of plugin
+
+for (i = 0; i < ellipses_shuffled_1.length; i++) {
+
+  var firstCloud = ellipses_shuffled_1[i];
+  var secondCloud = ellipses_shuffled_2[i];
+  var firstCloud_width = firstCloud[0];
+  var firstCloud_height = firstCloud[1];
+  var secondCloud_width = secondCloud[0];
+  var secondCloud_height = secondCloud[1];
+
+  var ellipsesFinal_width = [firstCloud_width,secondCloud_width];
+  var ellipsesFinal_height = [firstCloud_height,secondCloud_height];
+
+  var motionDirectionPair_discrete = [direction_list_shuffed_1[i],direction_list_shuffed_2[i]]
+
+  aTrial = {
+      width_1                 : firstCloud_width, 
+      height_1                : firstCloud_height,
+      width_2                 : secondCloud_width, 
+      height_2                : secondCloud_height,
+      //apertureCenterX       : shapeX, // right side
+      //apertureCenterY       : shapeY, // top & bottom
+      //boxType               : boxType_list_shuffled[i],
+      //cueType               : cueList_shuffled[i],
+      //participant_id        : assignedParticipantID,
+      //boxType_number        : boxType_list_shuffled[i],
+      //dotCloud_number       : shuffled_dotFieldLocation_list[i],
+      //motionType            : finalMotion_direction,
+      motionSpeed           : motionSpeed_list_shuffled[i],
+      //dotNumber             : dotNumber_list[i],
+      //motionContrast        : motionContrast_list[i],
+      motionDirection_1       : direction_list_shuffed_1[i],
+      motionDirection_2       : direction_list_shuffed_2[i],
+      shapeLocationNumber    : shape_location_list_shuffled[i],
+      trialCue:               getRndInteger(1,2),
+      postTrial_gap           :Math.floor(Math.random() * 1000) + 1,
+      participant_id        : assignedParticipantID,
+      trialCoherence:       trial_coherence_list_shuffled[i],
+      trialShape:            trialShapeList_shuffled[i],
+      trialCoherenceIncZero:     trialCoherenceIncZeroList_shuffled[i]
+    } 
+    trial_feature_list_1.push(aTrial)
+}
+
+//var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
+var ellipses_shuffled_1_round2 = jsPsych.randomization.repeat(ellipseRatioList, 7); // 21 
+var ellipses_shuffled_2_round2 = jsPsych.randomization.repeat(ellipseRatioList, 7);
+var trialShapeList_shuffled_round2 = jsPsych.randomization.repeat(trialShapeList, 11);
+var trialCoherenceIncZeroList_shuffled_round2 = jsPsych.randomization.repeat(trialCoherenceList, 11);
+
+var shape_location_list_shuffled_round2 = jsPsych.randomization.repeat(shape_location_list, 11);
+var motionSpeed_list_shuffled_round2 = jsPsych.randomization.repeat(motionSpeed_list, 11);
+var direction_list_shuffed_1_round2 = jsPsych.randomization.repeat(direction_list, 5 * 11);
+var direction_list_shuffed_2_round2 = jsPsych.randomization.repeat(direction_list, 5 * 11);
+var trial_coherence_list_shuffled_round2 = jsPsych.randomization.repeat(coherence_list, 5 * 11);
+
+
+console.log(motionSpeed_list_shuffled)
+
+for (i = 0; i < ellipses_shuffled_1.length; i++) {
+
+  var firstCloud = ellipses_shuffled_1_round2[i];
+  var secondCloud = ellipses_shuffled_2_round2[i];
+  var firstCloud_width = firstCloud[0];
+  var firstCloud_height = firstCloud[1];
+  var secondCloud_width = secondCloud[0];
+  var secondCloud_height = secondCloud[1];
+
+  var ellipsesFinal_width = [firstCloud_width,secondCloud_width];
+  var ellipsesFinal_height = [firstCloud_height,secondCloud_height];
+
+  var motionDirectionPair_discrete = [direction_list_shuffed_1_round2[i],direction_list_shuffed_2_round2[i]]
+
+  aTrial = {
+      width_1                 : firstCloud_width, 
+      height_1                : firstCloud_height,
+      width_2                 : secondCloud_width, 
+      height_2                : secondCloud_height,
+      //apertureCenterX       : shapeX, // right side
+      //apertureCenterY       : shapeY, // top & bottom
+      //boxType               : boxType_list_shuffled[i],
+      //cueType               : cueList_shuffled[i],
+      //participant_id        : assignedParticipantID,
+      //boxType_number        : boxType_list_shuffled[i],
+      //dotCloud_number       : shuffled_dotFieldLocation_list[i],
+      //motionType            : finalMotion_direction,
+      motionSpeed           : motionSpeed_list_shuffled_round2[i],
+      //dotNumber             : dotNumber_list[i],
+      //motionContrast        : motionContrast_list[i],
+      motionDirection_1       : direction_list_shuffed_1_round2[i],
+      motionDirection_2       : direction_list_shuffed_2_round2[i],
+      shapeLocationNumber    : shape_location_list_shuffled_round2[i],
+      trialCue:               getRndInteger(1,2),
+      postTrial_gap           :Math.floor(Math.random() * 1000) + 1,
+      participant_id        : assignedParticipantID,
+      trialCoherence:       trial_coherence_list_shuffled_round2[i],
+      trialShape:            trialShapeList_shuffled_round2[i],
+      trialCoherenceIncZero:     trialCoherenceIncZeroList_shuffled_round2[i]
+    } 
+    trial_feature_list_2.push(aTrial)
+}
+
+//var motionSpeed_list = [0.5,0.4,0.85,0.7,0.83,0.6,0.7,0.8,0.9,1.0,1.3]
+var ellipses_shuffled_1_round3 = jsPsych.randomization.repeat(ellipseRatioList, 7); // 21 
+var ellipses_shuffled_2_round3 = jsPsych.randomization.repeat(ellipseRatioList, 7);
+var trialShapeList_shuffled_round3 = jsPsych.randomization.repeat(trialShapeList, 11);
+var trialCoherenceIncZeroList_shuffled_round3 = jsPsych.randomization.repeat(trialCoherenceList, 11);
+
+var shape_location_list_shuffled_round3 = jsPsych.randomization.repeat(shape_location_list, 11);
+var motionSpeed_list_shuffled_round3 = jsPsych.randomization.repeat(motionSpeed_list, 11);
+var direction_list_shuffed_1_round3 = jsPsych.randomization.repeat(direction_list, 5 * 11);
+var direction_list_shuffed_2_round3 = jsPsych.randomization.repeat(direction_list, 5 * 11);
+var trial_coherence_list_shuffled_round3 = jsPsych.randomization.repeat(coherence_list, 5 * 11);
+
+
+for (i = 0; i < ellipses_shuffled_1.length; i++) {
+
+  var firstCloud = ellipses_shuffled_1_round3[i];
+  var secondCloud = ellipses_shuffled_2_round3[i];
+  var firstCloud_width = firstCloud[0];
+  var firstCloud_height = firstCloud[1];
+  var secondCloud_width = secondCloud[0];
+  var secondCloud_height = secondCloud[1];
+
+  var ellipsesFinal_width = [firstCloud_width,secondCloud_width];
+  var ellipsesFinal_height = [firstCloud_height,secondCloud_height];
+
+  var motionDirectionPair_discrete = [direction_list_shuffed_1[i],direction_list_shuffed_2[i]]
+
+  aTrial = {
+      width_1                 : firstCloud_width, 
+      height_1                : firstCloud_height,
+      width_2                 : secondCloud_width, 
+      height_2                : secondCloud_height,
+      //apertureCenterX       : shapeX, // right side
+      //apertureCenterY       : shapeY, // top & bottom
+      //boxType               : boxType_list_shuffled[i],
+      //cueType               : cueList_shuffled[i],
+      //participant_id        : assignedParticipantID,
+      //boxType_number        : boxType_list_shuffled[i],
+      //dotCloud_number       : shuffled_dotFieldLocation_list[i],
+      //motionType            : finalMotion_direction,
+      motionSpeed           : motionSpeed_list_shuffled_round3[i],
+      //dotNumber             : dotNumber_list[i],
+      //motionContrast        : motionContrast_list_round3[i],
+      motionDirection_1       : direction_list_shuffed_1_round3[i],
+      motionDirection_2       : direction_list_shuffed_2_round3[i],
+      shapeLocationNumber    : shape_location_list_shuffled_round3[i],
+      trialCue:               getRndInteger(1,2),
+      postTrial_gap           :Math.floor(Math.random() * 1000) + 1,
+      participant_id        : assignedParticipantID,
+      trialCoherence:       trial_coherence_list_shuffled_round3[i],
+      trialShape:            trialShapeList_shuffled_round3[i],
+      trialCoherenceIncZero:     trialCoherenceIncZeroList_shuffled_round3[i]
+    } 
+    trial_feature_list_3.push(aTrial)
+}
+
+var virtual_chinrest_trial = {
+  type: 'virtual-chinrest',
+  resize_units: "deg",
+  blindspot_reps: 1,
+  pixels_per_unit: 70,
+  data: {
+    GE_trial_type: 'virtual-chinrest',
+    trial_participant_id: assignedParticipantID,
+    //distance_between_ellipses: displacementX,
+    current_date: getDay },
+  on_finish: saveData
+};
+
+var fullscreen_trial = {
+  type: 'fullscreen',
+  fullscreen_mode: true
+}
+
+
+/*set up instructions block*/
+var instructions = {
+  type: "instructions",
+  pages: [ "<p>This is backgroung motion experiment, like the examples below.</p>"
+    ],
+    show_clickable_nav:true
+};
+
+
+var test_block = {
+  type: "rdk_2",  
+  aperture_type: 4,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  trial_duration: 20000,
+  RDK_type: 3, //Applied to all apertures if only one value
+  aperture_width: function(){
+    return window.innerWidth;
+  },
+  aperture_height: function(){
+    return window.innerHeight;
+  },
+  number_of_dots: 2400, //Different parameter for each aperture. Array length must equal number_of_apertures
+  aperture_center_x: function(){
+    return (window.innerWidth/2)
+  }, //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
+  coherence: function(){
+    if (jsPsych.timelineVariable('trialCoherenceIncZero') == 1) {   /// 1 equals it will be RANDOM, coh:0
+    coherence = 0
+    }
+    else {
+    coherence = 1 //jsPsych.timelineVariable('trialCoherence')
+    }
+    console.log("coherence",coherence)
+    return coherence
+  },
+  dot_color: "white",
+  background_color: "gray",
+  move_distance: moveDistanceValue, // 12
+  coherent_direction: jsPsych.timelineVariable('motionDirection_1'),
+  coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
+  dot_life: 120,
+  foreground_aperture_width: 0, /* function(){
+    if(jsPsych.timelineVariable('trialShape')==1){ // this means the shape 1 will be equal to shape 2
+      width = jsPsych.timelineVariable('width_2')
+    }
+    else {
+      width = jsPsych.timelineVariable('width_1')
+    }
+    return width
+  },
+  foreground_aperture_height: function(){
+    if(jsPsych.timelineVariable('trialShape')==1){
+      height = jsPsych.timelineVariable('height_2')
+    }
+    else {
+      height = jsPsych.timelineVariable('height_1')
+    }
+    return height
+  },
+  foreground_aperture_width_2: jsPsych.timelineVariable('width_2'),
+  foreground_aperture_height_2: jsPsych.timelineVariable('height_2'), */
+  foreground_aperture_height: 0, 
+  foreground_aperture_width_2: 0, 
+  foreground_aperture_height_2: 0, 
+  foreground_number_of_dots: 0,
+  foreground_move_distance: 2, //jsPsych.timelineVariable('motionSpeed'), //Different parameter for each aperture. Array length must equal number_of_apertures
+  foreground_aperture_center_x: function(){
+      if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 3){
+        selectedShapeLocation = window.innerWidth/2 - 240
+      }
+      else if (jsPsych.timelineVariable('shapeLocationNumber') == 4){
+        selectedShapeLocation = window.innerWidth/2 + 240
+      }
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+    if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 3 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
+        selectedShapeLocation = window.innerHeight/2 - 240
+      }
+      else if (jsPsych.timelineVariable('shapeLocationNumber') == 2){
+        selectedShapeLocation = window.innerHeight/2 + 240
+      }
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+    if (jsPsych.timelineVariable('shapeLocationNumber') == 3){
+      selectedShapeLocation = window.innerWidth/2 - 240
+      }
+      else if (jsPsych.timelineVariable('shapeLocationNumber') == 1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
+        selectedShapeLocation = window.innerWidth/2 + 240
+      }
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+    if (jsPsych.timelineVariable('shapeLocationNumber') == 1){
+        selectedShapeLocation = window.innerHeight/2 - 240
+      }
+      else if (jsPsych.timelineVariable('shapeLocationNumber') == 2 || jsPsych.timelineVariable('shapeLocationNumber') == 3 || jsPsych.timelineVariable('shapeLocationNumber') == 4){
+        selectedShapeLocation = window.innerHeight/2 + 240
+      }
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  //foreground_number_of_apertures: 1
+  foreground_move_distance: 6, // irrelevant, this is not feeded to the plugin not working
+  reinsert_type: 2,
+  motionContrast: motionContrastValue, /// 0.3333 4 //jsPsych.timelineVariable('motionContrast'),
+  //post_trial_gap: jsPsych.timelineVariable('postTrial_gap'),
+  dot_radius: 2,
+  data: {
+    coherent_direction_1: jsPsych.timelineVariable('motionDirection_1'),
+    coherent_direction_2: jsPsych.timelineVariable('motionDirection_2'),
+    selectedShapeLocation: jsPsych.timelineVariable('shapeLocationNumber'),
+    //postTrial_gap: jsPsych.timelineVariable('postTrial_gap'),
+    trial_participant_id: jsPsych.timelineVariable('participant_id'),
+    GE_trial_type: "test-trial",
+  },
+  on_finish: function(data){
+    data.trial_number = count;
+    data.round_number = round;
+  }
+};
+
+var ydk_block = {
+  type: "ydk",
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 0,
+  //trial_duration: 5000,
+  coherence: 0,
+  RDK_type: 3, // #6 guzel Applied to all apertures if only one value
+  aperture_width: 150, //Applied to all apertures if only one value
+  aperture_height: 100,
+  correct_choice: "P",
+  number_of_dots: 100, //Different parameter for each aperture. Array length must equal number_of_apertures
+  aperture_center_x: function(){
+  return window.innerWidth/2;
+  },
+  aperture_center_y: function(){
+  return window.innerHeight/2; //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+  },
+  fixation_cross: false,
+  fixation_cross_width: 20,
+  fixation_cross_height: 20,
+  labels: ['Tall<br>','Flat'],
+  //prompt: '<p>Question here?</p>',
+  stimulus: '<p>Running</p>',
+  response_ends_trial_ydk: true,
+  min: 1,
+  max: 27,
+  slider_start: function(){
+    return Math.floor(Math.random() * 25) + 1; // Between 1 and max
+  },
+  require_movement: true,
+  border: false,
+  reinsert_type: 1,
+  dot_life: -0.5,
+  canvas_width: function(){
+    return window.innerWidth ///trial_data.px2deg
+  },
+  canvas_height: function(){
+    return window.innerHeight
+  },
+  on_finish: function() {
+    count++;
+  },
+  data: {
+    trial_number: count,
+    GE_trial_type: "response-trial",
+  },
+  on_finish: function() {
+    count++;
+      if (count == ellipses_shuffled_1.length){
+        count = 0; // resetting count
+        round++
+        console.log("this is the end of the first round, count:", count)
+        console.log("and round is:", round)
+      }
+      var progress = count/nTrials;
+      jsPsych.setProgressBar(progress);
+      //saveData()
+    },
+  //post_trial_gap: 350,
+}
+/*       if (count == boxType_list_shuffled.length){
+        count = 0; // resetting count
+        round++
+        console.log("this is the end of the first round, count:", count)
+        console.log("and round is:", round)
+      }
+      var progress = count/nTrials;
+      jsPsych.setProgressBar(progress); */
+    //},
+/*   data: {
+		trial_participant_id: jsPsych.timelineVariable('participant_id'),
+    GE_trial_type: "response-trial",
+	}
+};
+*/
+var taskBreakScreen1 = {
+  type: "instructions",
+  pages: ["<p> You have finished one third of the experiment. You can take a minute of break. <br>Press 'next' to continue.</p>"],
+  show_clickable_nav:true,
+/*   on_load: function() {
+  jsPsych.setProgressBar(0.05);
+  }, */
+  on_start: function() {
+        // set progress bar to 0 at the start of experiment
+        jsPsych.setProgressBar(0);
+        saveData()
+    },
+
+};
+
+var taskBreakScreen2 = {
+  type: "instructions",
+  pages: ["<p> You have finished two third of the experiment. You can take a minute of break. <br>Press 'next' to continue.</p>"],
+  show_clickable_nav:true,
+/*   on_load: function() {
+  jsPsych.setProgressBar(0.05);
+  }, */
+  on_start: function() {
+        // set progress bar to 0 at the start of experiment
+        jsPsych.setProgressBar(0);
+        saveData()
+    },
+};
+
+var taskStartScreen = {
+  type: "instructions",
+  pages: ["<p>The experiment will run in full screen mode. Please do not exit the full screen mode. Ready? <br>Press 'continue' to start.</p>"
+  + "<p> Just a recap: you will be presenting two shapes defined purely by dot cloud motion which may appear either on the left, right, top or bottom of the fixation dot. You are asked to take in both shapes, then using the slider, match your response to the shape indicated by the arrow. </p>"
+  + "<p>You will receive 2 research chits toward your psychology research requirement for participating. You will not be redirected to SONA to receive that. It will be administered manually within 24 hours.</p>"],
+  show_clickable_nav:true,
+/*   on_load: function() {
+  jsPsych.setProgressBar(0.05);
+  }, */
+  on_finish: function() {
+        // set progress bar to 0 at the start of experiment
+        //jsPsych.setProgressBar(0);
+    }
+};
+
+var blankTrial = {
+  type: 'rdk_2',
+  // stimulus: function(){
+  //   var curr_progress_bar_value = jsPsych.getProgressBarCompleted();
+  //   jsPsych.setProgressBar(curr_progress_bar_value + (1/nTrials));
+  //   return '<p style="font-size: 48px;">' + curr_progress_bar_value + '+</p>'
+  // },
+  choices: jsPsych.NO_KEYS,
+  post_trial_gap: 0,
+  number_of_dots: 0,
+  choices: ["a", "l"],
+  correct_choice: "a",
+  coherent_direction: 180,
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  trial_duration: generateRandomNumber(),
+  aperture_center_x: 0,
+  aperture_center_y: 0,
+  box_type:0,
+  box_sizes:0,
+  foreground_aperture_center_x:0,
+  foreground_aperture_center_y:0,
+  foreground_aperture_center_x_2:0,
+  foreground_aperture_center_y_2:0,
+};
+
+var blankTrial_short = {
+  type: 'rdk_2',
+  // stimulus: function(){
+  //   var curr_progress_bar_value = jsPsych.getProgressBarCompleted();
+  //   jsPsych.setProgressBar(curr_progress_bar_value + (1/nTrials));
+  //   return '<p style="font-size: 48px;">' + curr_progress_bar_value + '+</p>'
+  // },
+  choices: jsPsych.NO_KEYS,
+  post_trial_gap: 0,
+  number_of_dots: 0,
+  choices: ["a", "l"],
+  correct_choice: "a",
+  coherent_direction: generateRandomNumber(),
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  trial_duration: Math.floor(Math.random() * 150) + 1,
+  aperture_center_x: 0,
+  aperture_center_y: 0,
+  box_type:0,
+  box_sizes:0,
+  foreground_aperture_center_x:0,
+  foreground_aperture_center_y:0,
+  foreground_aperture_center_x_2:0,
+  foreground_aperture_center_y_2:0,
+};
+
+
+var cueTrial = {
+  type: 'html-keyboard-response',
+  on_start: function() {
+        document.body.style.backgroundColor = "#808080"
+        document.body.style.color = 'white'
+    },
+  stimulus: function(){
+
+    selectedCue = jsPsych.timelineVariable('trialCue')
+    console.log(jsPsych.timelineVariable('shapeLocationNumber'))
+/*     if (round == 0){
+    var selectedCueList = shuffled_dotFieldLocation_list[count]
+    }
+    if (round == 1){
+      var selectedCueList = shuffled_dotFieldLocation_list_secondRound[count]
+    }
+    if (round == 2){
+      var selectedCueList = shuffled_dotFieldLocation_list_thirdRound[count]
+    } */
+    if (jsPsych.timelineVariable('shapeLocationNumber')==1 || jsPsych.timelineVariable('shapeLocationNumber') == 2 ) {// this means if shapes are configured horizontally
+      if (selectedCue==1){
+        html_cue = '<p style="font-size: 90px;">&#x2190</p>' // horizontal up (left)
+        html_cue_arrow = "left"
+      } 
+      else if (selectedCue==2){
+        html_cue = '<p style="font-size: 90px;">&#x2192</p>'
+        html_cue_arrow = "right"
+      }
+    }
+    else if (jsPsych.timelineVariable('shapeLocationNumber')==3 || jsPsych.timelineVariable('shapeLocationNumber') == 4 ) {// this means if shapes are configured vertically
+      if (selectedCue==1){
+        html_cue = '<p style="font-size: 90px;">&#x2191</p>'
+        html_cue_arrow = "up"
+      } 
+      else if (selectedCue==2){
+        html_cue = '<p style="font-size: 90px;">&#x2193</p>'
+        html_cue_arrow = "down"
+      } 
+    }
+    else {
+      console.log("ELSE'deyim, somethings WRONG!")
+    }
+    return html_cue
+  },
+  choices: jsPsych.NO_KEYS,
+  trial_duration: 500,
+  data: {
+    cue_type: jsPsych.timelineVariable('trialCue')
+  }, 
+/*   on_finish: function() {
+        //document.body.style.backgroundColor = "white"
+        //document.body.style.color = 'black'
+    }, */
+};
+
+var redirect_trial = {
+	type: 'html-keyboard-response',
+	stimulus: '<p>You have completed the experiment.</p><p><a href="url-to-redirect-to">Please click here to return to SONA to get the chits. Thank you again</a></p>',
+	choices: jsPsych.NO_KEYS
+}
+
+function getDotFieldLocations(widthX, heightY){
+
+var displacementX = window.innerWidth/8 //640 //6.4 degrees to the center 200 cikariyorum
+var displacementY = window.innerWidth/8
+
+var DotField_xLocation_right = (window.innerWidth/2+displacementX)
+var DotField_xLocation_left = (window.innerWidth/2-displacementX)
+var DotField_yLocation_top = (window.innerHeight/2-displacementY) 
+var DotField_yLocation_bot = (window.innerHeight/2+displacementY)
+
+/* if (round == 0){
+  var shapeType = shuffled_dotFieldLocation_list[count]
+}
+if (round == 1){
+  var shapeType = shuffled_dotFieldLocation_list_secondRound[count]
+}
+if (round == 2){
+  var shapeType = shuffled_dotFieldLocation_list_thirdRound[count]
+} */
+
+if (shapeType==1){ //this means selected shape is vertical left
+  selectedShape = shapeType_left;
+}
+if (shapeType==2){ //this means selected shape is vertical right
+  selectedShape = shapeType_right;
+}
+if (shapeType==3){ //this means selected shape is horizontal top
+  selectedShape = shapeType_top;
+}
+if (shapeType==4){ //this means selected shape is horizontal bottom
+  selectedShape = shapeType_bot;
+}
+
+var shapeX = selectedShape[0];
+var shapeY = selectedShape[1];
+
+if (widthX == 1){
+  return shapeX
+}
+if (heightY == 1){
+  return shapeY
+}
+if (widthX==1 && heightY == 1){
+  return [0,0]
+}
+}
+
+
+
+//////* INSTRUCTION PHASE VARIABLES *////////////////////////////////////////
+//////////
+var instructionPracticeTrialDuration = 2000
+var numberOfInstructionPractice = 12 
+var practiceTrialFeatureList = []
+var practiceTrialShapeLocationNumber = [1,1,1,3,3,3,1,2,3,4,4,1,1,1,3,3,4,3,2] // 1 horizontal-top, 2: horizontal-bottom; 3: vertical-left, 4: vertical-right
+
+
+var practiceTestTrial_horizontal_top = {
+  type: "rdk_2",
+  aperture_type: 4,
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 0,
+  coherent_direction_2: 270,
+  trial_duration: 6000,
+  coherence: 0,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: 75,
+  foreground_aperture_height: 218,
+  foreground_aperture_width_2: 185,
+  foreground_aperture_height_2: 88,
+  correct_choice: "P",
+  number_of_dots: 2400,
+  dot_life: 120,
+  aperture_width: function(){
+    return window.innerWidth
+  },
+  aperture_height: function(){
+    return window.innerHeight
+  },
+  foreground_aperture_center_x: function(){
+      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+      selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+      selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+      selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: 1,
+  border_thickness: 5,
+  box_type: 5,
+  box_sizes: [[0],[0]],
+  move_distance: moveDistanceValue, // 12
+  motionContrast: motionContrastValue
+};
+var practiceTestTrial_vertical_left = {
+  type: "rdk_2",
+  dot_life: 120,
+  aperture_type: 4,
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 0,
+  coherent_direction_2: 270,
+  trial_duration: 3000,
+  coherence: 0,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: 75,
+  foreground_aperture_height: 218,
+  foreground_aperture_width_2: 185,
+  foreground_aperture_height_2: 88,
+  correct_choice: "P",
+  number_of_dots: 2400,
+  aperture_width: function(){
+    return window.innerWidth
+  },
+  aperture_height: function(){
+    return window.innerHeight
+  },
+  foreground_aperture_center_x: function(){
+      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+    selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+    selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+    selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: 1,
+  border_thickness: 5,
+  box_type: 5,
+  box_sizes: [[0],[0]],
+  move_distance: moveDistanceValue, // 12
+  motionContrast: motionContrastValue
+};
+var practiceTestTrial_horizontal_bottom = {
+  type: "rdk_2",
+  dot_life: 120,
+  aperture_type: 4,
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 0,
+  coherent_direction_2: 270,
+  trial_duration: 3000,
+  coherence: 0,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: 75,
+  foreground_aperture_height: 218,
+  foreground_aperture_width_2: 185,
+  foreground_aperture_height_2: 88,
+  correct_choice: "P",
+  number_of_dots: 2400,
+  aperture_width: function(){
+    return window.innerWidth
+  },
+  aperture_height: function(){
+    return window.innerHeight
+  },
+  foreground_aperture_center_x: function(){
+      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+      selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+      selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+      selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: 1,
+  border_thickness: 5,
+  box_type: 5,
+  box_sizes: [[0],[0]],
+  move_distance: moveDistanceValue, // 12
+  motionContrast: motionContrastValue
+};
+
+var practiceTestTrial_vertical_right = {
+  type: "rdk_2",
+  dot_life: 120,
+  aperture_type: 4,
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 0,
+  coherent_direction_2: 270,
+  trial_duration: 3000,
+  coherence:0,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: 75,
+  foreground_aperture_height: 218,
+  foreground_aperture_width_2: 185,
+  foreground_aperture_height_2: 88,
+  correct_choice: "P",
+  number_of_dots: 2400,
+  aperture_width: function(){
+    return window.innerWidth
+  },
+  aperture_height: function(){
+    return window.innerHeight
+  },
+  foreground_aperture_center_x: function(){
+      selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+    selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+    selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+    selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: 1,
+  border_thickness: 5,
+  box_type: 5,
+  box_sizes: [[0],[0]],
+  move_distance: moveDistanceValue, // 12
+  motionContrast: motionContrastValue
+};
+
+var practice_cueTrial_horizontal_right = {
+  type: 'html-keyboard-response',
+  on_start: function() {
+        document.body.style.backgroundColor = "#808080"
+        document.body.style.color = 'white'
+    },
+  stimulus: '<p style="font-size: 90px;">&#x2192</p>', // horizontal right
+  choices: jsPsych.NO_KEYS,
+  trial_duration: 1500, 
+  on_finish: function() {
+        document.body.style.backgroundColor = "white"
+        document.body.style.color = 'black'
+    },
+};
+var practice_cueTrial_horizontal_left = {
+  type: 'html-keyboard-response',
+  on_start: function() {
+        document.body.style.backgroundColor = "#808080"
+        document.body.style.color = 'white'
+    },
+  stimulus: '<p style="font-size: 90px;">&#x2190</p>', // horizontal left
+  choices: jsPsych.NO_KEYS,
+  trial_duration: 1500, 
+  on_finish: function() {
+        document.body.style.backgroundColor = "white"
+        document.body.style.color = 'black'
+    },
+};
+var practice_responseTrial = {
+  type: "ydk-practice",
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 180,
+  coherent_direction_2: 270,
+  //trial_duration: 5000,
+  coherence: 0,
+  RDK_type: 3, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: 150, //Applied to all apertures if only one value
+  foreground_aperture_height: 100,
+  correct_choice: "P",
+  number_of_dots: 100, //Different parameter for each aperture. Array length must equal number_of_apertures
+  foreground_aperture_center_x: function(){
+  return window.innerWidth/2;
+  },
+  foreground_aperture_center_y: function(){
+  return window.innerHeight/2; //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+  },
+  fixation_cross: false,
+  fixation_cross_width: 20,
+  fixation_cross_height: 20,
+  labels: ['Tall<br>','Long'],
+  //prompt: '<p>Question here?</p>',
+  stimulus: '<p>Move the slider and see how the central dot cloud changes. Left hand side makes it taller, and right hand side makes it flatter. Press "continue" to submit your response.</p>',
+  response_ends_trial_ydk: true,
+  min: 1,
+  max: 27,
+  slider_start: function(){
+    return Math.floor(Math.random() * 25) + 1; // Between 1 and max
+  },
+  require_movement: true,
+  border: false,
+  reinsert_type: 1,
+  dot_life: -0.5,
+  canvas_width: function(){
+    return window.innerWidth ///trial_data.px2deg
+  },
+  canvas_height: function(){
+    return window.innerHeight
+  }
+};
+//pages
+var pageOne = {
+    type: 'instructions',
+    pages: [
+        '<p>(We are so sorry if the text font is so small!) We&rsquo;re going to be doing a visual task, kind of like a game, for the next 40 minutes or so.  We&rsquo;ll walk through the task together, then you&rsquo;ll have a chance to practice for a bit.</p>'+
+'<p>I want to make sure that you understand everything before we start the actual experiment.</p>' + '<p>In this task, you&rsquo;ll be viewing shapes on the screen. You&rsquo;ll always see two shapes at the same time. Your job will be to make judgements about how tall or flat those shapes looked. But, those shapes will be defined purely by motion. In fact, they are defined by very fast dots! Let&rsquo;s see those shapes!</p>'
+    ],
+    show_clickable_nav: true
+}
+var pageTwo = {
+    type: 'instructions',
+    pages: [
+    '<p>Did you see them? Did you also notice how those shapes were different? One was <strong>tall</strong> and the other was <strong>flat</strong>.&nbsp; Great. Let&rsquo;s look at another shape pair.</p>' + '<p> Also, you should always fixate at the red dot at the center.</p>'
+    ],
+    show_clickable_nav: true
+}
+var pageThree = {
+    type: 'instructions',
+    pages: [
+        '<p>Just like you saw in the previous screen, sometimes the shape pairs will be organized vertically (one above the other) and sometimes they will be organized horizontally (side by side).</p>'
+        + '<p>Also, they could appear on the left, right, top and bottom. Let&rsquo;s see those.</p>'
+    ],
+    show_clickable_nav: true
+}
+var pageFour = {
+    type: 'instructions',
+    pages: [
+        '<p><p>Finally, even though there will always be two shapes, we&rsquo;re only going to ask you to tell us about one of them. There will be a cue (an arrow) after shapes disappear telling you which of the two shapes you will be rating.</p>' 
+        + '<p><strong>Your job is to indicate exactly how tall or flat the cued shape was. </strong>So, for example, if the cue points to the left, you&rsquo;d tell us about the shape on the left side of the pair. Let&rsquo;s try one&hellip;</p>'
+    ],
+    show_clickable_nav: true
+}
+var pageFive = {
+    type: 'instructions',
+    pages: [
+        '<p>In this case, you are asked to rate the shape on the <strong>right</strong>. That&rsquo;s it! Real simple, right?</p>' +
+        '<p>You indicate how flat or tall the cued shape appeared by adjusting a response shape at the end of each trial. Go ahead try it.</p>' + '<p> Remember you should always look at the red dot at the center (hint: task is becomes easier if you just look at the center)).</p>'
+    ],
+    show_clickable_nav: true
+}
+var pageSix = {
+    type: 'instructions',
+    pages: [
+        '<p>Remember you will only be rating one shape for each pair. And, you won&rsquo;t know which shape to rate until after they both disappear. So, you have to pay attention to both of them.</p>'+
+'<p>Also, please don&rsquo;t think about whether you&rsquo;re correct or incorrect. All we care about is that you tell us what you see. That&rsquo;s all that matters. So, as long as you tell us what you see, or as long as you give us your best guess, then you&rsquo;ll have done a good job. Does that make sense?</p>',
+'<p>Now you understand the basics of it. I&rsquo;m going to show you what the real trial looks like. Hey, remember, the following ones will still be practice but now it is going to go much faster.</p>' + '<p>Magnifico! Now it&rsquo;s time for you to do some practice trials.</p>'
+    ],
+    show_clickable_nav: true
+}
+
+///////* START OF PRACTICE TRIAL VARIABLES *////////////////////////////////////////
+
+pTrial1 = [128.03,	128.03]
+pTrial2 = [167.13,	98.04]
+pTrial3 = [121.38,	135.05]
+pTrial4 = [109.08,	150.22]
+pTrial5 = [79.19,	206.85]
+pTrial6 = [206.85,	79.19]
+
+pTrial1_2 = [128.03,	128.03]
+pTrial2_2 = [176.31,	92.96]
+pTrial3_2 = [121.38,	135.05]
+pTrial4_2 = [185.99,	88.14]
+pTrial5_2 = [206.85,	79.19]
+pTrial6_2 = [115.07,	142.44]
+
+var practiceTrial1 = { // horizontal top
+  type: "rdk_2",
+  aperture_width: function(){
+    return window.innerWidth;
+  },
+  aperture_height: function(){
+    return window.innerHeight;
+  },
+  aperture_type: 4,
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 360,
+  coherent_direction_2: 270,
+  trial_duration: 200,
+  coherence: 1,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: pTrial1[0],//Applied to all apertures if only one value
+  foreground_aperture_height: pTrial1[1],
+  foreground_aperture_width_2: pTrial1_2[0],//Applied to all apertures if only one value
+  foreground_aperture_height_2: pTrial1_2[1],
+  correct_choice: "P",
+  number_of_dots: 2400,
+  foreground_aperture_center_x: function(){
+      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+    selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+    selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+    selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: 1,
+  border_thickness: 5,
+  box_type: 5,
+  box_sizes: [[0],[0]],
+  move_distance: moveDistanceValue, // 12
+  motionContrast: motionContrastValue,
+};
+
+var practiceTrial2 = { // vertical right
+  type: "rdk_2",
+  aperture_type: 4,
+  aperture_width: function(){
+    return window.innerWidth;
+  },
+  aperture_height: function(){
+    return window.innerHeight;
+  },
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 180,
+  coherent_direction_2: 90,
+  trial_duration: 200,
+  coherence: 0,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: pTrial2[0],//Applied to all apertures if only one value
+  foreground_aperture_height: pTrial2[1],
+  foreground_aperture_width_2: pTrial2_2[0],//Applied to all apertures if only one value
+  foreground_aperture_height_2: pTrial2_2[1],
+  correct_choice: "P",
+  number_of_dots: 2400,
+  foreground_aperture_center_x: function(){
+      selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+    selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+    selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+    selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  }, //[(window.innerHeight/2)-300, (window.innerHeight/2)+300],
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: 1,
+  border_thickness: 5,
+  box_type: 5,
+  box_sizes: [[0],[0]],
+  move_distance: moveDistanceValue, // 12
+  motionContrast: motionContrastValue,
+};
+var practiceTrial3 = { // horizontal bottom
+  type: "rdk_2",
+  aperture_type: 4,
+  aperture_width: function(){
+    return window.innerWidth;
+  },
+  aperture_height: function(){
+    return window.innerHeight;
+  },
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 360,
+  coherent_direction_2: 270,
+  trial_duration: 200,
+  coherence: 0,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: pTrial3[0],//Applied to all apertures if only one value
+  foreground_aperture_height: pTrial3[1],
+  foreground_aperture_width_2: pTrial3_2[0],//Applied to all apertures if only one value
+  foreground_aperture_height_2: pTrial3_2[1],
+  correct_choice: "P",
+  number_of_dots: 2400,
+  foreground_aperture_center_x: function(){
+      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+    selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+    selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+    selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  }, //[(window.innerHeight/2)+300, (window.innerHeight/2)+300],
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: 1,
+  border_thickness: 5,
+  box_type: 5,
+  box_sizes: [[0],[0]],
+  move_distance: moveDistanceValue, // 12
+  motionContrast: motionContrastValue,
+};
+var practiceTrial4 = { // horizontal top
+  type: "rdk_2",
+  aperture_type: 4,
+  aperture_width: function(){
+    return window.innerWidth;
+  },
+  aperture_height: function(){
+    return window.innerHeight;
+  },
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 0,
+  coherent_direction_2: 270,
+  trial_duration: 200,
+  coherence: 1,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: pTrial4[0],//Applied to all apertures if only one value
+  foreground_aperture_height: pTrial4[1],
+  foreground_aperture_width_2: pTrial4_2[0],//Applied to all apertures if only one value
+  foreground_aperture_height_2: pTrial4_2[1],
+  correct_choice: "P",
+  number_of_dots: 2400,
+  foreground_aperture_center_x: function(){
+      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+    selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+    selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+    selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },//[(window.innerHeight/2)-300, (window.innerHeight/2)-300],
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: 1,
+  border_thickness: 5,
+  box_type: 5,
+  box_sizes: [[0],[0]],
+  move_distance: moveDistanceValue, // 12
+  motionContrast: motionContrastValue,
+};
+var practiceTrial5 = { // vertical left
+  type: "rdk_2",
+  aperture_type: 4,
+  aperture_width: function(){
+    return window.innerWidth;
+  },
+  aperture_height: function(){
+    return window.innerHeight;
+  },
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 90,
+  coherent_direction_2: 180,
+  trial_duration: 200,
+  coherence: 1,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: pTrial5[0],//Applied to all apertures if only one value
+  foreground_aperture_height: pTrial5[1],
+  foreground_aperture_width_2: pTrial5_2[0],//Applied to all apertures if only one value
+  foreground_aperture_height_2: pTrial5_2[1],
+  correct_choice: "P",
+  number_of_dots: 2400,
+  foreground_aperture_center_x: function(){
+      selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+    selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+    selectedShapeLocation = window.innerWidth/2 - window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+    selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  }, //[(window.innerHeight/2)-300, (window.innerHeight/2)+300],
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: 1,
+  border_thickness: 5,
+  box_type: 5,
+  box_sizes: [[0],[0]],
+  move_distance: moveDistanceValue, // 12
+  motionContrast: motionContrastValue,
+};
+var practiceTrial6 = { // vertical right
+  type: "rdk_2",
+  aperture_type: 4,
+  aperture_width: function(){
+    return window.innerWidth;
+  },
+  aperture_height: function(){
+    return window.innerHeight;
+  },
+  number_of_apertures: 1, //This needs to be set if more than one aperture
+  coherent_direction: 0,
+  coherent_direction_2: 0,
+  trial_duration: 200,
+  coherence: 0,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: pTrial6[0],//Applied to all apertures if only one value
+  foreground_aperture_height: pTrial6[1],
+  foreground_aperture_width_2: pTrial6_2[0],//Applied to all apertures if only one value
+  foreground_aperture_height_2: pTrial6_2[1],
+  correct_choice: "P",
+  number_of_dots: 2400,
+  foreground_aperture_center_x: function(){
+      selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+    }, 
+  foreground_aperture_center_y: function(){
+    selectedShapeLocation = window.innerHeight/2 - window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_x_2: function(){
+    selectedShapeLocation = window.innerWidth/2 + window.innerWidth/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  },
+  foreground_aperture_center_y_2: function(){
+    selectedShapeLocation = window.innerHeight/2 + window.innerHeight/6
+      return selectedShapeLocation //[(window.innerWidth/2)-(window.innerWidth/4),(window.innerWidth/2)+(window.innerWidth/4)], //[window.innerWidth/2],//
+  }, //[(window.innerHeight/2)-300, (window.innerHeight/2)-300],
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: 1,
+  border_thickness: 5,
+  box_type: 5,
+  box_sizes: [[0],[0]],
+  move_distance: moveDistanceValue, // 12
+  motionContrast: motionContrastValue
+};
+
+var practiceCue1 = {
+  type: 'html-keyboard-response',
+  on_start: function() {
+        document.body.style.backgroundColor = "#808080"
+        document.body.style.color = 'white'
+    },
+  stimulus: '<p style="font-size: 90px;">&#x2190</p>', // horizontal right
+  choices: jsPsych.NO_KEYS,
+  trial_duration: 750, 
+  on_finish: function() {
+        document.body.style.backgroundColor = "white"
+        document.body.style.color = 'black'
+    },
+};
+var practiceCue2 = {
+  type: 'html-keyboard-response',
+  on_start: function() {
+        document.body.style.backgroundColor = "#808080"
+        document.body.style.color = 'white'
+    },
+  stimulus: '<p style="font-size: 90px;">&#x2191</p>', // horizontal right
+  choices: jsPsych.NO_KEYS,
+  trial_duration: 750, 
+  on_finish: function() {
+        document.body.style.backgroundColor = "white"
+        document.body.style.color = 'black'
+    },
+};
+var practiceCue3 = {
+  type: 'html-keyboard-response',
+  on_start: function() {
+        document.body.style.backgroundColor = "#808080"
+        document.body.style.color = 'white'
+    },
+  stimulus: '<p style="font-size: 90px;">&#x2192</p>', // horizontal right
+  choices: jsPsych.NO_KEYS,
+  trial_duration: 750, 
+  on_finish: function() {
+        document.body.style.backgroundColor = "white"
+        document.body.style.color = 'black'
+    },
+};
+
+var practiceCue4 = {
+  type: 'html-keyboard-response',
+  on_start: function() {
+        document.body.style.backgroundColor = "#808080"
+        document.body.style.color = 'white'
+    },
+  stimulus: '<p style="font-size: 90px;">&#x2190</p>' , // horizontal right
+  choices: jsPsych.NO_KEYS,
+  trial_duration: 750, 
+  on_finish: function() {
+        document.body.style.backgroundColor = "white"
+        document.body.style.color = 'black'
+    },
+};
+var practiceCue5 = {
+  type: 'html-keyboard-response',
+  on_start: function() {
+        document.body.style.backgroundColor = "#808080"
+        document.body.style.color = 'white'
+    },
+  stimulus: '<p style="font-size: 90px;">&#x2191</p>', // horizontal right
+  choices: jsPsych.NO_KEYS,
+  trial_duration: 1500, 
+  on_finish: function() {
+        document.body.style.backgroundColor = "white"
+        document.body.style.color = 'black'
+    },
+};
+var practiceCue6 = {
+  type: 'html-keyboard-response',
+  on_start: function() {
+        document.body.style.backgroundColor = "#808080"
+        document.body.style.color = 'white'
+    },
+  stimulus: '<p style="font-size: 90px;">&#x2193</p>', // horizontal right
+  choices: jsPsych.NO_KEYS,
+  trial_duration: 750, 
+  on_finish: function() {
+        document.body.style.backgroundColor = "white"
+        document.body.style.color = 'black'
+    },
+};
+
+var practicePageOne = {
+    type: 'instructions',
+    pages: [
+        '<p>One thing to keep in mind is that taking a long time to respond doesn&rsquo;t really help with this task. Once the shapes are gone, there&rsquo;s nothing there for you to think about. So, after the shapes disappear, just make a quick decision about what you saw and make your response. You don&rsquo;t need to think about it too much. Does that make sense?</p>'],
+    show_clickable_nav: true
+}
+
+var practicePageTwo = {
+    type: 'instructions',
+    pages: [
+        '<p>You might notice that sometimes it&rsquo;s easy and sometimes it&rsquo;s not. That&rsquo;s totally normal.</p>' + '<p>Here&rsquo;s the deal&hellip;we&rsquo;ve found that even when people feel like they don&rsquo;t know how to answer or that they&rsquo;re just guessing, they still do the task well. If you ever feel like you don&rsquo;t know what to say, just go ahead and guess, okay?</p>'],
+    show_clickable_nav: true
+}
+var practicePageThree = {
+    type: 'instructions',
+    pages: [
+        '<p>Alright, you&rsquo;re definitely ready to move on to the game.</p>'+
+      '<p>You&rsquo;re going to run in the real game now. It should take about 40 minutes. There will be many more trials than the practice session you just did, so please do your best to pay attention the whole time, okay? </p>'+ '<p> You&rsquo;ll get breaks when you&rsquo;re 1/3 of the way through, and 2/3 way through. You&rsquo;ll know when this happens. The screen will say take a break. Just relax for a minute, and then press the spacebar to start again.</p>' +
+    '<p>When you&rsquo;re ready, go ahead and get started. Thank you!</p>'],
+    show_clickable_nav: true
+}
+
+
+///////* END OF PRACTICE TRIAL VARIABLES *////////////////////////////////////////
+
+var done = {
+    type: 'html-keyboard-response',
+    stimulus: 'The experiment is now over. Thanks so much for participating!',
+    trial_duration: 5000,
+    on_start: saveData,
+};
+
+var debrief = {
+    type: 'instructions',
+    pages: [
+    '<p>The experiment is now over. Thanks so much for participating!</p>'
+    + '<p>Here is the debrief: The purpose of the study was to test factors that influence perceptual averaging in aspect ratio perception. For this, we aimed to measure the facilitatory or inhibitory role of sharing a motion direction in influencing the perception of the aspect ratio of the post-cued shape. </p>'
+    + '<p> Some studies show that when shapes are simultaneously presented to the observer, the aspect ratio of the cued shape is perceived to be pulled or biased toward to the aspect ratio of undue shape, e.g., the tall shape appears flatter when paired with a flat shape. In this experiment, we are investigating mediating factors involved in this perceptual averaging. We think the shape pairs are perceived to be more similar when the direction of the dot motion is shared between the two shapes relative to when they don&rsquo;t.</p>'
+    + '<p>You have finished the experiment, but <strong>you will not be directed to SONA</strong>. You may close this window/tab now. And, you will receive your <strong>chits on SONA within 24 hours</strong>. Thank you so much again!!!</p>'
+    ],
+    show_clickable_nav: true,
+    trial_duration: 100000,
+    on_start: function(){
+      saveData()
+      document.body.style.backgroundColor = "white"
+      document.body.style.color = 'black'
+  }
+}
+
+
+var test_block_RR = {
+  type: "rdk_2",
+  number_of_apertures: 2, //This needs to be set if more than one aperture
+  coherent_direction: 3,
+  coherent_direction: 270,
+  trial_duration: function(){
+    if (trialDurationSelected == "") {
+      trialDurationSelected = 100
+    }
+    return trialDurationSelected;
+  },
+  coherence: 0.75,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: jsPsych.timelineVariable('width'), //Applied to all apertures if only one value
+  foreground_aperture_height: jsPsych.timelineVariable('height'),
+  correct_choice: "P",
+  number_of_dots: function(){
+    if (dotNumberSelected == "") {
+      dotNumberSelected = dot_number
+    }
+    dotNumberSelected_prep = [dotNumberSelected,dotNumberSelected]
+    return dotNumberSelected_prep;
+  },
+  foreground_aperture_center_x: function(){
+    return getDotFieldLocations(1, 0)
+  },
+  foreground_aperture_center_y: function(){
+    return getDotFieldLocations(0, 1)
+  },
+  //aperture_center_x: jsPsych.timelineVariable('apertureCenterX'), //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+  //aperture_center_y: jsPsych.timelineVariable('apertureCenterY'),
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: function(){
+    if (moveDistanceSelected == "") {
+      moveDistanceSelected = 1
+    }
+    return moveDistanceSelected;
+  },
+  border_thickness: function(){
+    if (borderThicknessSelected == "") {
+      borderThicknessSelected = 5
+    }
+    return borderThicknessSelected;
+  },
+  box_type: function(){
+    console.log("box type locations:", getBoxTypeLocations(1,0) )
+    return getBoxTypeLocations(1,0)},
+  box_sizes: function(){
+    console.log("box type sizes:", getBoxTypeLocations(1,0) )
+    return getBoxTypeLocations(0,1)},
+};
+var test_block_RL = {
+  type: "rdk_2",
+  number_of_apertures: 2, //This needs to be set if more than one aperture
+  coherent_direction: 3,
+  coherent_direction: 90,
+  trial_duration: function(){
+    if (trialDurationSelected == "") {
+      trialDurationSelected = 100
+    }
+    return trialDurationSelected;
+  },
+  coherence: 0.75,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: jsPsych.timelineVariable('width'), //Applied to all apertures if only one value
+  foreground_aperture_height: jsPsych.timelineVariable('height'),
+  correct_choice: "P",
+  number_of_dots: function(){
+    if (dotNumberSelected == "") {
+      dotNumberSelected = dot_number
+    }
+    dotNumberSelected_prep = [dotNumberSelected,dotNumberSelected]
+    return dotNumberSelected_prep;
+  },
+  foreground_aperture_center_x: function(){
+    return getDotFieldLocations(1, 0)
+  },
+  foreground_aperture_center_y: function(){
+    return getDotFieldLocations(0, 1)
+  },
+  //aperture_center_x: jsPsych.timelineVariable('apertureCenterX'), //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+  //aperture_center_y: jsPsych.timelineVariable('apertureCenterY'),
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: function(){
+    if (moveDistanceSelected == "") {
+      moveDistanceSelected = 1
+    }
+    return moveDistanceSelected;
+  },
+  border_thickness: function(){
+    if (borderThicknessSelected == "") {
+      borderThicknessSelected = 5
+    }
+    return borderThicknessSelected;
+  },
+  box_type: function(){
+    console.log("box type locations:", getBoxTypeLocations(1,0) )
+    return getBoxTypeLocations(1,0)},
+  box_sizes: function(){
+    console.log("box type sizes:", getBoxTypeLocations(1,0) )
+    return getBoxTypeLocations(0,1)},
+};
+var test_block_LR = {
+  type: "rdk_2",
+  number_of_apertures: 2, //This needs to be set if more than one aperture
+  coherent_direction: 3,
+  coherent_direction: 270,
+  trial_duration: function(){
+    if (trialDurationSelected == "") {
+      trialDurationSelected = 100
+    }
+    return trialDurationSelected;
+  },
+  coherence: 0.75,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  foreground_aperture_width: jsPsych.timelineVariable('width'), //Applied to all apertures if only one value
+  foreground_aperture_height: jsPsych.timelineVariable('height'),
+  correct_choice: "P",
+  number_of_dots: function(){
+    if (dotNumberSelected == "") {
+      dotNumberSelected = dot_number
+    }
+    dotNumberSelected_prep = [dotNumberSelected,dotNumberSelected]
+    return dotNumberSelected_prep;
+  },
+  foreground_aperture_center_x: function(){
+    return getDotFieldLocations(1, 0)
+  },
+  foreground_aperture_center_y: function(){
+    return getDotFieldLocations(0, 1)
+  },
+  //aperture_center_x: jsPsych.timelineVariable('apertureCenterX'), //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+  //aperture_center_y: jsPsych.timelineVariable('apertureCenterY'),
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: function(){
+    if (moveDistanceSelected == "") {
+      moveDistanceSelected = 1
+    }
+    return moveDistanceSelected;
+  },
+  border_thickness: function(){
+    if (borderThicknessSelected == "") {
+      borderThicknessSelected = 5
+    }
+    return borderThicknessSelected;
+  },
+  box_type: function(){
+    console.log("box type locations:", getBoxTypeLocations(1,0) )
+    return getBoxTypeLocations(1,0)},
+  box_sizes: function(){
+    console.log("box type sizes:", getBoxTypeLocations(1,0) )
+    return getBoxTypeLocations(0,1)},
+};
+var test_block_LL = {
+  type: "rdk_2",
+  number_of_apertures: 2, //This needs to be set if more than one aperture
+  coherent_direction: 3,
+  coherent_direction: 0,
+  trial_duration: function(){
+    if (trialDurationSelected == "") {
+      trialDurationSelected = 100
+    }
+    return trialDurationSelected;
+  },
+  coherence: 0.75,
+  RDK_type: motion_type, // #6 guzel Applied to all apertures if only one value
+  aperture_width: jsPsych.timelineVariable('width'), //Applied to all apertures if only one value
+  aperture_height: jsPsych.timelineVariable('height'),
+  correct_choice: "P",
+  number_of_dots: function(){
+    if (dotNumberSelected == "") {
+      dotNumberSelected = dot_number
+    }
+    dotNumberSelected_prep = [dotNumberSelected,dotNumberSelected]
+    return dotNumberSelected_prep;
+  },
+  foreground_aperture_center_x: function(){
+    return getDotFieldLocations(1, 0)
+  },
+  foreground_aperture_center_y: function(){
+    return getDotFieldLocations(0, 1)
+  },
+  //aperture_center_x: jsPsych.timelineVariable('apertureCenterX'), //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen)
+  //aperture_center_y: jsPsych.timelineVariable('apertureCenterY'),
+  fixation_cross: true,
+  fixation_cross_width: fixationCircleRadius,
+  move_distance: function(){
+    if (moveDistanceSelected == "") {
+      moveDistanceSelected = 1
+    }
+    return moveDistanceSelected;
+  },
+  border_thickness: function(){
+    if (borderThicknessSelected == "") {
+      borderThicknessSelected = 5
+    }
+    return borderThicknessSelected;
+  },
+  box_type: function(){
+    console.log("box type locations:", getBoxTypeLocations(1,0) )
+    return getBoxTypeLocations(1,0)},
+  box_sizes: function(){
+    console.log("box type sizes:", getBoxTypeLocations(1,0) )
+    return getBoxTypeLocations(0,1)},
+};
+
+
+
+/* defining test timeline */
+/* var testProcedure_ellipses_round1 = {
+  timeline: [fixationTrial, test_block, blankTrial, cueTrial, ydk_block, blankTrial], //responseFeedback, test_block_response, ydk_block
+  timeline_variables: trial_list_round1,
+};
+
+var testProcedure_ellipses_round2 = {
+  timeline: [fixationTrial, test_block, blankTrial, cueTrial, ydk_block, blankTrial], //responseFeedback, test_block_response, ydk_block
+  timeline_variables: trial_list_round2,
+};
+
+var testProcedure_ellipses_round3 = {
+  timeline: [fixationTrial, test_block, blankTrial, cueTrial, ydk_block, blankTrial], //responseFeedback, test_block_response, ydk_block
+  timeline_variables: trial_list_round3,
+}; */
+  
+
+
+var instruction_procedure = {
+  timeline: [
+    pageOne, 
+    practiceTestTrial_horizontal_top, 
+    pageTwo, 
+    practiceTestTrial_horizontal_top,
+    practiceTestTrial_vertical_left,
+    pageThree,
+    practiceTestTrial_horizontal_top,
+    practiceTestTrial_horizontal_bottom,
+    practiceTestTrial_vertical_left,
+    practiceTestTrial_vertical_right,
+    pageFour,
+    practiceTestTrial_horizontal_top,
+    practice_cueTrial_horizontal_right,
+    pageFive,
+    practice_responseTrial,
+    practiceTestTrial_horizontal_bottom,
+    practice_cueTrial_horizontal_left,
+    practice_responseTrial,
+    pageSix
+    ],
+}
+
+var practice_procedure = {
+  timeline: [
+  practiceTrial1, // horizontal top
+  blankTrial,
+  practiceCue1, // left cue
+  practice_responseTrial, 
+  practiceTrial2, // vertical right
+  blankTrial,
+  practiceCue2, // top cue
+  practice_responseTrial, 
+  practicePageOne,  ////////// PRACTICE TEXT /////////
+  practiceTrial3, // horizontal bottom
+  blankTrial,
+  practiceCue3, // right cue
+  practice_responseTrial, 
+  practiceTrial4, // horizontal top
+  blankTrial,
+  practiceCue4, // left cue
+  practice_responseTrial,
+  practicePageTwo, ////////// PRACTICE TEXT /////////
+  practiceTrial5,// vertical left
+  blankTrial,
+  practiceCue5, // top cue
+  practice_responseTrial,
+  practiceTrial6, // vertical right
+  blankTrial,
+  practiceCue6, // bottom cue
+  practice_responseTrial,
+  practicePageThree, ////////// PRACTICE TEXT /////////
+    ]
+}
+
+/*set up experiment structure*/
+  var timeline = [];
+
+/* defining test timeline */
+  var testProcedure_1= {
+    timeline: [test_block, blankTrial_short, cueTrial, ydk_block, blankTrial], //responseFeedback, test_block_response, ydk_block
+    timeline_variables: trial_feature_list_1,
+  };
+
+  var testProcedure_2= {
+    timeline: [test_block, blankTrial_short, cueTrial, ydk_block, blankTrial], //responseFeedback, test_block_response, ydk_block
+    timeline_variables: trial_feature_list_2,
+  };
+
+  var testProcedure_3= {
+    timeline: [test_block, blankTrial_short, cueTrial, ydk_block, blankTrial], //responseFeedback, test_block_response, ydk_block
+    timeline_variables: trial_feature_list_3,
+  };
+
+  //timeline.push(fullscreen_trial)
+
+  timeline.push(fullscreen_trial);
+  timeline.push(virtual_chinrest_trial);
+  //timeline.push(instruction_procedure);
+  //timeline.push(practice_procedure);
+  timeline.push(taskStartScreen)
+
+
+  timeline.push(testProcedure_1);
+  timeline.push(taskBreakScreen1);
+
+  timeline.push(testProcedure_2);
+  timeline.push(taskBreakScreen2);
+  timeline.push(testProcedure_3);
+
+
+timeline.push({
+  type: 'fullscreen',
+  fullscreen_mode: false
+});
+timeline.push(debrief)
+
+
+  //timeline.push(redirect_trial);
+  /*start experiment*/
+  jsPsych.init({
+      timeline: timeline,
+      // show_progress_bar: true,
+      //on_finish: saveData,
+      show_progress_bar: true,
+      auto_update_progress_bar: false,
+      message_progress_bar: 'Completion Progress Until Break'
+  });
+</script>
+</html>
