@@ -1376,14 +1376,14 @@ jsPsych.plugins["ydk"] = (function() {
 				"ellipse1_move_direction"		:jsPsych.data.get().last(4).values()[1].coherent_direction_1,
 				"ellipse2_move_direction"		:jsPsych.data.get().last(4).values()[1].coherent_direction_2,
 
-				"selected_ellipse_logAR"		:selectedAperture_logAR,
+				//"selected_ellipse_logAR"		:selectedAperture_logAR, // !!!!!!!!!! Removed for CNS 2022
 				"cued_ellipse_logAR"			:cuedEllipse_logAR,
 				"uncued_ellipse_logAR"			:uncuedEllipse_logAR,
 
 				"coherence_level"				:jsPsych.data.get().last(4).values()[1].coherence,
 				"cuedMotionDirection"			:cuedMotionDirection,
 				"unCuedMotionDirection"			:unCuedMotionDirection,
-				"differenceBetweenCuedAndReported": selectedAperture_logAR - cuedEllipse_logAR,
+				//"differenceBetweenCuedAndReported": selectedAperture_logAR - cuedEllipse_logAR, // !!!!!!!!!! Removed for CNS 2022
 				"trial_participant_id": 			jsPsych.data.get().last(4).values()[1].trial_participant_id,
 				"foreground_aperture_center_x": jsPsych.data.get().last(4).values()[1].foreground_aperture_center_x,
 				"foreground_aperture_center_y": jsPsych.data.get().last(4).values()[1].foreground_aperture_center_y,

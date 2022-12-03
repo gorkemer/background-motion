@@ -48,7 +48,7 @@ function saveData() {
 var participantID = jsPsych.data.getURLVariable('ParticipantID');
 console.log('Participant ID is:', participantID);
 if (typeof participantID === "undefined") {
-alert("participant ID is undefined, assigning arbitrarily. ");
+//alert("participant ID is undefined, assigning arbitrarily. ");
 var participantID = 1;
 }
 jsPsych.data.addProperties({participant_ID: participantID});
@@ -434,7 +434,7 @@ var test_block = {
   type: "rdk_2",  
   aperture_type: 4,   //1 - Circle 2 - Ellipse 3 - Square 4 - Rectangle
   number_of_apertures: 1, //This needs to be set if more than one aperture
-  trial_duration: 5000,
+  trial_duration: 200,
   RDK_type: 3, //Applied to all apertures if only one value
   aperture_width: function(){
     return window.innerWidth;
@@ -448,7 +448,8 @@ var test_block = {
   }, //Separate the apertures on the screen (window.innerWidth/2 is the middle of the screen),
   coherence: function(){
     if (jsPsych.timelineVariable('trialCoherenceIncZero') == 1) {   /// 1 equals it will be RANDOM, coh:0
-    coherence = 0
+    /// coherence = 0 removed for CNS demo
+    coherence = 1
     }
     else {
     coherence = 1 //jsPsych.timelineVariable('trialCoherence')
@@ -544,7 +545,7 @@ var ydk_block = {
   type: "ydk",
   number_of_apertures: 1, //This needs to be set if more than one aperture
   coherent_direction: 0,
-  //trial_duration: 5000,
+/*   trial_duration: 1000, */
   coherence: 0,
   RDK_type: 3, // #6 guzel Applied to all apertures if only one value
   aperture_width: 150, //Applied to all apertures if only one value
@@ -569,7 +570,7 @@ var ydk_block = {
   slider_start: function(){
     return Math.floor(Math.random() * 25) + 1; // Between 1 and max
   },
-  require_movement: true,
+  require_movement: false,
   border: false,
   reinsert_type: 1,
   dot_life: -0.5,
@@ -673,8 +674,8 @@ var blankTrial = {
   correct_choice: "a",
   coherent_direction: 180,
   fixation_cross: true,
-  fixation_cross_width: fixationCircleRadius,
-  trial_duration: generateRandomNumber(),
+  fixation_cross_width: 15,
+  trial_duration: 50000,
   aperture_center_x: 0,
   aperture_center_y: 0,
   box_type:0,
@@ -1072,7 +1073,7 @@ var practice_responseTrial = {
   labels: ['Tall<br>','Long'],
   //prompt: '<p>Question here?</p>',
   stimulus: '<p>Move the slider and see how the central dot cloud changes. Left hand side makes it taller, and right hand side makes it flatter. Press "continue" to submit your response.</p>',
-  response_ends_trial_ydk: true,
+  response_ends_trial_ydk: false,
   min: 1,
   max: 27,
   slider_start: function(){
